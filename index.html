@@ -29,7 +29,7 @@
             --info: #1e90ff;
             --warning: #ffa502;
             --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --text-sub: #cbd5e1;
             --text-muted: #64748b;
         }
 
@@ -435,7 +435,8 @@
         .playlist-item { display: flex; justify-content: space-between; align-items: center; background: #0c0d10; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border); }
         .playlist-info { font-size: 12px; font-weight: 500; }
 
-        /* Music Controls UI - FRONT */
+        /* Music Controls UI - FRONT (Repositioned to bottom-left) */
+        .music-ctrl { position: fixed; bottom: 30px; left: 30px; z-index: 1000; width: auto; background: var(--accent); color: #000; border-radius: 50px; padding: 6px 14px; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: var(--transition); }
         .music-hud-group { display: flex; gap: 8px; align-items: center; }
         .music-ctrl-btn { width: 38px; height: 38px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); }
         .music-ctrl-btn:hover { background: var(--accent); color: #000; transform: scale(1.1); }
@@ -446,6 +447,311 @@
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(26px); }
+
+        /* Capsule Music Player Widget */
+        .music-capsule {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1001;
+            background: rgba(11, 12, 15, 0.75);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 
+                        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            transition: width 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+                        height 0.5s cubic-bezier(0.19, 1, 0.22, 1), 
+                        border-radius 0.5s cubic-bezier(0.19, 1, 0.22, 1),
+                        background 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .music-capsule.compact {
+            width: 250px;
+            height: 64px;
+            cursor: pointer;
+        }
+
+        .music-capsule.compact:hover {
+            background: rgba(17, 19, 24, 0.85);
+            border-color: var(--accent);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 193, 7, 0.15);
+        }
+
+        .music-capsule.expanded {
+            width: 320px;
+            height: 470px;
+            border-radius: 28px;
+            background: rgba(14, 16, 20, 0.95);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Compact Style */
+        .capsule-compact-trigger {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            height: 100%;
+            gap: 12px;
+        }
+
+        .capsule-vinyl-wrapper {
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .capsule-vinyl-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: spinVinyl 6s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .vinyl-center-hole {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes spinVinyl {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .capsule-mini-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .mini-label {
+            font-family: 'Orbitron';
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .mini-song-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Visualizer */
+        .capsule-visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 2.5px;
+            height: 16px;
+            margin-left: auto;
+        }
+        .capsule-visualizer .bar {
+            width: 2px;
+            height: 2px;
+            background: var(--accent);
+            border-radius: 1px;
+            transition: height 0.3s ease;
+        }
+
+        /* Equalizer animation when playing */
+        .playing-active .capsule-visualizer .bar:nth-child(1) { animation: bounceVisualizer 0.6s ease-in-out infinite alternate; }
+        .playing-active .capsule-visualizer .bar:nth-child(2) { animation: bounceVisualizer 0.8s ease-in-out infinite alternate; animation-delay: 0.1s; }
+        .playing-active .capsule-visualizer .bar:nth-child(3) { animation: bounceVisualizer 0.5s ease-in-out infinite alternate; animation-delay: 0.25s; }
+        .playing-active .capsule-visualizer .bar:nth-child(4) { animation: bounceVisualizer 0.7s ease-in-out infinite alternate; animation-delay: 0.15s; }
+        .playing-active .capsule-vinyl-img { animation-play-state: running; }
+
+        @keyframes bounceVisualizer {
+            0% { height: 3px; }
+            100% { height: 16px; }
+        }
+
+        /* Expanded Style Layouts */
+        .capsule-expanded-content {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s, visibility 0.3s;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .music-capsule.expanded .capsule-expanded-content {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .music-capsule.expanded .capsule-compact-trigger {
+            display: none;
+        }
+
+        .expanded-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .now-playing-indicator {
+            font-family: 'Orbitron';
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pulsating-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .capsule-close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .capsule-close-btn:hover {
+            color: #fff;
+        }
+
+        .expanded-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+        }
+
+        .expanded-album-art {
+            width: 150px;
+            height: 150px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .expanded-song-details h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 260px;
+        }
+
+        .expanded-song-details p {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 18px;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+
+        .time-stamps {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            font-family: 'Orbitron';
+            color: var(--text-muted);
+        }
+
+        /* Volume container */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 22px;
+            padding: 0 10px;
+        }
+
+        .volume-container i {
+            font-size: 12px;
+            color: var(--text-sub);
+            cursor: pointer;
+            width: 16px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            accent-color: var(--accent);
+            margin-bottom: 0 !important; /* Override standard input margin */
+        }
+
+        .play-pause-main {
+            background: var(--accent) !important;
+            color: #000 !important;
+            width: 46px !important;
+            height: 46px !important;
+        }
 
         @media (max-width: 992px) { 
             .admin-layout { flex-direction: column; }
@@ -484,12 +790,63 @@
         </div>
     </div>
     
-    <!-- Music Player Navigation UI -->
-    <div class="music-ctrl" style="width: auto; border-radius: 50px; padding: 6px 14px; right: 30px; bottom: 30px;">
-        <div class="music-hud-group">
-            <button class="music-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-            <button class="music-ctrl-btn" onclick="toggleMusic()" style="background:var(--accent); color:#000;"><i id="musicIcon" class="fa-solid fa-play"></i></button>
-            <button class="music-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+    <!-- State-of-the-Art Capsule Music Player Widget -->
+    <div id="music-capsule" class="music-capsule compact">
+        <!-- Compact Capsule View (Always visible when minimized) -->
+        <div class="capsule-compact-trigger" onclick="expandCapsule()">
+            <div class="capsule-vinyl-wrapper">
+                <img id="capsule-vinyl-art" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=100" class="capsule-vinyl-img">
+                <div class="vinyl-center-hole"></div>
+            </div>
+            <div class="capsule-mini-info">
+                <span class="mini-label">MUSIC ENGINE</span>
+                <span id="capsule-mini-title" class="mini-song-title">NO TRACK PLAYING</span>
+            </div>
+            <div class="capsule-visualizer" id="capsule-visualizer">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+
+        <!-- Expanded Player View -->
+        <div class="capsule-expanded-content">
+            <div class="expanded-header">
+                <span class="now-playing-indicator"><span class="pulsating-dot"></span> NOW PLAYING</span>
+                <button class="capsule-close-btn" onclick="minimizeCapsule(event)"><i class="fa-solid fa-chevron-down"></i></button>
+            </div>
+            <div class="expanded-body">
+                <img id="capsule-large-art" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300" class="expanded-album-art">
+                <div class="expanded-song-details">
+                    <h4 id="capsule-large-title">NO TRACK PLAYING</h4>
+                    <p id="capsule-large-artist">DEATHNOTE SOUND SYSTEM</p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container" onclick="seekTrack(event)">
+                    <div class="progress-bar-bg">
+                        <div id="capsule-progress-fill" class="progress-bar-fill"></div>
+                    </div>
+                    <div class="time-stamps">
+                        <span id="capsule-current-time">0:00</span>
+                        <span id="capsule-duration">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Volume Controller -->
+                <div class="volume-container">
+                    <i id="volume-icon" class="fa-solid fa-volume-high" onclick="toggleMute()"></i>
+                    <input type="range" id="capsule-volume-slider" class="volume-slider" min="0" max="100" value="50" oninput="setTrackVolume(this.value)">
+                </div>
+
+                <!-- Custom Controllers -->
+                <div class="music-hud-group" style="justify-content: center; margin-top: 5px; display: flex; gap: 8px; align-items: center;">
+                    <button class="music-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                    <button class="music-ctrl-btn play-pause-main" onclick="toggleMusic()"><i id="musicIconLarge" class="fa-solid fa-play"></i></button>
+                    <button class="music-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -633,12 +990,12 @@
                         <div class="admin-card col-12">
                             <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">MEDIA MANAGER UPLOAD CENTER</div>
                             
-                            <div class="upload-dropzone" style="height: 140px;" onclick="document.getElementById('fileMediaUpload').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropMediaHandler(event)">
+                            <div class="upload-dropzone" style="height: 140px; position: relative;" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropMediaHandler(event)">
                                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 32px; margin-bottom: 5px;"></i>
                                 <span style="font-size: 13px; font-weight: bold; color: var(--text-main);">DRAG & DROP IMAGE HERE</span>
                                 <span>Or click to select photo file (Auto compressed to lightweight cloud storage)</span>
+                                <input type="file" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" accept="image/*" onchange="fileSelectMediaHandler(this)">
                             </div>
-                            <input type="file" style="display:none;" id="fileMediaUpload" accept="image/*" onchange="fileSelectMediaHandler(this)">
 
                             <div id="mediaManagerLibrary">
                                 <h3 style="font-family:'Orbitron'; font-size:12px; margin: 30px 0 15px; border-left: 2px solid var(--accent); padding-left: 10px; color: var(--text-main);">ALL CLOUD FILES</h3>
@@ -659,30 +1016,30 @@
                                 <div><label>SITE NAME</label><input type="text" id="configSiteName"></div>
                                 <div>
                                     <label>FAVICON IMAGE</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileFavicon').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configFavicon', 64, 64, 0.6)">
+                                    <div class="upload-dropzone" style="position: relative;" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configFavicon', 64, 64, 0.6)">
                                         <i class="fa-solid fa-image"></i>
                                         <span>Click / Drop Favicon File (64x64)</span>
+                                        <input type="file" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" accept="image/*" onchange="fileSelectHandler(this, 'configFavicon', 64, 64, 0.6)">
                                     </div>
-                                    <input type="file" style="display:none;" id="fileFavicon" accept="image/*" onchange="fileSelectHandler(this, 'configFavicon', 64, 64, 0.6)">
                                     <input type="text" id="configFavicon" placeholder="Or Favicon URL / Base64 fallback">
                                 </div>
                                 <div><label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;"></div>
                                 <div>
                                     <label>LOGO IMAGE</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileLogo').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configLogoUrl', 300, 300, 0.75)">
+                                    <div class="upload-dropzone" style="position: relative;" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configLogoUrl', 300, 300, 0.75)">
                                         <i class="fa-solid fa-cube"></i>
                                         <span>Click / Drop Logo File (300x300)</span>
+                                        <input type="file" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" accept="image/*" onchange="fileSelectHandler(this, 'configLogoUrl', 300, 300, 0.75)">
                                     </div>
-                                    <input type="file" style="display:none;" id="fileLogo" accept="image/*" onchange="fileSelectHandler(this, 'configLogoUrl', 300, 300, 0.75)">
                                     <input type="text" id="configLogoUrl" placeholder="Or Logo URL / Base64 fallback">
                                 </div>
                                 <div>
                                     <label>WALLPAPER / BACKGROUND</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileBg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configBgUrl', 1200, 800, 0.65)">
+                                    <div class="upload-dropzone" style="position: relative;" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configBgUrl', 1200, 800, 0.65)">
                                         <i class="fa-solid fa-panorama"></i>
                                         <span>Click / Drop Background File (High Compress)</span>
+                                        <input type="file" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" accept="image/*" onchange="fileSelectHandler(this, 'configBgUrl', 1200, 800, 0.65)">
                                     </div>
-                                    <input type="file" style="display:none;" id="fileBg" accept="image/*" onchange="fileSelectHandler(this, 'configBgUrl', 1200, 800, 0.65)">
                                     <input type="text" id="configBgUrl" placeholder="Or Wallpaper URL / Base64 fallback">
                                 </div>
                                 <div><label>ATMOSPHERE EFFECT</label>
@@ -736,11 +1093,11 @@
                                 <div><label>FULL NAME</label><input type="text" id="memName"></div>
                                 <div style="grid-column: span 2;">
                                     <label>AVATAR IMAGE</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileMemImg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'memImg', 150, 150, 0.7)">
+                                    <div class="upload-dropzone" style="position: relative;" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'memImg', 150, 150, 0.7)">
                                         <i class="fa-solid fa-cloud-arrow-up"></i>
                                         <span>Click / Drop Avatar (Base64 Compress)</span>
+                                        <input type="file" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" accept="image/*" onchange="fileSelectHandler(this, 'memImg', 150, 150, 0.7)">
                                     </div>
-                                    <input type="file" style="display:none;" id="fileMemImg" accept="image/*" onchange="fileSelectHandler(this, 'memImg', 150, 150, 0.7)">
                                     <input type="text" id="memImg" placeholder="Or Avatar URL / Base64 fallback">
                                 </div>
                                 <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
@@ -824,7 +1181,7 @@
                                 <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
                             </div>
 
-                            <div style="display:grid; grid-template-columns: 2fr 1.5fr auto; gap:15px; margin-bottom: 20px; align-items: flex-end;">
+                            <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap:15px; margin-bottom: 20px; align-items: flex-end;">
                                 <div>
                                     <label>SONG TITLE (ชื่อเพลง)</label>
                                     <input type="text" id="musicTitle" placeholder="e.g. Lost in Tokyo" style="margin-bottom:0;">
@@ -832,6 +1189,10 @@
                                 <div>
                                     <label>YOUTUBE VIDEO ID</label>
                                     <input type="text" id="musicVidId" placeholder="e.g. JXg_Qe48cbU" style="margin-bottom:0;">
+                                </div>
+                                <div>
+                                    <label>START (SEC) / เริ่มวินาทีที่</label>
+                                    <input type="number" id="musicStart" placeholder="e.g. 0" value="0" style="margin-bottom:0;">
                                 </div>
                                 <button class="config-btn" onclick="addSongPlaylist()" style="height: 48px;">ADD TO PLAYLIST</button>
                             </div>
@@ -924,13 +1285,33 @@
             }
         }
 
+        // Intercept Permission write errors and alert nicely
         function handleWriteError(err) {
             console.error(err);
             if (err.message && (err.message.includes("Permission denied") || err.message.includes("PERMISSION_DENIED"))) {
-                showToast("Firebase ปฏิเสธการเขียนข้อมูล (Rules หมดอายุ) แนะนำให้กดปุ่ม 'FORCE LOCAL STORAGE' ด้านบนหลังบ้านครับ", "error");
+                showToast("Firebase ล็อคเขียนไม่ได้ แนะนำกดปุ่มสีส้ม 'FORCE LOCAL STORAGE' ด้านบนหลังบ้านครับ", "error");
             } else {
                 showToast("เกิดข้อผิดพลาดในการบันทึก: " + err.message, "error");
             }
+        }
+
+        // Self-healing database permission verification test
+        function testWritePermission() {
+            if (useLocalFallback) return;
+            db.ref('.info/connected').once('value', (snap) => {
+                if (snap.val() === true) {
+                    const testRef = db.ref('write_test_connection');
+                    testRef.set({ timestamp: Date.now() }).then(() => {
+                        testRef.remove();
+                    }).catch(err => {
+                        console.warn("Auto detected locked database write rules. Fallback triggered.", err.message);
+                        if (err.message && (err.message.includes("Permission denied") || err.message.includes("PERMISSION_DENIED"))) {
+                            triggerFallbackMode();
+                            showToast("ตรวจพบสิทธิ์เซิร์ฟเวอร์โดเมนล็อคการเขียน: ระบบสลับไปใช้ Local Storage ในเครื่องอัตโนมัติเรียบร้อย", "warning");
+                        }
+                    });
+                }
+            });
         }
 
         function getDefaultData(path) {
@@ -968,7 +1349,7 @@
             }
             if (path === 'playlist') {
                 return {
-                    "p1": { title: "Background LoFi", videoId: "JXg_Qe48cbU" }
+                    "p1": { title: "Background LoFi", videoId: "JXg_Qe48cbU", startSeconds: 0 }
                 };
             }
             if (path === 'media') {
@@ -999,6 +1380,7 @@
                             if (path === 'config') {
                                 document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE';
                                 clearTimeout(fallbackTimeout);
+                                testWritePermission(); // Execute background permission test
                             }
                             successCallback(snap);
                         }, (err) => {
@@ -1055,7 +1437,21 @@
                                 }
                             };
                         }
-                        return db.ref(path).push(value);
+                        
+                        // Wrap push reference so it catches errors safely
+                        const nativeRef = db.ref(path).push(value);
+                        return {
+                            key: nativeRef.key,
+                            set: function(val) {
+                                return nativeRef.set(val).catch(handleWriteError);
+                            },
+                            update: function(val) {
+                                return nativeRef.update(val).catch(handleWriteError);
+                            },
+                            remove: function() {
+                                return nativeRef.remove().catch(handleWriteError);
+                            }
+                        };
                     },
                     child: function(childPath) {
                         return {
@@ -1084,6 +1480,67 @@
                 };
             }
         };
+
+        // ----------------------------------------------------
+        // SYSTEM: Image Compression & Loading Core
+        // ----------------------------------------------------
+        function processUploadedFile(file, targetInputId, maxWidth, maxHeight, quality) {
+            try {
+                if (!file.type.match('image.*')) {
+                    return showToast("ไฟล์ที่อัปโหลดต้องเป็นรูปภาพเท่านั้น", "error");
+                }
+                showToast("กำลังย่อขนาดและบีบอัดรูปภาพ...", "info");
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const img = new Image();
+                        img.onload = function() {
+                            try {
+                                const canvas = document.createElement('canvas');
+                                let width = img.width;
+                                let height = img.height;
+
+                                if (width > height) {
+                                    if (width > maxWidth) {
+                                        height *= maxWidth / width;
+                                        width = maxWidth;
+                                    }
+                                } else {
+                                    if (height > maxHeight) {
+                                        width *= maxHeight / height;
+                                        height = maxHeight;
+                                    }
+                                }
+
+                                canvas.width = width;
+                                canvas.height = height;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, width, height);
+
+                                const base64Str = canvas.toDataURL('image/jpeg', quality);
+                                document.getElementById(targetInputId).value = base64Str;
+                                showToast("บีบอัดรูปภาพเสร็จสิ้น", "success");
+                            } catch (err) {
+                                showToast("เกิดข้อผิดพลาดในขั้นตอนเขียนภาพ: " + err.message, "error");
+                            }
+                        };
+                        img.onerror = function() {
+                            showToast("ไม่สามารถเรียกอ่านไฟล์รูปภาพชิ้นนี้ได้", "error");
+                        };
+                        img.src = e.target.result;
+                    } catch (err) {
+                        showToast("เกิดข้อผิดพลาดในการโหลดไฟล์ภาพ: " + err.message, "error");
+                    }
+                };
+                reader.onerror = function() {
+                    showToast("ไม่สามารถเรียกอ่านไฟล์จากโฟลเดอร์ได้", "error");
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                showToast("เกิดข้อผิดพลาดร้ายแรง: " + err.message, "error");
+            }
+        }
 
         // ----------------------------------------------------
         // SYSTEM: Media Cloud Manager Functions
@@ -1237,6 +1694,7 @@
 
                 row.addEventListener('dragover', (e) => {
                     e.preventDefault();
+                    if (!draggedNode) return; // Prevent crashes if unhandled item dragged on screen
                     const container = document.getElementById('adminMemberList');
                     const elements = [...container.querySelectorAll('.member-table-row.draggable:not(.dragging)')];
                     
@@ -1398,7 +1856,7 @@
                 selectedMemberIds.clear();
                 document.getElementById('selectAllMembers').checked = false;
                 filterAdminMembers();
-            });
+            }).catch(handleWriteError);
         }
 
         function applyBulkDelete() {
@@ -1414,7 +1872,7 @@
                     selectedMemberIds.clear();
                     document.getElementById('selectAllMembers').checked = false;
                     filterAdminMembers();
-                });
+                }).catch(handleWriteError);
             });
         }
 
@@ -1428,7 +1886,7 @@
             }).then(() => {
                 showToast("เปลี่ยนสถานะผู้ใช้งานสำเร็จ", "success");
                 logActivity(`เปลี่ยนสถานะสมาชิก "${currentMembers[id].name}" เป็น ${nextStatus}`, "info");
-            });
+            }).catch(handleWriteError);
         }
 
         // ----------------------------------------------------
@@ -1437,15 +1895,17 @@
         function addSongPlaylist() {
             const title = document.getElementById('musicTitle').value.trim();
             const videoId = document.getElementById('musicVidId').value.trim();
+            const startSeconds = parseInt(document.getElementById('musicStart').value) || 0;
             
             if (!title || !videoId) return showToast("กรุณากรอกชื่อเพลงและ Video ID ให้ครบถ้วน", "warning");
 
-            dbHelper.ref('playlist').push({ title, videoId }).then(() => {
+            dbHelper.ref('playlist').push({ title, videoId, startSeconds }).then(() => {
                 document.getElementById('musicTitle').value = '';
                 document.getElementById('musicVidId').value = '';
+                document.getElementById('musicStart').value = '0';
                 showToast("เพิ่มเพลงเข้าสู่รายการเพลงเรียบร้อย", "success");
-                logActivity(`เพิ่มเพลงใหม่ลงระบบคอร์: ${title}`, "success");
-            });
+                logActivity(`เพิ่มเพลงใหม่ลงระบบคอร์: ${title} (เริ่มที่ ${startSeconds} วินาที)`, "success");
+            }).catch(handleWriteError);
         }
 
         dbHelper.ref('playlist').on('value', snap => {
@@ -1458,8 +1918,7 @@
             renderPlaylistUI();
             
             if (player && playlist.length > 0) {
-                const ids = playlist.map(item => item.videoId);
-                player.cuePlaylist(ids, currentTrackIndex);
+                playTrack(0); // Cue/Load playlist sequences
             }
         });
 
@@ -1473,7 +1932,7 @@
             playlist.forEach((track, index) => {
                 html += `
                     <div class="playlist-item">
-                        <span class="playlist-info"><b>${index+1}. ${track.title}</b> <small style="color:#64748b;">(ID: ${track.videoId})</small></span>
+                        <span class="playlist-info"><b>${index+1}. ${track.title}</b> <small style="color:#64748b;">(ID: ${track.videoId} | เริ่มที่: ${track.startSeconds || 0} วิ)</small></span>
                         <i class="fa-solid fa-trash-can delete-btn" onclick="deleteSongPlaylist('${track.id}')"></i>
                     </div>
                 `;
@@ -1485,17 +1944,48 @@
             showConfirm("Remove Track", "ต้องการนำไฟล์เพลงนี้ออกจากแกลเลอรีเพลย์ลิสต์ใช่หรือไม่?", () => {
                 dbHelper.ref('playlist').child(id).remove().then(() => {
                     showToast("ลบเพลงสำเร็จ", "success");
-                });
+                }).catch(handleWriteError);
             });
         }
 
-        function nextSong() {
+        // Dedicated custom playlist manager loops
+        function playTrack(index) {
             if (!player || playlist.length === 0) return;
-            player.nextVideo();
+            if (index < 0) index = playlist.length - 1;
+            if (index >= playlist.length) index = 0;
+            currentTrackIndex = index;
+            
+            const song = playlist[currentTrackIndex];
+            if (song) {
+                player.loadVideoById({
+                    videoId: song.videoId,
+                    startSeconds: parseInt(song.startSeconds) || 0
+                });
+
+                // Update UI Artwork & Titles
+                const artUrl = `https://img.youtube.com/vi/${song.videoId}/mqdefault.jpg`;
+                document.getElementById('capsule-vinyl-art').src = artUrl;
+                document.getElementById('capsule-large-art').src = artUrl;
+                
+                document.getElementById('capsule-mini-title').innerText = song.title.toUpperCase();
+                document.getElementById('capsule-large-title').innerText = song.title.toUpperCase();
+                
+                // Show toast & set playing active state
+                showToast(`Playing: ${song.title}`, "info");
+                document.getElementById('music-capsule').classList.add('playing-active');
+                
+                isPlaying = true;
+                updatePlayPauseIcons();
+                startProgressTracker();
+            }
         }
+
+        function nextSong() {
+            playTrack(currentTrackIndex + 1);
+        }
+
         function prevSong() {
-            if (!player || playlist.length === 0) return;
-            player.previousVideo();
+            playTrack(currentTrackIndex - 1);
         }
 
         // ----------------------------------------------------
@@ -1633,7 +2123,58 @@
                 document.getElementById('newGroupOrder').value = '';
                 showToast("NEW GROUP LAYOUT ADDED", "success");
                 logActivity(`เพิ่มกลุ่มโครงสร้างยศ "${name}" เข้าสู่สารระบบ`, "success");
-            });
+            }).catch(handleWriteError);
+        }
+
+        // Skeletons structure loader
+        function showSkeletons() {
+            const wrapper = document.getElementById('memberSections');
+            let skeletonHtml = `
+                <section class="category-section reveal-active" style="opacity: 1; transform: none; filter: none;">
+                    <div class="category-header-skeleton"></div>
+                    <div class="member-grid">
+            `;
+            for(let i=0; i<3; i++) {
+                skeletonHtml += `
+                    <div class="member-card skeleton-card">
+                        <div class="skeleton-avatar"></div>
+                        <div style="flex:1;">
+                            <div class="skeleton-text short"></div>
+                            <div class="skeleton-text mini"></div>
+                        </div>
+                        <div class="skeleton-social"></div>
+                    </div>
+                `;
+            }
+            skeletonHtml += `</div></section>`;
+            wrapper.innerHTML = skeletonHtml;
+        }
+
+        // Real-time custom toast notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'fa-solid fa-circle-check',
+                error: 'fa-solid fa-circle-exclamation',
+                warning: 'fa-solid fa-triangle-exclamation',
+                info: 'fa-solid fa-circle-info'
+            };
+
+            toast.innerHTML = `
+                <i class="${icons[type]}"></i>
+                <div class="toast-content">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('toast-show'); }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-show');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
         }
 
         function addRole() {
@@ -1646,7 +2187,7 @@
                 document.getElementById('newRoleOrder').value = '';
                 showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
                 logActivity(`สร้างยศตำแหน่งหน้าที่ "${name}" ใหม่สำเร็จ`, "success");
-            });
+            }).catch(handleWriteError);
         }
 
         function saveMember() {
@@ -1678,7 +2219,7 @@
                 showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success"); 
                 logActivity((id ? 'อัปเดตแก้ไขโปรไฟล์ของ' : 'เพิ่มรายชื่อสมาชิกใหม่') + ' "' + data.name + '" ลงสู่หน้าทำเนียบ', "success");
                 clearMemForm(); 
-            });
+            }).catch(handleWriteError);
         }
 
         function editMember(id) {
@@ -1710,264 +2251,6 @@
             document.getElementById('memTk').value = '';
             document.getElementById('memBtn').innerText = "DEPLOY TO DIRECTORY";
             document.getElementById('memBtn').style.background = "var(--accent)";
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Scroll Reveal Intersection Observer Setup
-        // ----------------------------------------------------
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('reveal-active');
-                }
-            });
-        }, {
-            threshold: 0.05,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        function updateScrollReveals() {
-            const sections = document.querySelectorAll('.category-section');
-            sections.forEach(section => {
-                revealObserver.observe(section);
-            });
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Throttled Particle Spawner for Best Performance
-        // ----------------------------------------------------
-        let lastParticleTime = 0;
-        function handleCardHoverParticles(e) {
-            const now = Date.now();
-            if (now - lastParticleTime < 120) return; 
-            lastParticleTime = now;
-
-            const card = e.currentTarget;
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const particle = document.createElement('span');
-            particle.className = 'hover-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-
-            const size = Math.random() * 3 + 1.5; 
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            const driftX = (Math.random() - 0.5) * 30;
-            const driftY = -(Math.random() * 40 + 20);
-            particle.style.setProperty('--drift-x', `${driftX}px`);
-            particle.style.setProperty('--drift-y', `${driftY}px`);
-
-            card.appendChild(particle);
-
-            setTimeout(() => {
-                particle.remove();
-            }, 1000);
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Front-End Filter & Sorting Category (Active only on Front)
-        // ----------------------------------------------------
-        function filterMembers() {
-            const term = document.getElementById('memberSearch').value.toLowerCase();
-            const wrapper = document.getElementById('memberSections');
-            wrapper.innerHTML = '';
-            const structure = {};
-            
-            Object.keys(currentMembers).forEach(id => {
-                const m = currentMembers[id];
-                if (m.status === 'inactive') return; // Hide inactive users from frontend view
-
-                const role = currentRoles[m.roleId];
-                if(!role) return;
-                const gId = role.groupId;
-                const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
-                const gOrder = currentGroups[gId]?.order || 0;
-                
-                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
-                    if(!structure[gId]) {
-                        structure[gId] = { name: gName, order: gOrder, items: [] };
-                    }
-                    structure[gId].items.push({...m, role});
-                }
-            });
-            
-            const sortedSections = Object.keys(structure).map(gId => ({
-                id: gId,
-                ...structure[gId]
-            })).sort((a, b) => (a.order || 0) - (b.order || 0));
-
-            sortedSections.forEach(group => {
-                group.items.sort((a, b) => {
-                    const orderA = a.order || 0;
-                    const orderB = b.order || 0;
-                    if (orderA !== orderB) return orderA - orderB;
-                    return a.name.localeCompare(b.name);
-                });
-
-                const groupColor = group.items[0]?.role?.color || 'var(--accent)';
-                
-                let html = `
-                    <section class="category-section">
-                        <div class="category-header" style="color: ${groupColor}; border-left-color: ${groupColor};">
-                            ${group.name}
-                        </div>
-                        <div class="member-grid">`;
-                        
-                group.items.forEach((m, i) => {
-                    const roleColor = m.role?.color || '#ffc107';
-                    html += `
-                        <div class="member-card" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
-                            <img src="${m.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}" class="avatar">
-                            <div>
-                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
-                                <span class="rank-tag" style="background:${roleColor}">${m.role.name}</span>
-                            </div>
-                            <div class="social-links">
-                                ${m.fb ? `<a href="${m.fb}" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>` : ''}
-                                ${m.yt ? `<a href="${m.yt}" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>` : ''}
-                                ${m.tk ? `<a href="${m.tk}" target="_blank" style="color:#fff;"><i class="fa-brands fa-tiktok"></i></a>` : ''}
-                            </div>
-                        </div>`;
-                });
-                html += `</div></section>`;
-                wrapper.innerHTML += html;
-            });
-
-            const cards = document.querySelectorAll('.member-card');
-            cards.forEach(card => {
-                card.addEventListener('mousemove', handleCardHoverParticles);
-            });
-
-            updateScrollReveals();
-
-            if(!sortedSections.length) wrapper.innerHTML = '<p style="text-align:center; opacity:0.2; padding:100px; font-family:\'Orbitron\'">NO RECORDS FOUND</p>';
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Category Tabs Selector Front
-        // ----------------------------------------------------
-        function renderTabs() {
-            const container = document.getElementById('categoryTabs');
-            
-            let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#161719'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
-            
-            const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
-            
-            sortedRoleKeys.forEach(id => {
-                const active = activeTab === id;
-                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#161719'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function setActiveTab(id) { activeTab = id; renderTabs(); filterMembers(); }
-
-        function toggleMusic() {
-            if(!player) return;
-            const icon = document.getElementById('musicIcon');
-            if(isPlaying) {
-                player.pauseVideo();
-                icon.className = 'fa-solid fa-play';
-                isPlaying = false;
-            } else {
-                player.playVideo();
-                icon.className = 'fa-solid fa-pause';
-                isPlaying = true;
-            }
-        }
-
-        function onYouTubeIframeAPIReady() {
-            dbHelper.ref('music').once('value', snap => {
-                let m = snap.val() || {};
-                
-                dbHelper.ref('playlist').once('value', playlistSnap => {
-                    const pData = playlistSnap.val() || {};
-                    playlist = Object.keys(pData).map(k => ({ id: k, ...pData[k] }));
-                    const autoStart = m.auto !== undefined ? m.auto : true;
-                    
-                    const videoIds = playlist.map(item => item.videoId);
-                    const startId = videoIds[0] || "JXg_Qe48cbU";
-                    
-                    player = new YT.Player('player', {
-                        height: '0', width: '0', videoId: startId,
-                        playerVars: { 
-                            'autoplay': autoStart ? 1 : 0, 
-                            'playlist': videoIds.join(','),
-                            'loop': 1 
-                        },
-                        events: { 
-                            'onReady': (e) => { 
-                                if(autoStart && playlist.length > 0) { 
-                                    e.target.playVideo(); 
-                                    
-                                    setTimeout(() => {
-                                        if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                                            const playOnInteraction = () => {
-                                                player.playVideo();
-                                                document.removeEventListener('click', playOnInteraction);
-                                            };
-                                            document.addEventListener('click', playOnInteraction);
-                                        }
-                                    }, 1000);
-                                }
-                            },
-                            'onStateChange': (e) => {
-                                if(e.data === YT.PlayerState.PLAYING) { 
-                                    isPlaying = true; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-pause'; 
-                                } else { 
-                                    isPlaying = false; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-play'; 
-                                }
-                            }
-                        }
-                    });
-                });
-            });
-        }
-
-        dbHelper.ref('config').on('value', snap => {
-            const d = snap.val() || {};
-            document.title = d.name || 'DEATHNOTE';
-            document.getElementById('siteNameDisplay').innerText = d.name || 'DEATHNOTE';
-            document.getElementById('favicon').href = d.favicon || '';
-            document.getElementById('siteLogo').src = d.logo || '';
-            if(d.bgUrl) document.body.style.backgroundImage = `url('${d.bgUrl}')`;
-            if(d.themeColor) {
-                document.documentElement.style.setProperty('--accent', d.themeColor);
-            }
-            weatherType = d.weather || 'none'; initWeather();
-            document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by DEATHNOTE';
-            document.getElementById('footerLinkLabel').href = d.footerLink || '#';
-        });
-
-        function saveConfig() {
-            dbHelper.ref('config').update({
-                name: document.getElementById('configSiteName').value,
-                favicon: document.getElementById('configFavicon').value,
-                themeColor: document.getElementById('configThemeColor').value,
-                logo: document.getElementById('configLogoUrl').value,
-                bgUrl: document.getElementById('configBgUrl').value,
-                weather: document.getElementById('configWeather').value,
-                footerText: document.getElementById('configFooterText').value,
-                footerLink: document.getElementById('configFooterLink').value
-            }).then(() => {
-                showToast("CONFIGURATION DATABASE UPDATED", "success");
-                logActivity("อัปเดตปรับแก้การตั้งค่าส่วนหน้าบ้านเว็บไซต์หลัก", "info");
-            });
-        }
-
-        function saveMusic() {
-            dbHelper.ref('music').update({
-                auto: document.getElementById('musicAutoToggle').checked
-            }).then(() => {
-                showToast("AUDIO CORE SYNCHRONIZED", "success");
-                logActivity("ปรับเปลี่ยนตั้งค่าระบบบอร์ดเพลงพื้นหลัง (Audio Engine)", "info");
-            });
         }
 
         const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
