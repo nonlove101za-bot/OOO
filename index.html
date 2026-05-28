@@ -873,7 +873,7 @@
                 const orderA = currentMembers[a].order || 0;
                 const orderB = currentMembers[b].order || 0;
                 if (orderA !== orderB) return orderA - orderB;
-                return currentMembers[a].name.localeCompare(currentMembers[b].name);
+                return (currentMembers[a].name || "").localeCompare(currentMembers[b].name || "");
             });
             
             sortedMemberKeys.forEach(id => {
@@ -979,7 +979,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Member Filter, Sorting & Custom Effects Render
+        // SYSTEM: Member Filter, Sorting & Custom Effects Render (ปรับให้กันข้อผิดพลาดกรณีไม่มีชื่อ)
         // ----------------------------------------------------
         let animEnabled = true;
 
@@ -991,6 +991,7 @@
             
             Object.keys(currentMembers).forEach(id => {
                 const m = currentMembers[id];
+                if (!m) return;
                 const role = currentRoles[m.roleId];
                 if(!role) return;
                 
@@ -998,10 +999,12 @@
                 if(role.hidden && activeTab !== m.roleId) return;
 
                 const gId = role.groupId;
-                const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
-                const gOrder = currentGroups[gId]?.order || 0;
+                const gName = (currentGroups[gId] && currentGroups[gId].name) || "MEMBER DEATHNOTE 2K26";
+                const gOrder = (currentGroups[gId] && currentGroups[gId].order) || 0;
                 
-                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
+                // ค้นหาอย่างปลอดภัย
+                const memberName = m.name || "";
+                if(memberName.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
                     if(!structure[gId]) {
                         structure[gId] = { name: gName, order: gOrder, items: [] };
                     }
@@ -1015,14 +1018,15 @@
             })).sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedSections.forEach(group => {
+                // ดักจับและคัดกรองจัดเรียงอย่างปลอดภัยกรณีไม่มีชื่อ
                 group.items.sort((a, b) => {
                     const orderA = a.order || 0;
                     const orderB = b.order || 0;
                     if (orderA !== orderB) return orderA - orderB;
-                    return a.name.localeCompare(b.name);
+                    return (a.name || "").localeCompare(b.name || "");
                 });
 
-                const groupColor = group.items[0]?.role?.color || 'var(--accent)';
+                const groupColor = (group.items[0] && group.items[0].role && group.items[0].role.color) || 'var(--accent)';
                 
                 let html = `
                     <section class="category-section ${animEnabled ? 'scroll-reveal' : ''}">
@@ -1038,7 +1042,7 @@
                         <div class="member-card ${animEnabled ? 'animate-on' : ''}" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
                             <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
                             <div>
-                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
+                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name || "UNNAMED"}</div>
                                 <span class="rank-tag" style="background:${roleColor}">
                                     ${iconTag}${m.role.name}
                                 </span>
@@ -1072,7 +1076,7 @@
             
             sortedRoleKeys.forEach(id => {
                 const r = currentRoles[id];
-                if (r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
+                if (!r || r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
                 const active = activeTab === id;
                 html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${r.name}</button>`;
             });
