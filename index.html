@@ -435,24 +435,11 @@
         .playlist-item { display: flex; justify-content: space-between; align-items: center; background: #0c0d10; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border); }
         .playlist-info { font-size: 12px; font-weight: 500; }
 
-        /* Music Controls UI - FRONT (Repositioned to bottom-left) */
-        .music-ctrl { position: fixed; bottom: 30px; left: 30px; z-index: 1000; width: auto; background: var(--accent); color: #000; border-radius: 50px; padding: 6px 14px; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: var(--transition); }
-        .music-hud-group { display: flex; gap: 8px; align-items: center; }
-        .music-ctrl-btn { width: 38px; height: 38px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); }
-        .music-ctrl-btn:hover { background: var(--accent); color: #000; transform: scale(1.1); }
-
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-bottom: 15px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success); }
-        input:checked + .slider:before { transform: translateX(26px); }
-
         /* Capsule Music Player Widget */
         .music-capsule {
             position: fixed;
             bottom: 30px;
-            left: 30px;
+            right: 30px; /* ย้ายมาล่างขวาสำเร็จ */
             z-index: 1001;
             background: rgba(11, 12, 15, 0.75);
             backdrop-filter: blur(16px) saturate(180%);
@@ -790,7 +777,7 @@
         </div>
     </div>
     
-    <!-- State-of-the-Art Capsule Music Player Widget -->
+    <!-- State-of-the-Art Capsule Music Player Widget (ล่างขวา) -->
     <div id="music-capsule" class="music-capsule compact">
         <!-- Compact Capsule View (Always visible when minimized) -->
         <div class="capsule-compact-trigger" onclick="expandCapsule()">
@@ -1218,12 +1205,13 @@
             databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
+        let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
         } catch(e) {
             console.error("Firebase init error:", e);
         }
-        const db = firebase.database();
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let playlist = [], currentTrackIndex = 0, isPlaying = false;
@@ -1250,8 +1238,12 @@
             useLocalFallback = true;
             clearTimeout(fallbackTimeout);
             
-            document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-database" style="color:#ffc107"></i> LOCAL STORAGE';
-            document.getElementById('toggleDbModeBtn').innerText = "SWITCH TO FIREBASE";
+            const dbStatusEl = document.getElementById('dbStatus');
+            if(dbStatusEl) dbStatusEl.innerHTML = '<i class="fa-solid fa-database" style="color:#ffc107"></i> LOCAL STORAGE';
+            
+            const toggleDbBtn = document.getElementById('toggleDbModeBtn');
+            if(toggleDbBtn) toggleDbBtn.innerText = "SWITCH TO FIREBASE";
+            
             showToast("สลับเข้าสู่ Offline Mode จัดเก็บข้อมูลในเบราว์เซอร์ชั่วคราว", "warning");
 
             Object.keys(listeners).forEach(path => {
@@ -1297,7 +1289,7 @@
 
         // Self-healing database permission verification test
         function testWritePermission() {
-            if (useLocalFallback) return;
+            if (useLocalFallback || !db) return;
             db.ref('.info/connected').once('value', (snap) => {
                 if (snap.val() === true) {
                     const testRef = db.ref('write_test_connection');
@@ -1370,15 +1362,16 @@
                             listeners[path].push(successCallback);
                         }
 
-                        if (useLocalFallback) {
-                            triggerLocalUpdate(path);
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             return;
                         }
 
                         db.ref(path).on(event, (snap) => {
                             firebaseLoaded[path] = true;
                             if (path === 'config') {
-                                document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE';
+                                const dbStatusEl = document.getElementById('dbStatus');
+                                if(dbStatusEl) dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE';
                                 clearTimeout(fallbackTimeout);
                                 testWritePermission(); // Execute background permission test
                             }
@@ -1390,7 +1383,7 @@
                         });
                     },
                     once: function(event, successCallback) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || getDefaultData(path);
                             successCallback({ val: () => localData });
                             return;
@@ -1401,7 +1394,7 @@
                         });
                     },
                     set: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
                             localStorage.setItem('deathnote_' + path, JSON.stringify(value));
                             triggerLocalUpdate(path);
                             return Promise.resolve();
@@ -1409,7 +1402,7 @@
                         return db.ref(path).set(value).catch(handleWriteError);
                     },
                     update: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
                             const existing = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const updated = { ...existing, ...value };
                             localStorage.setItem('deathnote_' + path, JSON.stringify(updated));
@@ -1419,7 +1412,7 @@
                         return db.ref(path).update(value).catch(handleWriteError);
                     },
                     push: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const newId = 'local_' + Math.random().toString(36).substr(2, 9);
                             if (value) {
@@ -1456,7 +1449,7 @@
                     child: function(childPath) {
                         return {
                             remove: function() {
-                                if (useLocalFallback) {
+                                if (useLocalFallback || !db) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     delete localData[childPath];
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -1466,7 +1459,7 @@
                                 return db.ref(path).child(childPath).remove().catch(handleWriteError);
                             },
                             set: function(value) {
-                                if (useLocalFallback) {
+                                if (useLocalFallback || !db) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     localData[childPath] = value;
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -1967,8 +1960,9 @@
                 document.getElementById('capsule-vinyl-art').src = artUrl;
                 document.getElementById('capsule-large-art').src = artUrl;
                 
-                document.getElementById('capsule-mini-title').innerText = song.title.toUpperCase();
-                document.getElementById('capsule-large-title').innerText = song.title.toUpperCase();
+                const upTitle = song.title ? song.title.toUpperCase() : "UNKNOWN TRACK";
+                document.getElementById('capsule-mini-title').innerText = upTitle;
+                document.getElementById('capsule-large-title').innerText = upTitle;
                 
                 // Show toast & set playing active state
                 showToast(`Playing: ${song.title}`, "info");
@@ -2070,7 +2064,7 @@
                         <span>${currentGroups[id].name} <small style="color: #64748b;">(Order: ${currentGroups[id].order || 0})</small></span>
                         <i class="fa-solid fa-trash-can delete-btn" onclick="deleteGroupConfirm('${id}')"></i>
                     </div>`;
-                opt += `<option value="${id}">${currentGroups[id].name}</option>`;
+                opt += `<option value="${id}">${currentGroups[id].name}</option>';`;
             });
             document.getElementById('groupListContainer').innerHTML = list;
             document.getElementById('roleGroupSelect').innerHTML = opt;
@@ -2313,7 +2307,7 @@
         // ----------------------------------------------------
         let confirmActionCallback = null;
         function showConfirm(title, message, callback) {
-            document.getElementById('confirmTitle').innerText = title.toUpperCase();
+            document.getElementById('confirmTitle').innerText = title ? title.toUpperCase() : "ARE YOU SURE?";
             document.getElementById('confirmMessage').innerText = message;
             document.getElementById('confirmModal').style.display = 'flex';
             confirmActionCallback = callback;
@@ -2384,6 +2378,139 @@
                 `;
             });
             document.getElementById('analyticsDistribution').innerHTML = visualHtml || '<p style="font-size:12px; color:#555; padding: 10px 0;">No active structure layout to compute</p>';
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Premium Capsule Music Player Controllers
+        // ----------------------------------------------------
+        function expandCapsule() {
+            const cap = document.getElementById('music-capsule');
+            cap.classList.remove('compact');
+            cap.classList.add('expanded');
+        }
+        function minimizeCapsule(e) {
+            if(e) e.stopPropagation();
+            const cap = document.getElementById('music-capsule');
+            cap.classList.remove('expanded');
+            cap.classList.add('compact');
+        }
+
+        // Live Real-Time playback duration timeline tracker
+        let progressInterval = null;
+        function startProgressTracker() {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = setInterval(() => {
+                if (player && isPlaying && typeof player.getCurrentTime === 'function' && typeof player.getDuration === 'function') {
+                    const currentTime = player.getCurrentTime() || 0;
+                    const duration = player.getDuration() || 0;
+                    
+                    if (duration > 0) {
+                        const percent = (currentTime / duration) * 100;
+                        const fill = document.getElementById('capsule-progress-fill');
+                        if (fill) fill.style.width = percent + '%';
+                        
+                        const currTimeEl = document.getElementById('capsule-current-time');
+                        if (currTimeEl) currTimeEl.innerText = formatTime(currentTime);
+                        
+                        const durEl = document.getElementById('capsule-duration');
+                        if (durEl) durEl.innerText = formatTime(duration);
+                    }
+                }
+            }, 500);
+        }
+
+        function stopProgressTracker() {
+            if (progressInterval) clearInterval(progressInterval);
+        }
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return m + ":" + (s < 10 ? "0" : "") + s;
+        }
+
+        function seekTrack(e) {
+            if (!player || playlist.length === 0) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const percent = clickX / rect.width;
+            const duration = player.getDuration() || 0;
+            if (duration > 0) {
+                const targetSec = percent * duration;
+                player.seekTo(targetSec, true);
+                const fill = document.getElementById('capsule-progress-fill');
+                if (fill) fill.style.width = (percent * 100) + '%';
+                
+                const currTimeEl = document.getElementById('capsule-current-time');
+                if (currTimeEl) currTimeEl.innerText = formatTime(targetSec);
+            }
+        }
+
+        let previousVolume = 50;
+        function setTrackVolume(vol) {
+            if (!player) return;
+            player.setVolume(vol);
+            updateVolumeIcon(vol);
+        }
+
+        function updateVolumeIcon(vol) {
+            const icon = document.getElementById('volume-icon');
+            if(!icon) return;
+            if (vol == 0) {
+                icon.className = 'fa-solid fa-volume-xmark';
+            } else if (vol < 50) {
+                icon.className = 'fa-solid fa-volume-low';
+            } else {
+                icon.className = 'fa-solid fa-volume-high';
+            }
+        }
+
+        function toggleMute() {
+            if (!player) return;
+            const slider = document.getElementById('capsule-volume-slider');
+            if (player.isMuted()) {
+                player.unMute();
+                if (slider) {
+                    slider.value = previousVolume;
+                    setTrackVolume(previousVolume);
+                }
+            } else {
+                if (slider) {
+                    previousVolume = slider.value;
+                    slider.value = 0;
+                }
+                player.mute();
+                updateVolumeIcon(0);
+            }
+        }
+
+        function toggleMusic() {
+            if(!player || playlist.length === 0) return;
+            const capsule = document.getElementById('music-capsule');
+            if(isPlaying) {
+                player.pauseVideo();
+                isPlaying = false;
+                if (capsule) capsule.classList.remove('playing-active');
+                stopProgressTracker();
+            } else {
+                player.playVideo();
+                isPlaying = true;
+                if (capsule) capsule.classList.add('playing-active');
+                startProgressTracker();
+            }
+            updatePlayPauseIcons();
+        }
+
+        function updatePlayPauseIcons() {
+            const miniPlayBtn = document.getElementById('musicIcon');
+            const largePlayBtn = document.getElementById('musicIconLarge');
+            if (isPlaying) {
+                if(miniPlayBtn) miniPlayBtn.className = 'fa-solid fa-pause';
+                if(largePlayBtn) largePlayBtn.className = 'fa-solid fa-pause';
+            } else {
+                if(miniPlayBtn) miniPlayBtn.className = 'fa-solid fa-play';
+                if(largePlayBtn) largePlayBtn.className = 'fa-solid fa-play';
+            }
         }
     </script>
 </body>
