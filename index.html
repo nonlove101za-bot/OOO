@@ -6,8 +6,7 @@
     <title id="pageTitle">DEATHNOTE</title>
     <link id="favicon" rel="icon" href="" type="image/x-icon">
     
-    <!-- ฟอนต์ที่รอบรับทั้งหมดสำหรับระบบ -->
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600&family=Creepster&family=Kanit:wght@300;400;600&family=Prompt:wght@300;400;600&family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -28,26 +27,15 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { 
-            background-color: var(--bg); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            background-attachment: fixed; 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-            line-height: 1.6; 
-            transition: background 0.5s ease; 
-            opacity: 0; 
-            animation: fadeInPage 1.2s ease forwards; 
-        }
+        body { background-color: var(--bg); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.6; transition: background 0.5s ease; opacity: 0; animation: fadeInPage 1.2s ease forwards; }
         @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
         
         #weather-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(15px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
         
-        /* Navbar ลอยแบบโปร่ง */
+        /* ----------------------------------------------------
+           Navbar ลอยแบบโปร่ง (Floating Transparent Navbar Capsule)
+           ---------------------------------------------------- */
         .top-nav { 
             position: fixed; 
             top: 20px; 
@@ -72,17 +60,31 @@
         .config-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Orbitron'; cursor: pointer; transition: var(--transition); font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .config-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); }
         
-        .hero { padding: 140px 20px 60px; text-align: center; }
-        .hero.animate-on { animation: slideIn 1s cubic-bezier(0.22, 1, 0.36, 1); }
+        .hero { padding: 140px 20px 60px; text-align: center; animation: slideIn 1s cubic-bezier(0.22, 1, 0.36, 1); }
         #siteLogo { max-width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 25px var(--accent)); }
-        .hero h1 { font-family: inherit; font-size: clamp(28px, 6vw, 52px); letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        .hero h1 { font-family: 'Orbitron'; font-size: clamp(28px, 6vw, 52px); letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
         
         /* Scroll Reveal Animation */
-        .category-section { max-width: 1440px; margin: 40px auto; padding: 0 8%; transition: var(--transition); }
-        .category-section.scroll-reveal { opacity: 0; transform: translateY(40px) scale(0.97); filter: blur(5px); }
-        .category-section.reveal-active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        .category-section { 
+            max-width: 1440px; 
+            margin: 40px auto; 
+            padding: 0 8%; 
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            filter: blur(5px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                        filter 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .category-section.reveal-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
 
-        .category-header { font-family: inherit; font-size: 14px; letter-spacing: 4px; color: var(--accent); margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 15px; text-transform: uppercase; transition: var(--transition); }
+        /* หัวข้อกลุ่มสมาชิก */
+        .category-header { font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: var(--accent); margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 15px; text-transform: uppercase; transition: var(--transition); }
+        
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-bottom: 40px; z-index: 100; position: relative; }
         
         /* Light Glassmorphism Card */
@@ -101,9 +103,8 @@
             position: relative;
             overflow: hidden; 
         }
-        .member-card.animate-on { animation: slideIn 0.5s ease backwards; }
         
-        /* Neon Pulse Animation */
+        /* Neon Pulse Animation (อ้างอิงตามสียศ --role-color) */
         .member-card:hover { 
             transform: translateY(-6px) scale(1.02); 
             background: rgba(25, 25, 28, 0.6); 
@@ -112,47 +113,55 @@
         }
 
         @keyframes neonPulse {
-            0% { border-color: var(--role-color, var(--accent)); box-shadow: 0 0 10px var(--role-color, var(--accent)), 0 8px 32px rgba(0, 0, 0, 0.4); }
-            100% { border-color: var(--role-color, var(--accent)); box-shadow: 0 0 20px var(--role-color, var(--accent)), 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 10px var(--role-color, var(--accent)); }
+            0% {
+                border-color: var(--role-color, var(--accent));
+                box-shadow: 0 0 10px var(--role-color, var(--accent)),
+                            0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                border-color: var(--role-color, var(--accent));
+                box-shadow: 0 0 20px var(--role-color, var(--accent)),
+                            0 8px 32px rgba(0, 0, 0, 0.5),
+                            inset 0 0 10px var(--role-color, var(--accent));
+            }
         }
 
         /* Hover Particles */
-        .hover-particle { position: absolute; background: var(--role-color, var(--accent)); border-radius: 50%; pointer-events: none; opacity: 0.8; z-index: 5; animation: driftUpFade 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; box-shadow: 0 0 8px var(--role-color, var(--accent)); }
-        @keyframes driftUpFade { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 100% { transform: translate(var(--drift-x), var(--drift-y)) scale(0); opacity: 0; } }
+        .hover-particle {
+            position: absolute;
+            background: var(--role-color, var(--accent));
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.8;
+            z-index: 5;
+            animation: driftUpFade 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            box-shadow: 0 0 8px var(--role-color, var(--accent));
+        }
+        @keyframes driftUpFade {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(var(--drift-x), var(--drift-y)) scale(0);
+                opacity: 0;
+            }
+        }
         
         .avatar { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(255,255,255,0.05); z-index: 10; }
-        .rank-tag { font-family: inherit; font-size: 9px; font-weight: 800; padding: 4px 12px; border-radius: 5px; color: #000; letter-spacing: 1px; margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; z-index: 10; }
+        .rank-tag { font-family: 'Orbitron'; font-size: 9px; font-weight: 800; padding: 4px 12px; border-radius: 5px; color: #000; letter-spacing: 1px; margin-top: 6px; display: inline-block; z-index: 10; }
         
         .social-links { margin-left: auto; display: flex; gap: 12px; font-size: 20px; z-index: 10; }
         .social-links a { transition: var(--transition); }
         .social-links a:hover { transform: scale(1.2); }
         
-        .site-footer { padding: 40px 20px; text-align: center; font-family: inherit; font-size: 10px; letter-spacing: 2px; opacity: 0.5; transition: var(--transition); }
+        .site-footer { padding: 40px 20px; text-align: center; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; opacity: 0.5; transition: var(--transition); }
         .site-footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
         
-        /* Glitch Mode & Screen Flash Overlay */
-        #screen-flash { position: fixed; inset: 0; background: #fff; z-index: 11000; pointer-events: none; opacity: 0; transition: opacity 0.5s ease-out; }
-        .glitch-active { animation: glitch 0.3s linear infinite; filter: hue-rotate(90deg); }
-        @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-3px, 3px) } 40% { transform: translate(-3px, -3px) } 60% { transform: translate(3px, 3px) } 80% { transform: translate(3px, -3px) } 100% { transform: translate(0) } }
-
-        /* Video Background (ปรับให้โปร่งใสเพื่อป้องกันการบดบังวอลเปเปอร์หลัก) */
-        #video-bg-container { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; background: transparent; display: none; }
-        #video-bg-container iframe, #video-bg-container video { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; transform: translate(-50%, -50%); opacity: 0.4; }
-
-        /* Cursors */
-        .cursor-default { cursor: default; }
-        .cursor-crosshair { cursor: crosshair; }
-        .cursor-pointer-all * { cursor: pointer; }
-
-        /* Admin UI Panel Tabs & Design */
+        /* Admin UI */
         .admin-panel { display: none; position: fixed; inset: 0; background: #0c0d0f; z-index: 9999; overflow-y: auto; padding: 40px 20px; }
-        .admin-container { max-width: 1300px; margin: 0 auto; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #222; }
-        .admin-tabs-nav { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 15px; overflow-x: auto; }
-        .admin-tab-btn { background: #1c1e22; border: 1px solid #333; padding: 10px 20px; border-radius: 8px; color: #888; font-family: 'Orbitron'; cursor: pointer; transition: var(--transition); }
-        .admin-tab-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-        .admin-tab-content { display: none; }
-        .admin-tab-content.active { display: block; }
+        .admin-container { max-width: 1200px; margin: 0 auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #222; }
         .admin-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
         .admin-card { background: var(--admin-card); padding: 28px; border-radius: 20px; border: 1px solid var(--border); }
         
@@ -161,26 +170,36 @@
         .col-12 { grid-column: span 12; }
         
         label { display: block; font-family: 'Orbitron'; font-size: 10px; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; }
-        input, select, textarea { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d2f34; color: #fff; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
+        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d2f34; color: #fff; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
+        input:focus { border-color: var(--accent); outline: none; }
         
-        /* Music Controller Mini Bar */
-        .music-bar-container { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
-        .vol-slider { width: 100px; margin-bottom: 0; cursor: pointer; }
+        .btn-save { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-weight: 700; transition: var(--transition); background: var(--accent); color: #000; }
+        .admin-item-row { background: #111214; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .delete-btn { color: var(--danger); cursor: pointer; padding: 8px; }
+        
+        /* Notification */
+        #notification-container { position: fixed; bottom: 30px; left: 30px; z-index: 10000; }
+        .notify { background: var(--accent); color: #000; border-radius: 8px; padding: 14px 24px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 12px; margin-top: 10px; animation: slideIn 0.3s ease; }
+        
+        /* Music Control Button */
+        .music-ctrl { position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 50px; height: 50px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: var(--transition); }
+        .music-ctrl:hover { transform: scale(1.1); }
 
-        .file-upload-wrapper { position: relative; margin-bottom: 20px; }
-        .file-upload-input { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .file-upload-btn { display: block; text-align: center; background: #222; border: 1px dashed var(--accent); color: var(--accent); padding: 12px; border-radius: 10px; cursor: pointer; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-bottom: 15px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        @media (max-width: 992px) { .col-4, .col-8 { grid-column: span 12; } }
     </style>
 </head>
 <body>
 
-    <div id="video-bg-container"></div>
-    <div id="screen-flash"></div>
     <canvas id="weather-canvas"></canvas>
     <div id="notification-container"></div>
     
-    <!-- ปุ่มควบคุมเครื่องเล่นเพลงหลัก -->
     <div class="music-ctrl" onclick="toggleMusic()">
         <i id="musicIcon" class="fa-solid fa-play"></i>
     </div>
@@ -192,31 +211,24 @@
             <h2 style="font-family:'Orbitron'; text-align:center; color:var(--accent); margin-bottom:30px;">ADMIN LOGIN</h2>
             <label>USERNAME</label><input type="text" id="loginUser">
             <label>PASSWORD</label><input type="password" id="loginPass">
-            <!-- จุดยืนยัน 2FA Passcode สำรอง -->
-            <label>2FA SECURITY CODE (IF SET)</label><input type="password" id="login2FA" placeholder="เว้นว่างได้หากไม่ได้ตั้งค่าไว้">
             <button class="btn-save" onclick="attemptLogin()">ENTER COMMAND</button>
             <button style="width:100%; background:none; border:none; color:#555; margin-top:15px; cursor:pointer;" onclick="closeModal('loginModal')">CANCEL</button>
         </div>
     </div>
 
     <nav class="top-nav">
-        <div style="font-family:'Orbitron'; font-size:11px; letter-spacing:2px; display: flex; align-items: center; gap: 15px; width:100%; justify-content:space-between;">
+        <div style="font-family:'Orbitron'; font-size:11px; letter-spacing:2px; display: flex; align-items: center; gap: 15px;">
             <span><i class="fa-solid fa-users" style="color:var(--accent)"></i> MEMBER: <span id="countNum">0</span></span>
-            <!-- แผงเครื่องเล่นเพลงลอยด้านบน -->
-            <div style="display:flex; align-items:center; gap:15px;">
-                <span id="currentTrackDisplay" style="font-size: 9px; opacity: 0.7;"><i class="fa-solid fa-music"></i> STOPPED</span>
-                <input type="range" id="navbarVol" class="vol-slider" min="0" max="100" value="80" oninput="changeVolume(this.value)">
-                <span id="dbStatus" style="font-size: 9px; color: var(--accent); background: rgba(255,193,7,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,193,7,0.2)">
-                    <i class="fa-solid fa-circle-nodes"></i> CONNECTING...
-                </span>
-            </div>
+            <span id="dbStatus" style="font-size: 9px; color: var(--accent); background: rgba(255,193,7,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,193,7,0.2)">
+                <i class="fa-solid fa-circle-nodes"></i> CONNECTING...
+            </span>
         </div>
     </nav>
 
-    <header class="hero animate-on" id="heroBlock">
+    <header class="hero">
         <img src="" id="siteLogo">
         <h1 id="siteNameDisplay">LOADING...</h1>
-        <p id="siteDescDisplay" style="font-family: inherit; font-size:11px; opacity:0.6; letter-spacing:6px;">Not a perfect gang but try to be the best.</p>
+        <p id="siteDescDisplay" style="font-family:'Orbitron'; font-size:11px; opacity:0.6; letter-spacing:6px;">Not a perfect gang but try to be the best.</p>
     </header>
 
     <div style="max-width:700px; margin:0 auto 60px; padding:0 20px;">
@@ -231,240 +243,91 @@
         <a id="footerLinkLabel" href="#" target="_blank">DEATHNOTE</a>
     </footer>
 
-    <!-- CENTRAL COMMAND ADMIN PANEL -->
     <div id="adminPanel" class="admin-panel">
         <div class="admin-container">
             <header class="admin-header">
                 <div>
-                    <h2 style="font-family:'Orbitron'; color:var(--accent); font-size:24px;">CENTRAL COMMAND v2.0</h2>
-                    <p style="font-size:12px; color:#555;">Real-time Database & Core System Management</p>
+                    <h2 style="font-family:'Orbitron'; color:var(--accent); font-size:24px;">CENTRAL COMMAND</h2>
+                    <p style="font-size:12px; color:#555;">Real-time Database & Site Management</p>
                 </div>
                 <button class="config-btn" style="background:var(--danger); color:#fff;" onclick="closeAdminPanel()">CLOSE</button>
             </header>
 
-            <!-- แถบเมนูด้านหลังบ้าน -->
-            <nav class="admin-tabs-nav">
-                <button class="admin-tab-btn active" onclick="switchAdminTab('tab-site')">1. SYSTEM SETTING</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('tab-roles')">2. ROLES & PERMISSIONS</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('tab-personnel')">3. PERSONNEL DIRECTORY</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('tab-music')">4. MUSIC PLAYLIST ENGINE</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('tab-sec')">5. SECURITY & LOGS</button>
-            </nav>
-
-            <!-- 1. SYSTEM SETTING -->
-            <div id="tab-site" class="admin-tab-content active">
-                <div class="admin-grid">
-                    <div class="admin-card col-4">
-                        <label>SITE NAME</label><input type="text" id="configSiteName">
-                        <label>FAVICON URL</label><input type="text" id="configFavicon">
-                        <div class="file-upload-wrapper">
-                            <span class="file-upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> อัปโหลดภาพ Favicon แทน URL</span>
-                            <input type="file" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'configFavicon')">
-                        </div>
-                        <label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;">
-                        <label>LOGO URL</label><input type="text" id="configLogoUrl">
-                        <div class="file-upload-wrapper">
-                            <span class="file-upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> อัปโหลดโลโก้หลักแทน URL</span>
-                            <input type="file" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'configLogoUrl')">
-                        </div>
-                    </div>
-                    <div class="admin-card col-4">
-                        <label>WALLPAPER / BACKGROUND URL</label><input type="text" id="configBgUrl">
-                        <div class="file-upload-wrapper">
-                            <span class="file-upload-btn"><i class="fa-solid fa-cloud-arrow-up"></i> อัปโหลดวอลเปเปอร์แทน URL</span>
-                            <input type="file" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'configBgUrl')">
-                        </div>
-                        <label>VIDEO BACKGROUND URL (YOUTUBE ID OR MP4)</label><input type="text" id="configVideoBg" placeholder="e.g. JXg_Qe48cbU">
-                        <label>SELECT FONT</label>
-                        <select id="configFont">
-                            <option value="'Inter', sans-serif">INTER (STANDARD)</option>
-                            <option value="'Orbitron', sans-serif">ORBITRON (CYBER)</option>
-                            <option value="'Kanit', sans-serif">KANIT (THAILAND)</option>
-                            <option value="'Prompt', sans-serif">PROMPT (THAILAND)</option>
-                            <option value="'Chakra Petch', sans-serif">CHAKRA PETCH</option>
-                            <option value="'Creepster', cursive">CREEPSTER (HORROR)</option>
-                        </select>
-                        <label>SELECT CURSOR</label>
-                        <select id="configCursor">
-                            <option value="default">DEFAULT STANDARD</option>
-                            <option value="crosshair">CROSSHAIR (AIM)</option>
-                            <option value="pointer">POINTER HAND ONLY</option>
-                        </select>
-                    </div>
-                    <div class="admin-card col-4">
-                        <label>ATMOSPHERE EFFECT (PARTICLES)</label>
-                        <select id="configWeather">
-                            <option value="none">CLEAR</option>
-                            <option value="snow">SNOWFLAKES (หิมะ)</option>
-                            <option value="rain">RAIN SHOWER (ฝนตก)</option>
-                            <option value="sakura">SAKURA (ซากุระร่วงหล่น)</option>
-                            <option value="blood">BLOOD RAIN (ธีมเลือดหล่น)</option>
-                        </select>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-                            <span style="font-size:11px;">MOUSE TRAIL EFFECT</span>
-                            <label class="switch"><input type="checkbox" id="configMouseTrail"><span class="slider"></span></label>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-                            <span style="font-size:11px;">GLITCH MODE (CYBERPUNK)</span>
-                            <label class="switch"><input type="checkbox" id="configGlitch"><span class="slider"></span></label>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-                            <span style="font-size:11px;">SCREEN FLASH ON LOAD</span>
-                            <label class="switch"><input type="checkbox" id="configFlash"><span class="slider"></span></label>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-                            <span style="font-size:11px;">CARD ANIMATION</span>
-                            <label class="switch"><input type="checkbox" id="configAnim"><span class="slider"></span></label>
-                        </div>
-                        <label>FOOTER TEXT</label><input type="text" id="configFooterText">
-                        <label>FOOTER LINK</label><input type="text" id="configFooterLink">
-                    </div>
-                    <div class="admin-card col-12">
-                        <button class="btn-save" onclick="saveConfig()">SYNC DATABASE CONFIGURATION</button>
-                    </div>
+            <div class="admin-grid">
+                <div class="admin-card col-4">
+                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">SETTING - WEBSITE</div>
+                    <label>SITE NAME</label><input type="text" id="configSiteName">
+                    <label>FAVICON URL</label><input type="text" id="configFavicon">
+                    <label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;">
+                    <label>LOGO URL</label><input type="text" id="configLogoUrl">
+                    <label>WALLPAPER URL</label><input type="text" id="configBgUrl">
+                    <label>ATMOSPHERE EFFECT</label>
+                    <select id="configWeather">
+                        <option value="none">CLEAR</option>
+                        <option value="snow">SNOWFLAKES</option>
+                        <option value="rain">RAIN SHOWER</option>
+                    </select>
+                    <label>FOOTER TEXT</label><input type="text" id="configFooterText">
+                    <label>FOOTER LINK</label><input type="text" id="configFooterLink">
+                    <button class="btn-save" onclick="saveConfig()">SYNC DATABASE</button>
                 </div>
-            </div>
 
-            <!-- 2. ROLES & PERMISSIONS -->
-            <div id="tab-roles" class="admin-tab-content">
-                <div class="admin-grid">
-                    <div class="admin-card col-4">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ADD ROLE GROUP (กลุ่มยศ)</div>
-                        <div style="display:flex; gap:10px; margin-bottom:15px;">
-                            <input type="text" id="newGroupName" placeholder="GROUP NAME" style="margin-bottom:0;">
-                            <input type="number" id="newGroupOrder" placeholder="ORDER" style="margin-bottom:0; width:80px;">
+                <div class="col-8" style="display:flex; flex-direction:column; gap:24px;">
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ROLE GROUPS</div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="newGroupName" placeholder="NEW GROUP NAME" style="margin-bottom:0; flex: 2;">
+                            <input type="number" id="newGroupOrder" placeholder="ORDER (e.g. 1)" style="margin-bottom:0; flex: 1;">
+                            <button class="config-btn" onclick="addGroup()">ADD</button>
                         </div>
-                        <button class="config-btn" style="width:100%" onclick="addGroup()">ADD GROUP</button>
-                        <div id="groupListContainer" style="margin-top:20px; max-height:250px; overflow-y:auto;"></div>
+                        <div id="groupListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr; gap:10px;"></div>
                     </div>
-                    <div class="admin-card col-8">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ADD/EDIT ROLE (สิทธิ์ยศ)</div>
-                        <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr auto; gap:10px; margin-bottom:15px;">
+
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">RANK & ROLES</div>
+                        <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr auto; gap:10px;">
                             <input type="text" id="newRoleName" placeholder="ROLE NAME" style="margin-bottom:0;">
                             <select id="roleGroupSelect" style="margin-bottom:0;"></select>
                             <input type="number" id="newRoleOrder" placeholder="ORDER" style="margin-bottom:0;">
                             <input type="color" id="newRoleColor" value="#ffc107" style="height:46px; margin-bottom:0;">
-                            <button class="config-btn" onclick="addRole()">ADD ROLE</button>
+                            <button class="config-btn" onclick="addRole()">ADD</button>
                         </div>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr 1.5fr 1fr; gap:10px; margin-bottom:20px;">
-                            <div>
-                                <label>ROLE ICON (FontAwesome e.g. fa-crown)</label>
-                                <input type="text" id="newRoleIcon" placeholder="fa-crown" style="margin-bottom:0;">
-                            </div>
-                            <div>
-                                <label>PERMISSION LEVEL</label>
-                                <select id="newRolePerm" style="margin-bottom:0;">
-                                    <option value="Member">MEMBER (ปกติ)</option>
-                                    <option value="Moderator">MODERATOR (ผู้คุม)</option>
-                                    <option value="Admin">ADMIN (สิทธิ์บัญชาการ)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>เพลงแยกแท็บยศ (YOUTUBE ID)</label>
-                                <input type="text" id="newRoleMusic" placeholder="เล่นเพลงนี้เมื่อเลือกยศนี้" style="margin-bottom:0;">
-                            </div>
-                            <div style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                                <label>HIDDEN ROLE (ซ่อนยศ)</label>
-                                <label class="switch"><input type="checkbox" id="newRoleHidden"><span class="slider"></span></label>
-                            </div>
-                        </div>
-                        <div id="roleListContainer" style="max-height:200px; overflow-y:auto;"></div>
+                        <div id="roleListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr; gap:10px;"></div>
                     </div>
-                </div>
-            </div>
 
-            <!-- 3. PERSONNEL DIRECTORY -->
-            <div id="tab-personnel" class="admin-tab-content">
-                <div class="admin-grid">
-                    <div class="admin-card col-12">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">PERSONNEL FORM</div>
-                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
-                            <div><label>FULL NAME</label><input type="text" id="memName"></div>
-                            <div>
-                                <label>AVATAR URL</label>
-                                <input type="text" id="memImg">
-                                <div class="file-upload-wrapper">
-                                    <span class="file-upload-btn"><i class="fa-solid fa-image"></i> อัปโหลดรูปประจำตัว</span>
-                                    <input type="file" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'memImg')">
-                                </div>
-                            </div>
-                            <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
-                            <div><label>SORT ORDER (ลำดับการแสดงผล)</label><input type="number" id="memOrder" value="0"></div>
-                            <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
-                            <div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
-                            <div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
-                        </div>
-                        <input type="hidden" id="editMemId">
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <button id="memBtn" class="btn-save" style="flex:3;" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
-                            <button class="btn-save" style="flex:1; background:#333; color:#fff;" onclick="clearMemForm()">CLEAR FORM</button>
-                        </div>
-                        <div id="adminMemberList" style="margin-top:30px; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. MUSIC PLAYLIST ENGINE -->
-            <div id="tab-music" class="admin-tab-content">
-                <div class="admin-grid">
-                    <div class="admin-card col-4">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">PLAYLIST CONTROLLER</div>
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">AUDIO MUSIC</div>
                         <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
                             <label class="switch"><input type="checkbox" id="musicAutoToggle"><span class="slider"></span></label>
                             <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
                         </div>
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                            <label class="switch"><input type="checkbox" id="musicShuffleToggle"><span class="slider"></span></label>
-                            <span style="font-size:11px; font-family:'Orbitron';">SHUFFLE MODE (สุ่มเพลง)</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                            <label class="switch"><input type="checkbox" id="musicLoopToggle"><span class="slider"></span></label>
-                            <span style="font-size:11px; font-family:'Orbitron';">LOOP CURRENT TRACK</span>
-                        </div>
-                        <button class="btn-save" onclick="saveMusicConfig()">SAVE SYSTEM MUSIC CONFIG</button>
-                    </div>
-                    <div class="admin-card col-8">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ADD SONG TO PLAYLIST (YouTube ID เท่านั้น)</div>
-                        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:15px; margin-bottom:20px;">
-                            <input type="text" id="newSongTitle" placeholder="SONG TITLE (e.g. Reminder)" style="margin-bottom:0;">
-                            <input type="text" id="newSongId" placeholder="YOUTUBE ID (e.g. JXg_Qe48cbU)" style="margin-bottom:0;">
-                            <input type="number" id="newSongStart" placeholder="START (SEC)" style="margin-bottom:0;" value="0">
-                            <button class="config-btn" onclick="addSongToPlaylist()">ADD TO PLAYLIST</button>
-                        </div>
-                        <div id="playlistContainer" style="max-height:220px; overflow-y:auto;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. SECURITY, LOGS & BACKUP -->
-            <div id="tab-sec" class="admin-tab-content">
-                <div class="admin-grid">
-                    <div class="admin-card col-4">
-                        <div style="margin-bottom:15px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">2FA & PANEL TIMEOUT</div>
-                        <label>2FA PASSCODE (ความปลอดภัยขั้นที่ 2)</label>
-                        <input type="password" id="configSecCode" placeholder="เว้นว่างเมื่อยกเลิกการใช้">
-                        <label>AUTO LOGOUT SESSION TIMEOUT (MINUTES)</label>
-                        <input type="number" id="configTimeout" value="10" placeholder="e.g. 10">
-                        <button class="btn-save" onclick="saveSecuritySettings()">UPDATE SECURITY ACCESS</button>
-                    </div>
-                    <div class="admin-card col-4">
-                        <div style="margin-bottom:15px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">BACKUP & RESTORE DATA</div>
-                        <button class="btn-save" style="margin-bottom:15px; background:#222; color:var(--accent); border:1px solid var(--accent);" onclick="exportDatabase()">EXPORT SYSTEM DATA (JSON)</button>
-                        <label>IMPORT DATABASE BACKUP</label>
-                        <div class="file-upload-wrapper">
-                            <span class="file-upload-btn"><i class="fa-solid fa-file-import"></i> เลือกไฟล์สำรองข้อมูล JSON</span>
-                            <input type="file" class="file-upload-input" accept=".json" onchange="importDatabase(this)">
-                        </div>
-                    </div>
-                    <div class="admin-card col-4">
-                        <div style="margin-bottom:15px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">REALTIME ACTIVITY LOGS</div>
-                        <div id="adminLogsContainer" style="background:#111; padding:15px; border-radius:10px; height:180px; overflow-y:auto; font-size:10px; font-family:monospace; line-height:1.4;">
-                            LOADING HISTORY LOGS...
+                        <div style="display:grid; grid-template-columns: 2fr 1fr auto; gap:15px;">
+                            <input type="text" id="musicVidId" placeholder="YOUTUBE VIDEO ID" style="margin-bottom:0;">
+                            <input type="number" id="musicStart" placeholder="START (SEC)" style="margin-bottom:0;">
+                            <button class="btn-save" onclick="saveMusic()">UPDATE AUDIO</button>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <div class="admin-card col-12">
+                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">ADMIN SETTING - ต้องเลือก Role และใส่ Link Facebook</div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px;">
+                        <div><label>FULL NAME</label><input type="text" id="memName"></div>
+                        <div><label>AVATAR URL</label><input type="text" id="memImg"></div>
+                        <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
+                        <div><label>SORT ORDER (ลำดับการแสดงผล)</label><input type="number" id="memOrder" value="0"></div>
+                        <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
+                        <div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
+                        <div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
+                    </div>
+                    <input type="hidden" id="editMemId">
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button id="memBtn" class="btn-save" style="flex:3;" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
+                        <button class="btn-save" style="flex:1; background:#333; color:#fff;" onclick="clearMemForm()">CLEAR FORM</button>
+                    </div>
+                    <div id="adminMemberList" style="margin-top:30px; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -484,15 +347,14 @@
         const db = firebase.database();
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
-        let isPlaying = false, playlistTracks = [], currentTrackIndex = 0;
-        let sessionTimer = null, lastUserActivityTime = Date.now(), isAutoNextActive = true;
+        let isPlaying = false;
 
         // ----------------------------------------------------
         // SYSTEM: ระบบป้องกันการค้างหน้าโหลด (LocalStorage Fallback)
         // ----------------------------------------------------
         let useLocalFallback = false;
         const listeners = {};
-        const firebaseLoaded = { config: false, roleGroups: false, roles: false, members: false, playlist: false };
+        const firebaseLoaded = { config: false, roleGroups: false, roles: false, members: false };
 
         const fallbackTimeout = setTimeout(() => {
             if (!firebaseLoaded.config) {
@@ -532,14 +394,7 @@
                     themeColor: '#ffc107',
                     logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150',
                     bgUrl: '',
-                    videoBg: '',
-                    weather: 'none',
-                    font: "'Inter', sans-serif",
-                    cursor: 'default',
-                    mouseTrail: false,
-                    glitch: false,
-                    flash: false,
-                    animation: true,
+                    weather: 'snow',
                     footerText: 'Designed by DEATHNOTE',
                     footerLink: '#'
                 };
@@ -677,96 +532,35 @@
         };
 
         // ----------------------------------------------------
-        // SYSTEM: ประวัติและประวัติบันทึกการกระทำ (Activity Logs)
+        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote
         // ----------------------------------------------------
-        function sysLog(action) {
-            const time = new Date().toLocaleString();
-            const logItem = { time, action };
-            if (!useLocalFallback) {
-                db.ref('logs').push(logItem);
-            } else {
-                const logs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
-                logs.unshift(logItem);
-                localStorage.setItem('deathnote_logs', JSON.stringify(logs.slice(0, 50)));
-                renderLogsUI();
-            }
-        }
-
-        if (!useLocalFallback) {
-            db.ref('logs').limitToLast(30).on('value', snap => {
-                renderLogsUI(snap.val());
-            });
-        }
-
-        function renderLogsUI(dataObj) {
-            const container = document.getElementById('adminLogsContainer');
-            if(!container) return;
-            let list = '';
-            const items = dataObj ? Object.values(dataObj).reverse() : (JSON.parse(localStorage.getItem('deathnote_logs')) || []);
-            items.forEach(log => {
-                list += `<div>[${log.time}] - ${log.action}</div>`;
-            });
-            container.innerHTML = list || 'NO ACTION RECORDED YET';
-        }
-
-        // ----------------------------------------------------
-        // FUNCTIONS: ระบบ Admin & Security (2FA, Session Timeout)
-        // ----------------------------------------------------
-        let globalTimeoutMinutes = 10;
-        
-        function updateActivity() {
-            lastUserActivityTime = Date.now();
-        }
-
-        document.addEventListener('mousemove', updateActivity);
-        document.addEventListener('keydown', updateActivity);
-
-        function checkSessionTimeout() {
-            if (document.getElementById('adminPanel').style.display === 'block') {
-                const elapsedMs = Date.now() - lastUserActivityTime;
-                const elapsedMin = elapsedMs / 1000 / 60;
-                if (elapsedMin >= globalTimeoutMinutes) {
-                    closeAdminPanel();
-                    showNotify("สิทธิ์ผู้ใช้หมดอายุเนื่องจากไม่มีกิจกรรมความเคลื่อนไหว");
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'deathnote') {
+                openModal('loginModal');
+                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
+                try {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                } catch (e) {
+                    console.warn("ไม่สามารถล้าง URL Parameter ในพื้นที่เครื่องเซิร์ฟเวอร์จำลองบางประเภท:", e);
                 }
             }
-        }
+        });
 
-        setInterval(checkSessionTimeout, 10000);
+        // ----------------------------------------------------
+        // FUNCTIONS
+        // ----------------------------------------------------
 
         function attemptLogin() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
-            const fa = document.getElementById('login2FA').value;
-
-            dbHelper.ref('config').once('value', snap => {
-                const d = snap.val() || {};
-                const stored2FA = d.secCode || '';
-                globalTimeoutMinutes = parseInt(d.timeout) || 10;
-
-                if (u === 'deathnote' && p === 'deathnote9871') {
-                    if (stored2FA !== '' && fa !== stored2FA) {
-                        showNotify("สิทธิ์ถูกปฏิเสธ: รหัส 2FA PASSCODE ไม่ถูกต้อง");
-                        return;
-                    }
-                    closeModal('loginModal'); 
-                    document.getElementById('adminPanel').style.display = 'block';
-                    document.body.style.overflow = 'hidden';
-                    sysLog("ผู้ดูแลระบบลงชื่อเข้าใช้สำเร็จ");
-                    loadConfigToInputs();
-                } else {
-                    showNotify("ACCESS DENIED: WRONG CREDENTIALS");
-                    sysLog("ความพยายามเข้าระบบไม่สำเร็จเนื่องจากข้อมูลไม่ถูกต้อง");
-                }
-            });
-        }
-
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+            if(u === 'deathnote' && p === 'deathnote9871') {
+                closeModal('loginModal'); 
+                document.getElementById('adminPanel').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                loadConfigToInputs();
+            } else showNotify("ACCESS DENIED: WRONG CREDENTIALS");
         }
 
         function showNotify(msg) {
@@ -778,22 +572,6 @@
             setTimeout(() => el.remove(), 3000);
         }
 
-        function handleImageUpload(inputEl, targetInputId) {
-            const file = inputEl.files[0];
-            if (file) {
-                if (file.size > 800 * 1024) {
-                    showNotify("ขนาดไฟล์ใหญ่เกินไป! รูปต้องไม่เกิน 800KB เพื่อประสิทธิภาพสูงสุด");
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(targetInputId).value = e.target.result;
-                    showNotify("อัปโหลดและเข้ารหัสภาพสำเร็จ!");
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         function loadConfigToInputs() {
             dbHelper.ref('config').once('value', snap => {
                 const d = snap.val() || {};
@@ -802,24 +580,15 @@
                 document.getElementById('configThemeColor').value = d.themeColor || '#ffc107';
                 document.getElementById('configLogoUrl').value = d.logo || '';
                 document.getElementById('configBgUrl').value = d.bgUrl || '';
-                document.getElementById('configVideoBg').value = d.videoBg || '';
-                document.getElementById('configFont').value = d.font || "'Inter', sans-serif";
-                document.getElementById('configCursor').value = d.cursor || "default";
                 document.getElementById('configWeather').value = d.weather || 'none';
-                document.getElementById('configMouseTrail').checked = d.mouseTrail || false;
-                document.getElementById('configGlitch').checked = d.glitch || false;
-                document.getElementById('configFlash').checked = d.flash || false;
-                document.getElementById('configAnim').checked = (d.animation !== false);
                 document.getElementById('configFooterText').value = d.footerText || '';
                 document.getElementById('configFooterLink').value = d.footerLink || '';
-                document.getElementById('configSecCode').value = d.secCode || '';
-                document.getElementById('configTimeout').value = d.timeout || '10';
             });
-            dbHelper.ref('musicConfig').once('value', snap => {
-                const mc = snap.val() || {};
-                document.getElementById('musicAutoToggle').checked = mc.auto !== false;
-                document.getElementById('musicShuffleToggle').checked = mc.shuffle || false;
-                document.getElementById('musicLoopToggle').checked = mc.loop || false;
+            dbHelper.ref('music').once('value', snap => {
+                const m = snap.val() || {};
+                document.getElementById('musicVidId').value = m.id || '';
+                document.getElementById('musicStart').value = m.start || 0;
+                document.getElementById('musicAutoToggle').checked = m.auto || false;
             });
         }
 
@@ -830,12 +599,11 @@
             document.body.style.overflow = 'auto'; 
         }
 
-        // ----------------------------------------------------
-        // REALTIME SYNCHRONIZATION listeners
-        // ----------------------------------------------------
         dbHelper.ref('roleGroups').on('value', snap => {
             currentGroups = snap.val() || {};
             let list = '', opt = '<option value="">SELECT GROUP</option>';
+            
+            // เรียงลำดับกลุ่มยศตามตัวเลขลำดับ (Order) ก่อนแสดงผล
             const sortedGroupKeys = Object.keys(currentGroups).sort((a,b) => (currentGroups[a].order || 0) - (currentGroups[b].order || 0));
             
             sortedGroupKeys.forEach(id => {
@@ -850,14 +618,14 @@
         dbHelper.ref('roles').on('value', snap => {
             currentRoles = snap.val() || {};
             let opt = '<option value="">SELECT ROLE</option>', list = '';
+            
+            // เรียงลำดับยศตามตัวเลขลำดับ (Order) ก่อนแสดงผล
             const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
             
             sortedRoleKeys.forEach(id => {
-                const r = currentRoles[id];
-                const gName = currentGroups[r.groupId]?.name || 'UNKNOWN';
-                const hiddenBadge = r.hidden ? '<span style="color:#ff4757; font-size:9px;">[HIDDEN]</span>' : '';
-                opt += `<option value="${id}">${r.name}</option>`;
-                list += `<div class="admin-item-row"><div><b style="color:${r.color}"><i class="fa-solid ${r.icon || 'fa-tag'}"></i> ${r.name}</b> <small style="color: #666;">(Order: ${r.order || 0})</small> ${hiddenBadge}<br><small>Group: ${gName} | Perm: ${r.permission || 'Member'}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roles').child('${id}').remove()"></i></div>`;
+                const gName = currentGroups[currentRoles[id].groupId]?.name || 'UNKNOWN';
+                opt += `<option value="${id}">${currentRoles[id].name}</option>`;
+                list += `<div class="admin-item-row"><div><b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b> <small style="color: #666;">(Order: ${currentRoles[id].order || 0})</small><br><small>${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roles').child('${id}').remove()"></i></div>`;
             });
             document.getElementById('memRole').innerHTML = opt;
             document.getElementById('roleListContainer').innerHTML = list;
@@ -869,6 +637,7 @@
             document.getElementById('countNum').innerText = Object.keys(currentMembers).length;
             let adminList = '';
             
+            // เรียงลำดับสมาชิกตามลำดับเลข (Order) ก่อนแสดงผลในหลังบ้าน
             const sortedMemberKeys = Object.keys(currentMembers).sort((a,b) => {
                 const orderA = currentMembers[a].order || 0;
                 const orderB = currentMembers[b].order || 0;
@@ -883,26 +652,14 @@
             filterMembers();
         });
 
-        dbHelper.ref('playlist').on('value', snap => {
-            const listObj = snap.val() || {};
-            playlistTracks = Object.keys(listObj).map(key => ({
-                key,
-                ...listObj[key]
-            }));
-            renderPlaylistUI();
-        });
-
         function addGroup() {
             const name = document.getElementById('newGroupName').value.toUpperCase();
             const order = parseInt(document.getElementById('newGroupOrder').value) || 0;
-            if(name) {
-                dbHelper.ref('roleGroups').push({ name, order }).then(() => {
-                    document.getElementById('newGroupName').value = '';
-                    document.getElementById('newGroupOrder').value = '';
-                    showNotify("กลุ่มยศถูกจัดเก็บเรียบร้อย");
-                    sysLog(`เพิ่มกลุ่มยศใหม่: ${name}`);
-                });
-            }
+            if(name) dbHelper.ref('roleGroups').push({ name, order }).then(() => {
+                document.getElementById('newGroupName').value = '';
+                document.getElementById('newGroupOrder').value = '';
+                showNotify("GROUP ADDED");
+            });
         }
 
         function addRole() {
@@ -910,22 +667,11 @@
             const gId = document.getElementById('roleGroupSelect').value;
             const color = document.getElementById('newRoleColor').value;
             const order = parseInt(document.getElementById('newRoleOrder').value) || 0;
-            const icon = document.getElementById('newRoleIcon').value;
-            const permission = document.getElementById('newRolePerm').value;
-            const hidden = document.getElementById('newRoleHidden').checked;
-            const tabMusic = document.getElementById('newRoleMusic').value;
-
-            if(name && gId) {
-                dbHelper.ref('roles').push({ name, groupId: gId, color, order, icon, permission, hidden, tabMusic }).then(() => {
-                    document.getElementById('newRoleName').value = '';
-                    document.getElementById('newRoleOrder').value = '';
-                    document.getElementById('newRoleIcon').value = '';
-                    document.getElementById('newRoleMusic').value = '';
-                    document.getElementById('newRoleHidden').checked = false;
-                    showNotify("สิทธิ์ยศใหม่ถูกเผยแพร่สำเร็จ");
-                    sysLog(`สร้างยศใหม่: ${name}`);
-                });
-            }
+            if(name && gId) dbHelper.ref('roles').push({ name, groupId: gId, color, order }).then(() => {
+                document.getElementById('newRoleName').value = '';
+                document.getElementById('newRoleOrder').value = '';
+                showNotify("ROLE CREATED");
+            });
         }
 
         function saveMember() {
@@ -946,7 +692,6 @@
             const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
             ref.set(data).then(() => { 
                 showNotify("PERSONNEL DATABASE UPDATED"); 
-                sysLog(`ปรับปรุงข้อมูลบุคลากร: ${data.name}`);
                 clearMemForm(); 
             });
         }
@@ -955,7 +700,7 @@
             const m = currentMembers[id];
             document.getElementById('editMemId').value = id;
             document.getElementById('memName').value = m.name;
-            document.getElementById('memImg').value = m.img || '';
+            document.getElementById('memImg').value = m.img;
             document.getElementById('memRole').value = m.roleId;
             document.getElementById('memOrder').value = m.order || 0;
             document.getElementById('memFb').value = m.fb;
@@ -979,10 +724,62 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Member Filter, Sorting & Custom Effects Render
+        // SYSTEM: Scroll Reveal Intersection Observer Setup
         // ----------------------------------------------------
-        let animEnabled = true;
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                }
+            });
+        }, {
+            threshold: 0.05,
+            rootMargin: '0px 0px -50px 0px'
+        });
 
+        function updateScrollReveals() {
+            const sections = document.querySelectorAll('.category-section');
+            sections.forEach(section => {
+                revealObserver.observe(section);
+            });
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Hover Particle Spawner
+        // ----------------------------------------------------
+        function handleCardHoverParticles(e) {
+            const card = e.currentTarget;
+            
+            if (Math.random() > 0.15) return; 
+
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const particle = document.createElement('span');
+            particle.className = 'hover-particle';
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            const size = Math.random() * 4 + 2; 
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            const driftX = (Math.random() - 0.5) * 40;
+            const driftY = -(Math.random() * 50 + 30);
+            particle.style.setProperty('--drift-x', `${driftX}px`);
+            particle.style.setProperty('--drift-y', `${driftY}px`);
+
+            card.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1200);
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Member Filter, Sorting & Section Header Dynamic Mapping
+        // ----------------------------------------------------
         function filterMembers() {
             const term = document.getElementById('memberSearch').value.toLowerCase();
             const wrapper = document.getElementById('memberSections');
@@ -993,13 +790,9 @@
                 const m = currentMembers[id];
                 const role = currentRoles[m.roleId];
                 if(!role) return;
-                
-                // ข้ามการเรนเดอร์ในหน้าแรกสำหรับบทบาทที่เป็น Hidden Role
-                if(role.hidden && activeTab !== m.roleId) return;
-
                 const gId = role.groupId;
                 const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
-                const gOrder = currentGroups[gId]?.order || 0;
+                const gOrder = currentGroups[gId]?.order || 0; // ดึงค่าน้ำหนักกลุ่มมาจัดลำดับ
                 
                 if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
                     if(!structure[gId]) {
@@ -1009,12 +802,14 @@
                 }
             });
             
+            // แปลงโครงสร้างเป็น Array เพื่อทำการจัดเรียงหัวข้อตาม Order
             const sortedSections = Object.keys(structure).map(gId => ({
                 id: gId,
                 ...structure[gId]
             })).sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedSections.forEach(group => {
+                // จัดลำดับรายชื่อสมาชิกภายในกลุ่มตามน้ำหนักเลข (Sort Order) ลำดับน้อยไปมาก
                 group.items.sort((a, b) => {
                     const orderA = a.order || 0;
                     const orderB = b.order || 0;
@@ -1022,10 +817,11 @@
                     return a.name.localeCompare(b.name);
                 });
 
+                // ดึงค่าสีของยศแรกในกลุ่มนี้ เพื่อกำหนดสีให้กับเส้นขีดซ้ายและชื่อหัวข้อกลุ่มแบบไดนามิก
                 const groupColor = group.items[0]?.role?.color || 'var(--accent)';
                 
                 let html = `
-                    <section class="category-section ${animEnabled ? 'scroll-reveal' : ''}">
+                    <section class="category-section">
                         <div class="category-header" style="color: ${groupColor}; border-left-color: ${groupColor};">
                             ${group.name}
                         </div>
@@ -1033,15 +829,12 @@
                         
                 group.items.forEach((m, i) => {
                     const roleColor = m.role?.color || '#ffc107';
-                    const iconTag = m.role?.icon ? `<i class="fa-solid ${m.role.icon}"></i> ` : '';
                     html += `
-                        <div class="member-card ${animEnabled ? 'animate-on' : ''}" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
+                        <div class="member-card" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
                             <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
                             <div>
                                 <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
-                                <span class="rank-tag" style="background:${roleColor}">
-                                    ${iconTag}${m.role.name}
-                                </span>
+                                <span class="rank-tag" style="background:${roleColor}">${m.role.name}</span>
                             </div>
                             <div class="social-links">
                                 ${m.fb ? `<a href="${m.fb}" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>` : ''}
@@ -1061,95 +854,29 @@
 
             updateScrollReveals();
 
-            if(!sortedSections.length) wrapper.innerHTML = '<p style="text-align:center; opacity:0.2; padding:100px; font-family: inherit">NO RECORDS FOUND</p>';
+            if(!sortedSections.length) wrapper.innerHTML = '<p style="text-align:center; opacity:0.2; padding:100px; font-family:\'Orbitron\'">NO RECORDS FOUND</p>';
         }
 
+        // ----------------------------------------------------
+        // SYSTEM: Category Tabs Renderer (ดึงลำดับ Order มาจัดทิศทางเรียงลำดับ)
+        // ----------------------------------------------------
         function renderTabs() {
             const container = document.getElementById('categoryTabs');
+            
             let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#222'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
             
+            // เรียงลำดับเมนูปุ่มตัวกรองตามลำดับ Order
             const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
             
             sortedRoleKeys.forEach(id => {
-                const r = currentRoles[id];
-                if (r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
                 const active = activeTab === id;
-                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${r.name}</button>`;
+                // คืนค่าปุ่มแบบเรียบง่ายเดิม ๆ: Active ใช้สี Accent ของเว็บ, Inactive ใช้พื้นหลังเข้มตัวหนังสือสีเทา #888
+                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
             });
             container.innerHTML = html;
         }
 
-        function setActiveTab(id) { 
-            activeTab = id; 
-            renderTabs(); 
-            filterMembers(); 
-            
-            // เพลงแยกแต่ละหน้า: ตรวจสอบและดึงเพลงที่ถูกกำหนดไว้ในยศนั้น ๆ
-            if (currentRoles[id] && currentRoles[id].tabMusic) {
-                isAutoNextActive = false; // ปิดการ Auto Next ชั่วคราวเมื่อผู้ใช้เลือกเจาะจงเพลงยศ
-                playSpecificTrack(currentRoles[id].tabMusic);
-            } else {
-                isAutoNextActive = true;
-            }
-        }
-
-        // ----------------------------------------------------
-        // PLAYLIST ENGINE: ควมคุมเครื่องเล่นเพลง Playlist
-        // ----------------------------------------------------
-        function addSongToPlaylist() {
-            const title = document.getElementById('newSongTitle').value;
-            const id = document.getElementById('newSongId').value;
-            const start = parseInt(document.getElementById('newSongStart').value) || 0;
-
-            if(title && id) {
-                dbHelper.ref('playlist').push({ title, id, start }).then(() => {
-                    document.getElementById('newSongTitle').value = '';
-                    document.getElementById('newSongId').value = '';
-                    document.getElementById('newSongStart').value = '0';
-                    showNotify("เพิ่มเพลงลงในคลัง Playlist แล้ว");
-                    sysLog(`เพิ่มเพลงในคลังระบบ: ${title}`);
-                });
-            }
-        }
-
-        function renderPlaylistUI() {
-            const container = document.getElementById('playlistContainer');
-            if(!container) return;
-            let list = '';
-            playlistTracks.forEach((track, index) => {
-                list += `<div class="admin-item-row">
-                    <span>${index+1}. ${track.title} <small style="color:#666;">(${track.id})</small></span>
-                    <div>
-                        <i class="fa-solid fa-play" style="color:var(--success); cursor:pointer; margin-right:15px;" onclick="playTrackByIndex(${index})"></i>
-                        <i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('playlist').child('${track.key}').remove()"></i>
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = list || 'PLAYLIST IS EMPTY';
-        }
-
-        function playTrackByIndex(index) {
-            if(!player || playlistTracks.length === 0) return;
-            currentTrackIndex = index;
-            const track = playlistTracks[index];
-            player.loadVideoById({
-                videoId: track.id,
-                startSeconds: track.start || 0
-            });
-            player.playVideo();
-            document.getElementById('currentTrackDisplay').innerHTML = `<i class="fa-solid fa-compact-disc fa-spin" style="color:var(--accent)"></i> ${track.title}`;
-            showNotify(`เล่นเพลง: ${track.title}`);
-        }
-
-        function playSpecificTrack(videoId) {
-            if(!player) return;
-            player.loadVideoById({
-                videoId: videoId,
-                startSeconds: 0
-            });
-            player.playVideo();
-            document.getElementById('currentTrackDisplay').innerHTML = `<i class="fa-solid fa-compact-disc fa-spin" style="color:var(--accent)"></i> Tab Custom Audio`;
-        }
+        function setActiveTab(id) { activeTab = id; renderTabs(); filterMembers(); }
 
         function toggleMusic() {
             if(!player) return;
@@ -1159,170 +886,59 @@
                 icon.className = 'fa-solid fa-play';
                 isPlaying = false;
             } else {
-                if (playlistTracks.length > 0 && player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                    playTrackByIndex(currentTrackIndex);
-                } else {
-                    player.playVideo();
-                }
+                player.playVideo();
                 icon.className = 'fa-solid fa-pause';
                 isPlaying = true;
             }
         }
 
-        function changeVolume(vol) {
-            if (player && typeof player.setVolume === 'function') {
-                player.setVolume(vol);
-            }
-            const slider1 = document.getElementById('navbarVol');
-            if (slider1) slider1.value = vol;
-        }
-
         function onYouTubeIframeAPIReady() {
-            // โหลดตั้งค่าและรายการเพลง
-            dbHelper.ref('musicConfig').once('value', snapMc => {
-                const mc = snapMc.val() || {};
-                const isAuto = mc.auto !== false;
-
-                dbHelper.ref('playlist').once('value', snapPl => {
-                    const listObj = snapPl.val() || {};
-                    playlistTracks = Object.keys(listObj).map(key => ({
-                        key,
-                        ...listObj[key]
-                    }));
-
-                    // หากคลังเพลงว่าง ให้ใช้เพลง Default (The Weeknd - Reminder)
-                    const initialId = playlistTracks.length > 0 ? playlistTracks[0].id : "JXg_Qe48cbU";
-                    const initialStart = playlistTracks.length > 0 ? (playlistTracks[0].start || 0) : 0;
-
-                    player = new YT.Player('player', {
-                        height: '0', width: '0', videoId: initialId,
-                        playerVars: { 'autoplay': isAuto ? 1 : 0, 'start': initialStart },
-                        events: { 
-                            'onReady': (e) => { 
-                                changeVolume(80);
-                                if(isAuto) { 
-                                    e.target.playVideo(); 
-                                    if(playlistTracks.length > 0) {
-                                        document.getElementById('currentTrackDisplay').innerHTML = `<i class="fa-solid fa-compact-disc fa-spin" style="color:var(--accent)"></i> ${playlistTracks[0].title}`;
+            dbHelper.ref('music').once('value', snap => {
+                let m = snap.val() || {};
+                
+                if(!m.id) {
+                    m = { id: "JXg_Qe48cbU", start: 0, auto: true };
+                }
+                
+                player = new YT.Player('player', {
+                    height: '0', width: '0', videoId: m.id,
+                    playerVars: { 'autoplay': m.auto ? 1 : 0, 'start': m.start || 0, 'loop': 1, 'playlist': m.id },
+                    events: { 
+                        'onReady': (e) => { 
+                            if(m.auto) { 
+                                e.target.playVideo(); 
+                                
+                                setTimeout(() => {
+                                    if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                                        const playOnInteraction = () => {
+                                            player.playVideo();
+                                            document.removeEventListener('click', playOnInteraction);
+                                        };
+                                        document.addEventListener('click', playOnInteraction);
                                     }
-                                    
-                                    setTimeout(() => {
-                                        if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                                            const playOnInteraction = () => {
-                                                player.playVideo();
-                                                document.removeEventListener('click', playOnInteraction);
-                                            };
-                                            document.addEventListener('click', playOnInteraction);
-                                        }
-                                    }, 1000);
-                                }
-                            },
-                            'onStateChange': (e) => {
-                                if(e.data === YT.PlayerState.PLAYING) { 
-                                    isPlaying = true; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-pause'; 
-                                } else { 
-                                    isPlaying = false; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-play'; 
-                                }
-
-                                // ระบบ Auto Next Song เมื่อจบเพลง
-                                if(e.data === YT.PlayerState.ENDED && isAutoNextActive) {
-                                    dbHelper.ref('musicConfig').once('value', s => {
-                                        const config = s.val() || {};
-                                        if (config.loop) {
-                                            player.playVideo(); // เล่นเพลงเดิมซ้ำ
-                                        } else if (config.shuffle && playlistTracks.length > 1) {
-                                            let nextIndex = currentTrackIndex;
-                                            while(nextIndex === currentTrackIndex) {
-                                                nextIndex = Math.floor(Math.random() * playlistTracks.length);
-                                            }
-                                            playTrackByIndex(nextIndex);
-                                        } else {
-                                            let nextIndex = currentTrackIndex + 1;
-                                            if (nextIndex >= playlistTracks.length) nextIndex = 0;
-                                            if (playlistTracks.length > 0) playTrackByIndex(nextIndex);
-                                        }
-                                    });
-                                }
+                                }, 1000);
                             }
+                        },
+                        'onStateChange': (e) => {
+                            if(e.data === YT.PlayerState.PLAYING) { isPlaying = true; document.getElementById('musicIcon').className = 'fa-solid fa-pause'; }
+                            else { isPlaying = false; document.getElementById('musicIcon').className = 'fa-solid fa-play'; }
                         }
-                    });
+                    }
                 });
             });
         }
 
-        // ----------------------------------------------------
-        // VIDEO BACKGROUND CONTROLLER
-        // ----------------------------------------------------
-        function renderVideoBackground(idOrLink) {
-            const container = document.getElementById('video-bg-container');
-            if(!container) return;
-            
-            // หากไม่ได้กรอกไอดีวิดีโอ ให้ปิดหน้าจอนี้ไปเลยเพื่อให้มั่นใจว่าไม่บังรูปภาพวอลเปเปอร์หลัก
-            if(!idOrLink || idOrLink === 'none' || idOrLink === '') {
-                container.innerHTML = '';
-                container.style.display = 'none';
-                return;
-            }
-            
-            container.style.display = 'block';
-            if(idOrLink.includes('mp4') || idOrLink.includes('.webm')) {
-                container.innerHTML = `<video autoplay muted loop playsinline src="${idOrLink}"></video>`;
-            } else {
-                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${idOrLink}?autoplay=1&mute=1&loop=1&playlist=${idOrLink}&controls=0&showinfo=0&rel=0&modestbranding=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-            }
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Firebase Core Settings Listeners
-        // ----------------------------------------------------
         dbHelper.ref('config').on('value', snap => {
             const d = snap.val() || {};
             document.title = d.name || 'DEATHNOTE';
             document.getElementById('siteNameDisplay').innerText = d.name || 'DEATHNOTE';
             document.getElementById('favicon').href = d.favicon || '';
             document.getElementById('siteLogo').src = d.logo || '';
-            
             if(d.bgUrl) document.body.style.backgroundImage = `url('${d.bgUrl}')`;
-            else document.body.style.backgroundImage = 'none';
-
             if(d.themeColor) {
                 document.documentElement.style.setProperty('--accent', d.themeColor);
             }
-
-            // จัดการวิดีโอพื้นหลัง
-            renderVideoBackground(d.videoBg);
-
-            // จัดการดีไซน์ Font & Cursor
-            if(d.font) document.body.style.fontFamily = d.font;
-            
-            document.body.className = ''; 
-            if(d.cursor === 'crosshair') document.body.classList.add('cursor-crosshair');
-            else if(d.cursor === 'pointer') document.body.classList.add('cursor-pointer-all');
-            else document.body.classList.add('cursor-default');
-
-            // Glitch Mode
-            if(d.glitch) document.body.classList.add('glitch-active');
-            else document.body.classList.remove('glitch-active');
-
-            // Screen Flash
-            if(d.flash && !window.hasFlashed) {
-                window.hasFlashed = true;
-                const flash = document.getElementById('screen-flash');
-                flash.style.opacity = '1';
-                setTimeout(() => { flash.style.opacity = '0'; }, 300);
-            }
-
-            // Animation Option Toggle
-            animEnabled = (d.animation !== false);
-            const heroBlock = document.getElementById('heroBlock');
-            if(animEnabled) heroBlock.classList.add('animate-on');
-            else heroBlock.classList.remove('animate-on');
-
-            weatherType = d.weather || 'none'; 
-            initWeather();
-            
+            weatherType = d.weather || 'none'; initWeather();
             document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by DEATHNOTE';
             document.getElementById('footerLinkLabel').href = d.footerLink || '#';
         });
@@ -1334,206 +950,48 @@
                 themeColor: document.getElementById('configThemeColor').value,
                 logo: document.getElementById('configLogoUrl').value,
                 bgUrl: document.getElementById('configBgUrl').value,
-                videoBg: document.getElementById('configVideoBg').value,
-                font: document.getElementById('configFont').value,
-                cursor: document.getElementById('configCursor').value,
                 weather: document.getElementById('configWeather').value,
-                mouseTrail: document.getElementById('configMouseTrail').checked,
-                glitch: document.getElementById('configGlitch').checked,
-                flash: document.getElementById('configFlash').checked,
-                animation: document.getElementById('configAnim').checked,
                 footerText: document.getElementById('configFooterText').value,
                 footerLink: document.getElementById('configFooterLink').value
-            }).then(() => {
-                showNotify("ระบบปรับปรุงโครงสร้างเว็บไซต์แล้ว");
-                sysLog("ปรับปรุงโครงสร้างทั่วไปของหน้าหลัก");
-            });
+            }).then(() => showNotify("CONFIGURATION SYNCHRONIZED"));
         }
 
-        function saveMusicConfig() {
-            dbHelper.ref('musicConfig').set({
-                auto: document.getElementById('musicAutoToggle').checked,
-                shuffle: document.getElementById('musicShuffleToggle').checked,
-                loop: document.getElementById('musicLoopToggle').checked
-            }).then(() => {
-                showNotify("สตรีมมิ่งระบบเสียงได้รับการปรับแต่งใหม่");
-                sysLog("แก้ไขระบบตั้งค่าควบคุมเพลง");
-            });
+        function saveMusic() {
+            dbHelper.ref('music').set({
+                id: document.getElementById('musicVidId').value,
+                start: document.getElementById('musicStart').value,
+                auto: document.getElementById('musicAutoToggle').checked
+            }).then(() => showNotify("AUDIO ENGINE UPDATED"));
         }
 
-        function saveSecuritySettings() {
-            dbHelper.ref('config').update({
-                secCode: document.getElementById('configSecCode').value,
-                timeout: parseInt(document.getElementById('configTimeout').value) || 10
-            }).then(() => {
-                showNotify("ระบบความปลอดภัยได้รับการติดตั้งใหม่");
-                sysLog("แก้ไขและปรับปรุงตั้งค่าความปลอดภัย 2FA / Session Timeout");
-            });
-        }
-
-        // ----------------------------------------------------
-        // BACKUP & RESTORE MODULE (JSON Export / Import)
-        // ----------------------------------------------------
-        function exportDatabase() {
-            dbHelper.ref('/').once('value', snap => {
-                const data = snap.val();
-                const json = JSON.stringify(data, null, 2);
-                const blob = new Blob([json], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `deathnote_db_backup_${Date.now()}.json`;
-                a.click();
-                sysLog("ส่งออกข้อมูลสำรองของเว็บไซต์ในรูปแบบไฟล์ JSON");
-            });
-        }
-
-        function importDatabase(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        if (confirm("คุณแน่ใจหรือไม่ที่จะเขียนทับฐานข้อมูลระบบปัจจุบันทั้งหมดด้วยไฟล์ JSON สำรองนี้? (ขั้นตอนนี้ไม่สามารถยกเลิกได้)")) {
-                            dbHelper.ref('/').set(data).then(() => {
-                                showNotify("ข้อมูลระบบได้รับการกู้คืนสำเร็จ! กำลังรีโหลดหน้าหลัก...");
-                                sysLog("กู้คืนข้อมูลระบบทั้งหมดผ่านทางไฟล์สำรอง JSON");
-                                setTimeout(() => window.location.reload(), 1500);
-                            });
-                        }
-                    } catch(err) {
-                        showNotify("เกิดข้อผิดพลาด: ไฟล์ JSON มีรูปแบบไม่ถูกต้อง");
-                    }
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        // ----------------------------------------------------
-        // CANVAS EFFECTS ENGINE: Particles & Mouse Trails
-        // ----------------------------------------------------
         const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
-        let particles = [], mouseTrailPoints = [], lastMousePos = { x: 0, y: 0 };
-        let isMouseTrailActive = false;
-
-        // ดักจับการเคลื่อนไหวเมาส์
-        window.addEventListener('mousemove', (e) => {
-            lastMousePos.x = e.clientX;
-            lastMousePos.y = e.clientY;
-            
-            if (isMouseTrailActive) {
-                mouseTrailPoints.push({
-                    x: e.clientX,
-                    y: e.clientY,
-                    alpha: 1.0,
-                    size: Math.random() * 6 + 3
-                });
-            }
-        });
-
-        dbHelper.ref('config').child('mouseTrail').on('value', snap => {
-            isMouseTrailActive = snap.val() || false;
-            if(!isMouseTrailActive) mouseTrailPoints = [];
-        });
-
+        let particles = [];
         function initWeather() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            particles = []; 
-            if(weatherType === 'none') return;
-            
-            const numParticles = weatherType === 'rain' || weatherType === 'blood' ? 120 : 80;
-            for(let i=0; i<numParticles; i++) {
+            particles = []; if(weatherType === 'none') return;
+            for(let i=0; i<80; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     speed: Math.random() * 2 + 1,
-                    radius: Math.random() * 3 + 1,
-                    angle: Math.random() * Math.PI,
-                    spinSpeed: Math.random() * 0.02 - 0.01
+                    radius: Math.random() * 2 + 1
                 });
             }
         }
 
         function drawWeather() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // เรนเดอร์ Mouse Trail (หางเมาส์ละอองไฟ)
-            if (isMouseTrailActive && mouseTrailPoints.length > 0) {
-                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ffc107';
-                ctx.fillStyle = accentColor;
-                for (let i = 0; i < mouseTrailPoints.length; i++) {
-                    const pt = mouseTrailPoints[i];
-                    ctx.save();
-                    ctx.globalAlpha = pt.alpha;
-                    ctx.beginPath();
-                    ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = accentColor;
-                    ctx.fill();
-                    ctx.restore();
-                    
-                    // ปรับค่าให้อนุภาคเมาส์ลดลงเรื่อย ๆ
-                    pt.alpha -= 0.04;
-                    pt.size = Math.max(0, pt.size - 0.1);
-                }
-                mouseTrailPoints = mouseTrailPoints.filter(p => p.alpha > 0);
-            }
-
-            // เรนเดอร์สภาพอากาศ / weather particles
-            if(weatherType !== 'none') {
-                particles.forEach(p => {
-                    ctx.beginPath();
-                    
-                    if (weatherType === 'snow') {
-                        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        p.y += p.speed * 0.8;
-                        p.x += Math.sin(p.angle) * 0.5;
-                        
-                    } else if (weatherType === 'rain') {
-                        ctx.strokeStyle = "rgba(174, 194, 224, 0.4)";
-                        ctx.lineWidth = 1.5;
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p.x + 1, p.y + 15);
-                        ctx.stroke();
-                        p.y += p.speed * 3.5;
-                        p.x += 0.5;
-
-                    } else if (weatherType === 'sakura') {
-                        // ปรับรูปร่างซากุระร่วงหล่น
-                        ctx.fillStyle = "rgba(255, 183, 197, 0.7)";
-                        ctx.save();
-                        ctx.translate(p.x, p.y);
-                        ctx.rotate(p.angle);
-                        ctx.ellipse(0, 0, p.radius * 2, p.radius, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.restore();
-                        p.y += p.speed * 0.9;
-                        p.x += Math.sin(p.angle) * 1.1;
-                        p.angle += p.spinSpeed;
-
-                    } else if (weatherType === 'blood') {
-                        // หยดเลือดร่วงหล่น ธีม Horror
-                        ctx.fillStyle = "rgba(180, 10, 10, 0.8)";
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.quadraticCurveTo(p.x - p.radius, p.y + p.radius * 2, p.x, p.y + p.radius * 3);
-                        ctx.quadraticCurveTo(p.x + p.radius, p.y + p.radius * 2, p.x, p.y);
-                        ctx.fill();
-                        p.y += p.speed * 2.8;
-                    }
-                    
-                    if(p.y > canvas.height) {
-                        p.y = -20;
-                        p.x = Math.random() * canvas.width;
-                    }
-                });
-            }
+            if(weatherType === 'none') return requestAnimationFrame(drawWeather);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.speed;
+                if(p.y > canvas.height) p.y = -10;
+            });
             requestAnimationFrame(drawWeather);
         }
-
         window.addEventListener('resize', initWeather);
         drawWeather();
     </script>
