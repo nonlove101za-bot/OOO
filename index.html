@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">GHETTOTROPHY</title>
+    <title id="pageTitle">DEATHNOTE</title>
     <link id="favicon" rel="icon" href="" type="image/x-icon">
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -128,7 +128,7 @@
     <header class="hero">
         <img src="" id="siteLogo">
         <h1 id="siteNameDisplay">LOADING...</h1>
-        <p id="siteDescDisplay" style="font-family:'Orbitron'; font-size:11px; opacity:0.6; letter-spacing:6px;">Not a perfect gang but try to be the best.</p>
+        <p id="siteDescDisplay" style="font-family:'Orbitron'; font-size:11px; opacity:0.6; letter-spacing:6px;">"We hold the pen that decides who stays and who goes.</p>
     </header>
 
     <div style="max-width:700px; margin:0 auto 60px; padding:0 20px;">
@@ -139,8 +139,8 @@
     <div id="memberSections"></div>
 
     <footer class="site-footer">
-        <span id="footerTextDisplay">Designed by GHETTOTROPHY</span> | Support by 
-        <a id="footerLinkLabel" href="#" target="_blank">GHETTO</a>
+        <span id="footerTextDisplay">Designed by Death Note</span> | Support by 
+        <a id="footerLinkLabel" href="#" target="_blank">Death Note</a>
     </footer>
 
     <div id="adminPanel" class="admin-panel">
@@ -274,7 +274,7 @@
 
         function triggerLocalUpdate(path) {
             if (listeners[path]) {
-                const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || getDefaultData(path);
+                const localData = JSON.parse(localStorage.getItem('DEATHNOTE_' + path)) || getDefaultData(path);
                 const snap = {
                     val: () => localData,
                     once: (evt, cb) => cb({ val: () => localData })
@@ -286,13 +286,13 @@
         function getDefaultData(path) {
             if (path === 'config') {
                 return {
-                    name: 'GHETTOTROPHY',
+                    name: 'DEATHNOTE',
                     favicon: '',
                     themeColor: '#ffc107',
                     logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150',
                     bgUrl: '',
                     weather: 'snow',
-                    footerText: 'Designed by GHETTOTROPHY',
+                    footerText: 'Designed by DEATHNOTE',
                     footerLink: '#'
                 };
             }
@@ -310,7 +310,7 @@
             }
             if (path === 'members') {
                 return {
-                    "m1": { name: "GHETTO PERSONNEL", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", roleId: "r1", fb: "https://facebook.com", yt: "", tk: "" }
+                    "m1": { name: "DEATHNOTE PERSONNEL", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", roleId: "r1", fb: "https://facebook.com", yt: "", tk: "" }
                 };
             }
             if (path === 'music') {
@@ -348,7 +348,7 @@
                     },
                     once: function(event, successCallback) {
                         if (useLocalFallback) {
-                            const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || getDefaultData(path);
+                            const localData = JSON.parse(localStorage.getItem('DEATHNOTE_' + path)) || getDefaultData(path);
                             successCallback({ val: () => localData });
                             return;
                         }
@@ -359,7 +359,7 @@
                     },
                     set: function(value) {
                         if (useLocalFallback) {
-                            localStorage.setItem('ghetto_' + path, JSON.stringify(value));
+                            localStorage.setItem(DEATHNOTE_' + path, JSON.stringify(value));
                             triggerLocalUpdate(path);
                             return Promise.resolve();
                         }
@@ -369,7 +369,7 @@
                     },
                     update: function(value) {
                         if (useLocalFallback) {
-                            const existing = JSON.parse(localStorage.getItem('ghetto_' + path)) || {};
+                            const existing = JSON.parse(localStorage.getItem('DEATHNOTE_' + path)) || {};
                             const updated = { ...existing, ...value };
                             localStorage.setItem('ghetto_' + path, JSON.stringify(updated));
                             triggerLocalUpdate(path);
@@ -700,14 +700,14 @@
 
         dbHelper.ref('config').on('value', snap => {
             const d = snap.val() || {};
-            document.title = d.name || 'GHETTOTROPHY';
-            document.getElementById('siteNameDisplay').innerText = d.name || 'GHETTOTROPHY';
+            document.title = d.name || 'DEATHNOTE';
+            document.getElementById('siteNameDisplay').innerText = d.name || 'DEATHNOTE';
             document.getElementById('favicon').href = d.favicon || '';
             document.getElementById('siteLogo').src = d.logo || '';
             if(d.bgUrl) document.body.style.backgroundImage = `url('${d.bgUrl}')`;
             if(d.themeColor) document.documentElement.style.setProperty('--accent', d.themeColor);
             weatherType = d.weather || 'none'; initWeather();
-            document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by GHETTOTROPHY';
+            document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by DEATHNOTE';
             document.getElementById('footerLinkLabel').href = d.footerLink || '#';
         });
 
