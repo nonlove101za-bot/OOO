@@ -306,7 +306,7 @@
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                             <span style="font-size:11px;">GLITCH MODE (CYBERPUNK)</span>
-                            <label class="switch"><input type="checkbox" id="configGlitch"><span class="slider"></span></label>
+                            <label class="switch"><input type="checkbox" id="configMouseTrail"><span class="slider"></span></label>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                             <span style="font-size:11px;">SCREEN FLASH ON LOAD</span>
@@ -476,12 +476,13 @@
             databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
+        let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
         } catch(e) {
             console.error("Firebase init error:", e);
         }
-        const db = firebase.database();
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let isPlaying = false, playlistTracks = [], currentTrackIndex = 0;
@@ -576,7 +577,8 @@
                             listeners[path].push(successCallback);
                         }
 
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             triggerLocalUpdate(path);
                             return;
                         }
@@ -595,7 +597,8 @@
                         });
                     },
                     once: function(event, successCallback) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || getDefaultData(path);
                             successCallback({ val: () => localData });
                             return;
@@ -606,7 +609,8 @@
                         });
                     },
                     set: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             localStorage.setItem('deathnote_' + path, JSON.stringify(value));
                             triggerLocalUpdate(path);
                             return Promise.resolve();
@@ -616,7 +620,8 @@
                         });
                     },
                     update: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             const existing = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const updated = { ...existing, ...value };
                             localStorage.setItem('deathnote_' + path, JSON.stringify(updated));
@@ -628,7 +633,8 @@
                         });
                     },
                     push: function(value) {
-                        if (useLocalFallback) {
+                        if (useLocalFallback || !db) {
+                            triggerFallbackMode();
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const newId = 'local_' + Math.random().toString(36).substr(2, 9);
                             if (value) {
@@ -651,7 +657,8 @@
                     child: function(childPath) {
                         return {
                             remove: function() {
-                                if (useLocalFallback) {
+                                if (useLocalFallback || !db) {
+                                    triggerFallbackMode();
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     delete localData[childPath];
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -661,7 +668,8 @@
                                 return db.ref(path).child(childPath).remove();
                             },
                             set: function(value) {
-                                if (useLocalFallback) {
+                                if (useLocalFallback || !db) {
+                                    triggerFallbackMode();
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     localData[childPath] = value;
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -682,7 +690,7 @@
         function sysLog(action) {
             const time = new Date().toLocaleString();
             const logItem = { time, action };
-            if (!useLocalFallback) {
+            if (db) {
                 db.ref('logs').push(logItem);
             } else {
                 const logs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
@@ -692,7 +700,7 @@
             }
         }
 
-        if (!useLocalFallback) {
+        if (db) {
             db.ref('logs').limitToLast(30).on('value', snap => {
                 renderLogsUI(snap.val());
             });
@@ -1536,6 +1544,30 @@
                 });
             }
             requestAnimationFrame(drawWeather);
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote (ปรับปรุงแบบด่วนเพื่อให้เข้างานได้เสถียรที่สุด)
+        // ----------------------------------------------------
+        function checkLoginParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'deathnote') {
+                openModal('loginModal');
+                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
+                try {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                } catch (e) {
+                    console.warn("ไม่สามารถล้าง URL Parameter:", e);
+                }
+            }
+        }
+
+        // เช็คสถานะการโหลดและทำงานทันทีเพื่อป้องกัน Race Condition
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', checkLoginParam);
+        } else {
+            checkLoginParam();
         }
 
         window.addEventListener('resize', initWeather);
