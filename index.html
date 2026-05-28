@@ -306,7 +306,6 @@
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                             <span style="font-size:11px;">GLITCH MODE (CYBERPUNK)</span>
-                            <!-- แก้ไขชื่อ ID ปุ่มเปิดปิดจาก configMouseTrail ซ้ำซ้อนให้เป็น configGlitch เรียบร้อย -->
                             <label class="switch"><input type="checkbox" id="configGlitch"><span class="slider"></span></label>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
@@ -477,14 +476,12 @@
             databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
-        // ตั้งค่าตัวแปรฐานข้อมูลแบบ Safe-guard ป้องกันตัวแปร null ปะทะระบบขัดข้อง
-        let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
         } catch(e) {
             console.error("Firebase init error:", e);
         }
+        const db = firebase.database();
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let isPlaying = false, playlistTracks = [], currentTrackIndex = 0;
@@ -579,8 +576,7 @@
                             listeners[path].push(successCallback);
                         }
 
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             triggerLocalUpdate(path);
                             return;
                         }
@@ -599,8 +595,7 @@
                         });
                     },
                     once: function(event, successCallback) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || getDefaultData(path);
                             successCallback({ val: () => localData });
                             return;
@@ -611,8 +606,7 @@
                         });
                     },
                     set: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             localStorage.setItem('deathnote_' + path, JSON.stringify(value));
                             triggerLocalUpdate(path);
                             return Promise.resolve();
@@ -622,8 +616,7 @@
                         });
                     },
                     update: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const existing = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const updated = { ...existing, ...value };
                             localStorage.setItem('deathnote_' + path, JSON.stringify(updated));
@@ -635,8 +628,7 @@
                         });
                     },
                     push: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const newId = 'local_' + Math.random().toString(36).substr(2, 9);
                             if (value) {
@@ -659,8 +651,7 @@
                     child: function(childPath) {
                         return {
                             remove: function() {
-                                if (useLocalFallback || !db) {
-                                    triggerFallbackMode();
+                                if (useLocalFallback) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     delete localData[childPath];
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -670,8 +661,7 @@
                                 return db.ref(path).child(childPath).remove();
                             },
                             set: function(value) {
-                                if (useLocalFallback || !db) {
-                                    triggerFallbackMode();
+                                if (useLocalFallback) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     localData[childPath] = value;
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -692,7 +682,7 @@
         function sysLog(action) {
             const time = new Date().toLocaleString();
             const logItem = { time, action };
-            if (db) {
+            if (!useLocalFallback) {
                 db.ref('logs').push(logItem);
             } else {
                 const logs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
@@ -702,7 +692,7 @@
             }
         }
 
-        if (db) {
+        if (!useLocalFallback) {
             db.ref('logs').limitToLast(30).on('value', snap => {
                 renderLogsUI(snap.val());
             });
@@ -817,11 +807,7 @@
                 document.getElementById('configCursor').value = d.cursor || "default";
                 document.getElementById('configWeather').value = d.weather || 'none';
                 document.getElementById('configMouseTrail').checked = d.mouseTrail || false;
-                
-                // ตรวจสอบและดักจับ Element แบบ Safe-guard ป้องกัน JS ค้าง
-                const glitchToggle = document.getElementById('configGlitch');
-                if (glitchToggle) glitchToggle.checked = d.glitch || false;
-                
+                document.getElementById('configGlitch').checked = d.glitch || false;
                 document.getElementById('configFlash').checked = d.flash || false;
                 document.getElementById('configAnim').checked = (d.animation !== false);
                 document.getElementById('configFooterText').value = d.footerText || '';
@@ -883,15 +869,12 @@
             document.getElementById('countNum').innerText = Object.keys(currentMembers).length;
             let adminList = '';
             
-            // ป้องกันข้อมูลใน DB เป็นค่าว่าง หรือ Null ปะทะการจัดเรียง
-            const sortedMemberKeys = Object.keys(currentMembers)
-                .filter(id => currentMembers[id] !== null && currentMembers[id] !== undefined)
-                .sort((a,b) => {
-                    const orderA = currentMembers[a].order || 0;
-                    const orderB = currentMembers[b].order || 0;
-                    if (orderA !== orderB) return orderA - orderB;
-                    return (currentMembers[a].name || "").localeCompare(currentMembers[b].name || "");
-                });
+            const sortedMemberKeys = Object.keys(currentMembers).sort((a,b) => {
+                const orderA = currentMembers[a].order || 0;
+                const orderB = currentMembers[b].order || 0;
+                if (orderA !== orderB) return orderA - orderB;
+                return currentMembers[a].name.localeCompare(currentMembers[b].name);
+            });
             
             sortedMemberKeys.forEach(id => {
                 adminList += `<div class="admin-item-row"><span>${currentMembers[id].name} <small style="color: #666;">(Order: ${currentMembers[id].order || 0})</small></span><div><i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('members').child('${id}').remove()"></i></div></div>`;
@@ -996,7 +979,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Member Filter, Sorting & Custom Effects Render (ปรับให้กันข้อผิดพลาดกรณีไม่มีชื่อ)
+        // SYSTEM: Member Filter, Sorting & Custom Effects Render
         // ----------------------------------------------------
         let animEnabled = true;
 
@@ -1008,7 +991,6 @@
             
             Object.keys(currentMembers).forEach(id => {
                 const m = currentMembers[id];
-                if (!m) return;
                 const role = currentRoles[m.roleId];
                 if(!role) return;
                 
@@ -1016,12 +998,10 @@
                 if(role.hidden && activeTab !== m.roleId) return;
 
                 const gId = role.groupId;
-                const gName = (currentGroups[gId] && currentGroups[gId].name) || "MEMBER DEATHNOTE 2K26";
-                const gOrder = (currentGroups[gId] && currentGroups[gId].order) || 0;
+                const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
+                const gOrder = currentGroups[gId]?.order || 0;
                 
-                // ค้นหาอย่างปลอดภัย
-                const memberName = m.name || "";
-                if(memberName.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
+                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
                     if(!structure[gId]) {
                         structure[gId] = { name: gName, order: gOrder, items: [] };
                     }
@@ -1035,15 +1015,14 @@
             })).sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedSections.forEach(group => {
-                // ดักจับและคัดกรองจัดเรียงอย่างปลอดภัยกรณีไม่มีชื่อ
                 group.items.sort((a, b) => {
                     const orderA = a.order || 0;
                     const orderB = b.order || 0;
                     if (orderA !== orderB) return orderA - orderB;
-                    return (a.name || "").localeCompare(b.name || "");
+                    return a.name.localeCompare(b.name);
                 });
 
-                const groupColor = (group.items[0] && group.items[0].role && group.items[0].role.color) || 'var(--accent)';
+                const groupColor = group.items[0]?.role?.color || 'var(--accent)';
                 
                 let html = `
                     <section class="category-section ${animEnabled ? 'scroll-reveal' : ''}">
@@ -1059,7 +1038,7 @@
                         <div class="member-card ${animEnabled ? 'animate-on' : ''}" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
                             <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
                             <div>
-                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name || "UNNAMED"}</div>
+                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
                                 <span class="rank-tag" style="background:${roleColor}">
                                     ${iconTag}${m.role.name}
                                 </span>
@@ -1093,7 +1072,7 @@
             
             sortedRoleKeys.forEach(id => {
                 const r = currentRoles[id];
-                if (!r || r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
+                if (r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
                 const active = activeTab === id;
                 html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${r.name}</button>`;
             });
@@ -1553,30 +1532,6 @@
                 });
             }
             requestAnimationFrame(drawWeather);
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote (ดักจับเพื่อรันล็อกอินแบบเรียลไทม์ 100%)
-        // ----------------------------------------------------
-        function checkLoginParam() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('login') === 'deathnote') {
-                openModal('loginModal');
-                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
-                try {
-                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-                } catch (e) {
-                    console.warn("ไม่สามารถล้าง URL Parameter:", e);
-                }
-            }
-        }
-
-        // ตรวจสอบทันทีตั้งแต่เบราว์เซอร์เริ่มรันสคริปต์ เพื่อป้องกันการหน่วงเวลากับเซิร์ฟเวอร์
-        if (document.readyState === 'loading') {
-            window.addEventListener('DOMContentLoaded', checkLoginParam);
-        } else {
-            checkLoginParam();
         }
 
         window.addEventListener('resize', initWeather);
