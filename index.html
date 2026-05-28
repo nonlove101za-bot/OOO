@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">GHETTOTROPHY</title>
+    <link id="favicon" rel="icon" href="" type="image/x-icon">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <style>
+        :root {
+            --accent: #ffc107;
+            --bg: #0a0a0a;
+            --card-bg: rgba(20, 20, 22, 0.95);
+            --admin-card: #1c1e22;
+            --input-bg: #111214;
+            --border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --danger: #ff4757;
+            --success: #2ed573;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background-color: var(--bg); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.6; transition: background 0.5s ease; opacity: 0; animation: fadeInPage 1.2s ease forwards; }
+        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+        
+        #weather-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        
+        .top-nav { position: fixed; top: 0; width: 100%; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; background: rgba(10,10,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .config-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Orbitron'; cursor: pointer; transition: var(--transition); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .config-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); }
+        
+        .hero { padding: 140px 20px 60px; text-align: center; animation: slideIn 1s cubic-bezier(0.22, 1, 0.36, 1); }
+        #siteLogo { max-width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 25px var(--accent)); }
+        .hero h1 { font-family: 'Orbitron'; font-size: clamp(28px, 6vw, 52px); letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        
+        .category-section { max-width: 1440px; margin: 40px auto; padding: 0 8%; }
+        .category-header { font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: var(--accent); margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 15px; text-transform: uppercase; }
+        
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-bottom: 40px; z-index: 100; position: relative; }
+        .member-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 18px; transition: var(--transition); backdrop-filter: blur(10px); animation: slideIn 0.5s ease backwards; }
+        .member-card:hover { border-color: var(--accent); transform: translateY(-5px); background: rgba(25, 25, 28, 0.98); }
+        
+        .avatar { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(255,255,255,0.05); }
+        .rank-tag { font-family: 'Orbitron'; font-size: 9px; font-weight: 800; padding: 4px 12px; border-radius: 5px; color: #000; letter-spacing: 1px; margin-top: 6px; display: inline-block; }
+        
+        .social-links { margin-left: auto; display: flex; gap: 12px; font-size: 20px; }
+        .social-links a { transition: var(--transition); }
+        .social-links a:hover { transform: scale(1.2); }
+        
+        .site-footer { padding: 40px 20px; text-align: center; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; opacity: 0.5; transition: var(--transition); }
+        .site-footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
+        
+        /* Admin UI */
+        .admin-panel { display: none; position: fixed; inset: 0; background: #0c0d0f; z-index: 9999; overflow-y: auto; padding: 40px 20px; }
+        .admin-container { max-width: 1200px; margin: 0 auto; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #222; }
+        .admin-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .admin-card { background: var(--admin-card); padding: 28px; border-radius: 20px; border: 1px solid var(--border); }
+        
+        .col-4 { grid-column: span 4; }
+        .col-8 { grid-column: span 8; }
+        .col-12 { grid-column: span 12; }
+        
+        label { display: block; font-family: 'Orbitron'; font-size: 10px; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; }
+        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d2f34; color: #fff; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
+        input:focus { border-color: var(--accent); outline: none; }
+        
+        .btn-save { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-weight: 700; transition: var(--transition); background: var(--accent); color: #000; }
+        .admin-item-row { background: #111214; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .delete-btn { color: var(--danger); cursor: pointer; padding: 8px; }
+        
+        /* Notification */
+        #notification-container { position: fixed; bottom: 30px; left: 30px; z-index: 10000; }
+        .notify { background: var(--accent); color: #000; border-radius: 8px; padding: 14px 24px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 12px; margin-top: 10px; animation: slideIn 0.3s ease; }
+        
+        /* Music Control Button */
+        .music-ctrl { position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 50px; height: 50px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: var(--transition); }
+        .music-ctrl:hover { transform: scale(1.1); }
+
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-bottom: 15px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        @media (max-width: 992px) { .col-4, .col-8 { grid-column: span 12; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="weather-canvas"></canvas>
+    <div id="notification-container"></div>
+    
+    <div class="music-ctrl" onclick="toggleMusic()">
+        <i id="musicIcon" class="fa-solid fa-play"></i>
+    </div>
+
+    <div id="yt-player-container" style="display:none;"><div id="player"></div></div>
+
+    <div id="loginModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
+        <div class="admin-card" style="width:100%; max-width:400px;">
+            <h2 style="font-family:'Orbitron'; text-align:center; color:var(--accent); margin-bottom:30px;">ADMIN LOGIN</h2>
+            <label>USERNAME</label><input type="text" id="loginUser">
+            <label>PASSWORD</label><input type="password" id="loginPass">
+            <button class="btn-save" onclick="attemptLogin()">ENTER COMMAND</button>
+            <button style="width:100%; background:none; border:none; color:#555; margin-top:15px; cursor:pointer;" onclick="closeModal('loginModal')">CANCEL</button>
+        </div>
+    </div>
+
+    <nav class="top-nav">
+        <div style="font-family:'Orbitron'; font-size:11px; letter-spacing:2px;">
+            <i class="fa-solid fa-users" style="color:var(--accent)"></i> MEMBER: <span id="countNum">0</span>
+        </div>
+        <button class="config-btn" onclick="openModal('loginModal')"><i class="fa-solid fa-lock"></i> ADMIN</button>
+    </nav>
+
+    <header class="hero">
+        <img src="" id="siteLogo">
+        <h1 id="siteNameDisplay">LOADING...</h1>
+        <p id="siteDescDisplay" style="font-family:'Orbitron'; font-size:11px; opacity:0.6; letter-spacing:6px;">Not a perfect gang but try to be the best.</p>
+    </header>
+
+    <div style="max-width:700px; margin:0 auto 60px; padding:0 20px;">
+        <input type="text" id="memberSearch" placeholder="SEARCH BY NAME..." oninput="filterMembers()" style="border-radius:50px; padding-left:30px; background:rgba(255,255,255,0.03);">
+        <div id="categoryTabs" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:20px;"></div>
+    </div>
+
+    <div id="memberSections"></div>
+
+    <footer class="site-footer">
+        <span id="footerTextDisplay">Designed by GHETTOTROPHY</span> | Support by 
+        <a id="footerLinkLabel" href="#" target="_blank">GHETTO</a>
+    </footer>
+
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-container">
+            <header class="admin-header">
+                <div>
+                    <h2 style="font-family:'Orbitron'; color:var(--accent); font-size:24px;">CENTRAL COMMAND</h2>
+                    <p style="font-size:12px; color:#555;">Real-time Database & Site Management</p>
+                </div>
+                <button class="config-btn" style="background:var(--danger); color:#fff;" onclick="closeAdminPanel()">CLOSE</button>
+            </header>
+
+            <div class="admin-grid">
+                <div class="admin-card col-4">
+                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">SETTING - WEBSITE</div>
+                    <label>SITE NAME</label><input type="text" id="configSiteName">
+                    <label>FAVICON URL</label><input type="text" id="configFavicon">
+                    <label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;">
+                    <label>LOGO URL</label><input type="text" id="configLogoUrl">
+                    <label>WALLPAPER URL</label><input type="text" id="configBgUrl">
+                    <label>ATMOSPHERE EFFECT</label>
+                    <select id="configWeather">
+                        <option value="none">CLEAR</option>
+                        <option value="snow">SNOWFLAKES</option>
+                        <option value="rain">RAIN SHOWER</option>
+                    </select>
+                    <label>FOOTER TEXT</label><input type="text" id="configFooterText">
+                    <label>FOOTER LINK</label><input type="text" id="configFooterLink">
+                    <button class="btn-save" onclick="saveConfig()">SYNC DATABASE</button>
+                </div>
+
+                <div class="col-8" style="display:flex; flex-direction:column; gap:24px;">
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ROLE GROUPS</div>
+                        <div style="display:flex; gap:15px;">
+                            <input type="text" id="newGroupName" placeholder="NEW GROUP (e.g. HIGH COMMAND)" style="margin-bottom:0;">
+                            <button class="config-btn" onclick="addGroup()">ADD</button>
+                        </div>
+                        <div id="groupListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">RANK & ROLES</div>
+                        <div style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:10px;">
+                            <input type="text" id="newRoleName" placeholder="ROLE NAME" style="margin-bottom:0;">
+                            <select id="roleGroupSelect" style="margin-bottom:0;"></select>
+                            <input type="color" id="newRoleColor" value="#ffc107" style="height:46px; margin-bottom:0;">
+                            <button class="config-btn" onclick="addRole()">ADD</button>
+                        </div>
+                        <div id="roleListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">AUDIO MUSIC</div>
+                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                            <label class="switch"><input type="checkbox" id="musicAutoToggle"><span class="slider"></span></label>
+                            <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 2fr 1fr auto; gap:15px;">
+                            <input type="text" id="musicVidId" placeholder="YOUTUBE VIDEO ID" style="margin-bottom:0;">
+                            <input type="number" id="musicStart" placeholder="START (SEC)" style="margin-bottom:0;">
+                            <button class="btn-save" onclick="saveMusic()">UPDATE AUDIO</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card col-12">
+                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">ADMIN SETTING - ต้องเลือก Role และใส่ Link Facebook</div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+                        <div><label>FULL NAME</label><input type="text" id="memName"></div>
+                        <div><label>AVATAR URL</label><input type="text" id="memImg"></div>
+                        <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
+                        <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
+                        <div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
+                        <div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
+                    </div>
+                    <input type="hidden" id="editMemId">
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button id="memBtn" class="btn-save" style="flex:3;" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
+                        <button class="btn-save" style="flex:1; background:#333; color:#fff;" onclick="clearMemForm()">CLEAR FORM</button>
+                    </div>
+                    <div id="adminMemberList" style="margin-top:30px; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+     
+
+        function attemptLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            if(u === 'ghett' && p === 'ghett9871') {
+                closeModal('loginModal'); 
+                document.getElementById('adminPanel').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                loadConfigToInputs();
+            } else showNotify("ACCESS DENIED: WRONG CREDENTIALS");
+        }
+
+        function showNotify(msg) {
+            const container = document.getElementById('notification-container');
+            const el = document.createElement('div');
+            el.className = 'notify';
+            el.innerHTML = `<i class="fa-solid fa-bell"></i> ${msg}`;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 3000);
+        }
+
+        function loadConfigToInputs() {
+            db.ref('config').once('value', snap => {
+                const d = snap.val() || {};
+                document.getElementById('configSiteName').value = d.name || '';
+                document.getElementById('configFavicon').value = d.favicon || '';
+                document.getElementById('configThemeColor').value = d.themeColor || '#ffc107';
+                document.getElementById('configLogoUrl').value = d.logo || '';
+                document.getElementById('configBgUrl').value = d.bgUrl || '';
+                document.getElementById('configWeather').value = d.weather || 'none';
+                document.getElementById('configFooterText').value = d.footerText || '';
+                document.getElementById('configFooterLink').value = d.footerLink || '';
+            });
+            db.ref('music').once('value', snap => {
+                const m = snap.val() || {};
+                document.getElementById('musicVidId').value = m.id || '';
+                document.getElementById('musicStart').value = m.start || 0;
+                document.getElementById('musicAutoToggle').checked = m.auto || false;
+            });
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeAdminPanel() { 
+            document.getElementById('adminPanel').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
+
+        db.ref('roleGroups').on('value', snap => {
+            currentGroups = snap.val() || {};
+            let list = '', opt = '<option value="">SELECT GROUP</option>';
+            Object.keys(currentGroups).forEach(id => {
+                list += `<div class="admin-item-row"><span>${currentGroups[id].name}</span><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('roleGroups').child('${id}').remove()"></i></div>`;
+                opt += `<option value="${id}">${currentGroups[id].name}</option>`;
+            });
+            document.getElementById('groupListContainer').innerHTML = list;
+            document.getElementById('roleGroupSelect').innerHTML = opt;
+            filterMembers();
+        });
+
+        db.ref('roles').on('value', snap => {
+            currentRoles = snap.val() || {};
+            let opt = '<option value="">SELECT ROLE</option>', list = '';
+            Object.keys(currentRoles).forEach(id => {
+                const gName = currentGroups[currentRoles[id].groupId]?.name || 'UNKNOWN';
+                opt += `<option value="${id}">${currentRoles[id].name}</option>`;
+                list += `<div class="admin-item-row"><div><b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b><br><small>${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('roles').child('${id}').remove()"></i></div>`;
+            });
+            document.getElementById('memRole').innerHTML = opt;
+            document.getElementById('roleListContainer').innerHTML = list;
+            renderTabs(); filterMembers();
+        });
+
+        db.ref('members').on('value', snap => {
+            currentMembers = snap.val() || {};
+            document.getElementById('countNum').innerText = Object.keys(currentMembers).length;
+            let adminList = '';
+            Object.keys(currentMembers).forEach(id => {
+                adminList += `<div class="admin-item-row"><span>${currentMembers[id].name}</span><div><i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('members').child('${id}').remove()"></i></div></div>`;
+            });
+            document.getElementById('adminMemberList').innerHTML = adminList;
+            filterMembers();
+        });
+
+        function addGroup() {
+            const name = document.getElementById('newGroupName').value.toUpperCase();
+            if(name) db.ref('roleGroups').push({ name }).then(() => {
+                document.getElementById('newGroupName').value = ''; showNotify("GROUP ADDED");
+            });
+        }
+
+        function addRole() {
+            const name = document.getElementById('newRoleName').value.toUpperCase();
+            const gId = document.getElementById('roleGroupSelect').value;
+            const color = document.getElementById('newRoleColor').value;
+            if(name && gId) db.ref('roles').push({ name, groupId: gId, color }).then(() => {
+                document.getElementById('newRoleName').value = ''; showNotify("ROLE CREATED");
+            });
+        }
+
+        function saveMember() {
+            const id = document.getElementById('editMemId').value;
+            const data = {
+                name: document.getElementById('memName').value,
+                img: document.getElementById('memImg').value,
+                roleId: document.getElementById('memRole').value,
+                fb: document.getElementById('memFb').value || "",
+                yt: document.getElementById('memYt').value || "",
+                tk: document.getElementById('memTk').value || ""
+            };
+
+            // Requirement: Name, Role, and Facebook Link must be provided
+            if(!data.name || !data.roleId) return showNotify("ERROR: NAME & ROLE REQUIRED");
+            if(!data.fb) return showNotify("ERROR: FACEBOOK LINK IS REQUIRED TO ADD MEMBER");
+
+            const ref = id ? db.ref('members').child(id) : db.ref('members').push();
+            ref.set(data).then(() => { 
+                showNotify("PERSONNEL DATABASE UPDATED"); 
+                clearMemForm(); 
+            });
+        }
+
+        function editMember(id) {
+            const m = currentMembers[id];
+            document.getElementById('editMemId').value = id;
+            document.getElementById('memName').value = m.name;
+            document.getElementById('memImg').value = m.img;
+            document.getElementById('memRole').value = m.roleId;
+            document.getElementById('memFb').value = m.fb;
+            document.getElementById('memYt').value = m.yt;
+            document.getElementById('memTk').value = m.tk;
+            document.getElementById('memBtn').innerText = "UPDATE PERSONNEL INFO";
+            document.getElementById('memBtn').style.background = "var(--success)";
+        }
+
+        function clearMemForm() {
+            document.getElementById('editMemId').value = '';
+            document.getElementById('memName').value = '';
+            document.getElementById('memImg').value = '';
+            document.getElementById('memFb').value = '';
+            document.getElementById('memYt').value = '';
+            document.getElementById('memTk').value = '';
+            document.getElementById('memBtn').innerText = "DEPLOY TO DIRECTORY";
+            document.getElementById('memBtn').style.background = "var(--accent)";
+        }
+
+        function filterMembers() {
+            const term = document.getElementById('memberSearch').value.toLowerCase();
+            const wrapper = document.getElementById('memberSections');
+            wrapper.innerHTML = '';
+            const structure = {};
+            Object.keys(currentMembers).forEach(id => {
+                const m = currentMembers[id];
+                const role = currentRoles[m.roleId];
+                if(!role) return;
+                const gId = role.groupId;
+                const gName = currentGroups[gId]?.name || "MEMBER GHETT 2K26";
+                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
+                    if(!structure[gId]) structure[gId] = { name: gName, items: [] };
+                    structure[gId].items.push({...m, role});
+                }
+            });
+            Object.keys(structure).forEach(gId => {
+                const group = structure[gId];
+                let html = `<section class="category-section"><div class="category-header">${group.name}</div><div class="member-grid">`;
+                group.items.forEach((m, i) => {
+                    html += `
+                        <div class="member-card" style="animation-delay:${i*0.05}s">
+                            <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
+                            <div>
+                                <div style="font-weight:600; font-size:15px;">${m.name}</div>
+                                <span class="rank-tag" style="background:${m.role.color}">${m.role.name}</span>
+                            </div>
+                            <div class="social-links">
+                                ${m.fb ? `<a href="${m.fb}" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>` : ''}
+                                ${m.yt ? `<a href="${m.yt}" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>` : ''}
+                                ${m.tk ? `<a href="${m.tk}" target="_blank" style="color:#fff;"><i class="fa-brands fa-tiktok"></i></a>` : ''}
+                            </div>
+                        </div>`;
+                });
+                html += `</div></section>`;
+                wrapper.innerHTML += html;
+            });
+            if(!Object.keys(structure).length) wrapper.innerHTML = '<p style="text-align:center; opacity:0.2; padding:100px; font-family:\'Orbitron\'">NO RECORDS FOUND</p>';
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('categoryTabs');
+            let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#222'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
+            Object.keys(currentRoles).forEach(id => {
+                const active = activeTab === id;
+                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function setActiveTab(id) { activeTab = id; renderTabs(); filterMembers(); }
+
+        function toggleMusic() {
+            if(!player) return;
+            const icon = document.getElementById('musicIcon');
+            if(isPlaying) {
+                player.pauseVideo();
+                icon.className = 'fa-solid fa-play';
+                isPlaying = false;
+            } else {
+                player.playVideo();
+                icon.className = 'fa-solid fa-pause';
+                isPlaying = true;
+            }
+        }
+
+        function onYouTubeIframeAPIReady() {
+            db.ref('music').once('value', snap => {
+                const m = snap.val() || {};
+                if(!m.id) return;
+                player = new YT.Player('player', {
+                    height: '0', width: '0', videoId: m.id,
+                    playerVars: { 'autoplay': m.auto ? 1 : 0, 'start': m.start || 0, 'loop': 1, 'playlist': m.id },
+                    events: { 
+                        'onReady': (e) => { 
+                            if(m.auto) { e.target.playVideo(); isPlaying = true; document.getElementById('musicIcon').className = 'fa-solid fa-pause'; }
+                        },
+                        'onStateChange': (e) => {
+                            if(e.data === YT.PlayerState.PLAYING) { isPlaying = true; document.getElementById('musicIcon').className = 'fa-solid fa-pause'; }
+                            else { isPlaying = false; document.getElementById('musicIcon').className = 'fa-solid fa-play'; }
+                        }
+                    }
+                });
+            });
+        }
+
+        db.ref('config').on('value', snap => {
+            const d = snap.val() || {};
+            document.title = d.name || 'GHETTOTROPHY';
+            document.getElementById('siteNameDisplay').innerText = d.name || 'GHETTOTROPHY';
+            document.getElementById('favicon').href = d.favicon || '';
+            document.getElementById('siteLogo').src = d.logo || '';
+            if(d.bgUrl) document.body.style.backgroundImage = `url('${d.bgUrl}')`;
+            if(d.themeColor) document.documentElement.style.setProperty('--accent', d.themeColor);
+            weatherType = d.weather || 'none'; initWeather();
+            document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by GHETTOTROPHY';
+            document.getElementById('footerLinkLabel').href = d.footerLink || '#';
+        });
+
+        function saveConfig() {
+            db.ref('config').update({
+                name: document.getElementById('configSiteName').value,
+                favicon: document.getElementById('configFavicon').value,
+                themeColor: document.getElementById('configThemeColor').value,
+                logo: document.getElementById('configLogoUrl').value,
+                bgUrl: document.getElementById('configBgUrl').value,
+                weather: document.getElementById('configWeather').value,
+                footerText: document.getElementById('configFooterText').value,
+                footerLink: document.getElementById('configFooterLink').value
+            }).then(() => showNotify("CONFIGURATION SYNCHRONIZED"));
+        }
+
+        function saveMusic() {
+            db.ref('music').set({
+                id: document.getElementById('musicVidId').value,
+                start: document.getElementById('musicStart').value,
+                auto: document.getElementById('musicAutoToggle').checked
+            }).then(() => showNotify("AUDIO ENGINE UPDATED"));
+        }
+
+        const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
+        let particles = [];
+        function initWeather() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = []; if(weatherType === 'none') return;
+            for(let i=0; i<80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    speed: Math.random() * 2 + 1,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+        }
+
+        function drawWeather() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(weatherType === 'none') return requestAnimationFrame(drawWeather);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.speed;
+                if(p.y > canvas.height) p.y = -10;
+            });
+            requestAnimationFrame(drawWeather);
+        }
+        window.addEventListener('resize', initWeather);
+        drawWeather();
+    </script>
+</body>
+</html>
