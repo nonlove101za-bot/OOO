@@ -28,20 +28,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        body { 
-            background-color: var(--bg); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            background-attachment: fixed; 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden; 
-            line-height: 1.6; 
-            transition: background 0.5s ease; 
-            opacity: 0; 
-            animation: fadeInPage 1.2s ease forwards; 
-        }
+        body { background-color: var(--bg); background-size: cover; background-position: center; background-attachment: fixed; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.6; transition: background 0.5s ease; opacity: 0; animation: fadeInPage 1.2s ease forwards; }
         @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
         
         #weather-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
@@ -135,8 +122,8 @@
         .glitch-active { animation: glitch 0.3s linear infinite; filter: hue-rotate(90deg); }
         @keyframes glitch { 0% { transform: translate(0) } 20% { transform: translate(-3px, 3px) } 40% { transform: translate(-3px, -3px) } 60% { transform: translate(3px, 3px) } 80% { transform: translate(3px, -3px) } 100% { transform: translate(0) } }
 
-        /* Video Background (ปรับให้โปร่งใสเพื่อป้องกันการบดบังวอลเปเปอร์หลัก) */
-        #video-bg-container { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; background: transparent; display: none; }
+        /* Video Background */
+        #video-bg-container { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; background: #000; }
         #video-bg-container iframe, #video-bg-container video { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; transform: translate(-50%, -50%); opacity: 0.4; }
 
         /* Cursors */
@@ -306,7 +293,7 @@
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                             <span style="font-size:11px;">GLITCH MODE (CYBERPUNK)</span>
-                            <label class="switch"><input type="checkbox" id="configMouseTrail"><span class="slider"></span></label>
+                            <label class="switch"><input type="checkbox" id="configGlitch"><span class="slider"></span></label>
                         </div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
                             <span style="font-size:11px;">SCREEN FLASH ON LOAD</span>
@@ -476,20 +463,19 @@
             databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
-        let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
         } catch(e) {
             console.error("Firebase init error:", e);
         }
+        const db = firebase.database();
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let isPlaying = false, playlistTracks = [], currentTrackIndex = 0;
         let sessionTimer = null, lastUserActivityTime = Date.now(), isAutoNextActive = true;
 
         // ----------------------------------------------------
-        // SYSTEM: ระบบป้องกันการค้างหน้าโหลด (LocalStorage Fallback)
+        // SYSTEM: LocalStorage Fallback System
         // ----------------------------------------------------
         let useLocalFallback = false;
         const listeners = {};
@@ -525,49 +511,6 @@
             }
         }
 
-        function getDefaultData(path) {
-            if (path === 'config') {
-                return {
-                    name: 'DEATHNOTE',
-                    favicon: '',
-                    themeColor: '#ffc107',
-                    logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150',
-                    bgUrl: '',
-                    videoBg: '',
-                    weather: 'none',
-                    font: "'Inter', sans-serif",
-                    cursor: 'default',
-                    mouseTrail: false,
-                    glitch: false,
-                    flash: false,
-                    animation: true,
-                    footerText: 'Designed by DEATHNOTE',
-                    footerLink: '#'
-                };
-            }
-            if (path === 'roleGroups') {
-                return {
-                    "g1": { name: "HIGH COMMAND", order: 1 },
-                    "g2": { name: "MEMBERS", order: 2 }
-                };
-            }
-            if (path === 'roles') {
-                return {
-                    "r1": { name: "FOUNDER", groupId: "g1", color: "#ff4757", order: 1 },
-                    "r2": { name: "MEMBER", groupId: "g2", color: "#ffc107", order: 2 }
-                };
-            }
-            if (path === 'members') {
-                return {
-                    "m1": { name: "DEATHNOTE PERSONNEL", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", roleId: "r1", fb: "https://facebook.com", yt: "", tk: "", order: 1 }
-                };
-            }
-            if (path === 'music') {
-                return { id: "JXg_Qe48cbU", start: 0, auto: true };
-            }
-            return {};
-        }
-
         const dbHelper = {
             ref: function(path) {
                 return {
@@ -577,8 +520,7 @@
                             listeners[path].push(successCallback);
                         }
 
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             triggerLocalUpdate(path);
                             return;
                         }
@@ -597,8 +539,7 @@
                         });
                     },
                     once: function(event, successCallback) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || getDefaultData(path);
                             successCallback({ val: () => localData });
                             return;
@@ -609,8 +550,7 @@
                         });
                     },
                     set: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             localStorage.setItem('deathnote_' + path, JSON.stringify(value));
                             triggerLocalUpdate(path);
                             return Promise.resolve();
@@ -620,8 +560,7 @@
                         });
                     },
                     update: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const existing = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const updated = { ...existing, ...value };
                             localStorage.setItem('deathnote_' + path, JSON.stringify(updated));
@@ -633,8 +572,7 @@
                         });
                     },
                     push: function(value) {
-                        if (useLocalFallback || !db) {
-                            triggerFallbackMode();
+                        if (useLocalFallback) {
                             const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                             const newId = 'local_' + Math.random().toString(36).substr(2, 9);
                             if (value) {
@@ -657,8 +595,7 @@
                     child: function(childPath) {
                         return {
                             remove: function() {
-                                if (useLocalFallback || !db) {
-                                    triggerFallbackMode();
+                                if (useLocalFallback) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     delete localData[childPath];
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -668,8 +605,7 @@
                                 return db.ref(path).child(childPath).remove();
                             },
                             set: function(value) {
-                                if (useLocalFallback || !db) {
-                                    triggerFallbackMode();
+                                if (useLocalFallback) {
                                     const localData = JSON.parse(localStorage.getItem('deathnote_' + path)) || {};
                                     localData[childPath] = value;
                                     localStorage.setItem('deathnote_' + path, JSON.stringify(localData));
@@ -690,7 +626,7 @@
         function sysLog(action) {
             const time = new Date().toLocaleString();
             const logItem = { time, action };
-            if (db) {
+            if (!useLocalFallback) {
                 db.ref('logs').push(logItem);
             } else {
                 const logs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
@@ -700,7 +636,7 @@
             }
         }
 
-        if (db) {
+        if (!useLocalFallback) {
             db.ref('logs').limitToLast(30).on('value', snap => {
                 renderLogsUI(snap.val());
             });
@@ -716,6 +652,23 @@
             });
             container.innerHTML = list || 'NO ACTION RECORDED YET';
         }
+
+        // ----------------------------------------------------
+        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote
+        // ----------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'deathnote') {
+                openModal('loginModal');
+                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
+                try {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                } catch (e) {
+                    console.warn("ไม่สามารถล้าง URL Parameter:", e);
+                }
+            }
+        });
 
         // ----------------------------------------------------
         // FUNCTIONS: ระบบ Admin & Security (2FA, Session Timeout)
@@ -881,7 +834,7 @@
                 const orderA = currentMembers[a].order || 0;
                 const orderB = currentMembers[b].order || 0;
                 if (orderA !== orderB) return orderA - orderB;
-                return (currentMembers[a].name || "").localeCompare(currentMembers[b].name || "");
+                return currentMembers[a].name.localeCompare(currentMembers[b].name);
             });
             
             sortedMemberKeys.forEach(id => {
@@ -987,7 +940,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Member Filter, Sorting & Custom Effects Render (ปรับให้กันข้อผิดพลาดกรณีไม่มีชื่อ)
+        // SYSTEM: Member Filter, Sorting & Custom Effects Render
         // ----------------------------------------------------
         let animEnabled = true;
 
@@ -999,7 +952,6 @@
             
             Object.keys(currentMembers).forEach(id => {
                 const m = currentMembers[id];
-                if (!m) return;
                 const role = currentRoles[m.roleId];
                 if(!role) return;
                 
@@ -1007,12 +959,10 @@
                 if(role.hidden && activeTab !== m.roleId) return;
 
                 const gId = role.groupId;
-                const gName = (currentGroups[gId] && currentGroups[gId].name) || "MEMBER DEATHNOTE 2K26";
-                const gOrder = (currentGroups[gId] && currentGroups[gId].order) || 0;
+                const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
+                const gOrder = currentGroups[gId]?.order || 0;
                 
-                // ค้นหาอย่างปลอดภัย
-                const memberName = m.name || "";
-                if(memberName.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
+                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
                     if(!structure[gId]) {
                         structure[gId] = { name: gName, order: gOrder, items: [] };
                     }
@@ -1026,15 +976,14 @@
             })).sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedSections.forEach(group => {
-                // ดักจับและคัดกรองจัดเรียงอย่างปลอดภัยกรณีไม่มีชื่อ
                 group.items.sort((a, b) => {
                     const orderA = a.order || 0;
                     const orderB = b.order || 0;
                     if (orderA !== orderB) return orderA - orderB;
-                    return (a.name || "").localeCompare(b.name || "");
+                    return a.name.localeCompare(b.name);
                 });
 
-                const groupColor = (group.items[0] && group.items[0].role && group.items[0].role.color) || 'var(--accent)';
+                const groupColor = group.items[0]?.role?.color || 'var(--accent)';
                 
                 let html = `
                     <section class="category-section ${animEnabled ? 'scroll-reveal' : ''}">
@@ -1050,7 +999,7 @@
                         <div class="member-card ${animEnabled ? 'animate-on' : ''}" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
                             <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
                             <div>
-                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name || "UNNAMED"}</div>
+                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
                                 <span class="rank-tag" style="background:${roleColor}">
                                     ${iconTag}${m.role.name}
                                 </span>
@@ -1084,7 +1033,7 @@
             
             sortedRoleKeys.forEach(id => {
                 const r = currentRoles[id];
-                if (!r || r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
+                if (r.hidden) return; // ซ่อนแท็บยศหน้าแรกหากเปิดสิทธิ์ซ่อน
                 const active = activeTab === id;
                 html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${r.name}</button>`;
             });
@@ -1270,15 +1219,10 @@
         function renderVideoBackground(idOrLink) {
             const container = document.getElementById('video-bg-container');
             if(!container) return;
-            
-            // หากไม่ได้กรอกไอดีวิดีโอ ให้ปิดหน้าจอนี้ไปเลยเพื่อให้มั่นใจว่าไม่บังรูปภาพวอลเปเปอร์หลัก
-            if(!idOrLink || idOrLink === 'none' || idOrLink === '') {
+            if(!idOrLink) {
                 container.innerHTML = '';
-                container.style.display = 'none';
                 return;
             }
-            
-            container.style.display = 'block';
             if(idOrLink.includes('mp4') || idOrLink.includes('.webm')) {
                 container.innerHTML = `<video autoplay muted loop playsinline src="${idOrLink}"></video>`;
             } else {
@@ -1339,6 +1283,9 @@
             document.getElementById('footerLinkLabel').href = d.footerLink || '#';
         });
 
+        // ----------------------------------------------------
+        // DATABASE UPDATE / SAVE FUNCTIONS
+        // ----------------------------------------------------
         function saveConfig() {
             dbHelper.ref('config').update({
                 name: document.getElementById('configSiteName').value,
@@ -1544,30 +1491,6 @@
                 });
             }
             requestAnimationFrame(drawWeather);
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote (ปรับปรุงแบบด่วนเพื่อให้เข้างานได้เสถียรที่สุด)
-        // ----------------------------------------------------
-        function checkLoginParam() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('login') === 'deathnote') {
-                openModal('loginModal');
-                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
-                try {
-                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-                } catch (e) {
-                    console.warn("ไม่สามารถล้าง URL Parameter:", e);
-                }
-            }
-        }
-
-        // เช็คสถานะการโหลดและทำงานทันทีเพื่อป้องกัน Race Condition
-        if (document.readyState === 'loading') {
-            window.addEventListener('DOMContentLoaded', checkLoginParam);
-        } else {
-            checkLoginParam();
         }
 
         window.addEventListener('resize', initWeather);
