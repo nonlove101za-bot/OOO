@@ -51,8 +51,8 @@
             align-items: center; 
             z-index: 1000; 
             background: rgba(10, 10, 10, 0.4); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(4px); 
+            -webkit-backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.08); 
             border-radius: 50px; 
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
@@ -87,7 +87,7 @@
         .category-header { font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: var(--accent); margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 15px; text-transform: uppercase; transition: var(--transition); }
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-bottom: 40px; z-index: 100; position: relative; }
         
-        /* Card & Effects */
+        /* Card & Effects - Optimized Blur for Performance */
         .member-card { 
             background: var(--card-bg); 
             border: 1px solid var(--border); 
@@ -97,8 +97,8 @@
             align-items: center; 
             gap: 18px; 
             transition: var(--transition); 
-            backdrop-filter: blur(12px) saturate(160%); 
-            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            backdrop-filter: blur(4px) saturate(120%); 
+            -webkit-backdrop-filter: blur(4px) saturate(120%);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             position: relative;
             overflow: hidden; 
@@ -122,19 +122,21 @@
             }
         }
 
+        /* Throttled Lightweight Hover Particles */
         .hover-particle {
             position: absolute;
             background: var(--role-color, var(--accent));
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.7;
             z-index: 5;
-            animation: driftUpFade 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-            box-shadow: 0 0 8px var(--role-color, var(--accent));
+            animation: driftUpFade 1.0s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            box-shadow: 0 0 6px var(--role-color, var(--accent));
+            will-change: transform, opacity;
         }
         @keyframes driftUpFade {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-            100% { transform: translate(var(--drift-x), var(--drift-y)) scale(0); opacity: 0; }
+            0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.7; }
+            100% { transform: translate3d(var(--drift-x), var(--drift-y), 0) scale(0); opacity: 0; }
         }
         
         .avatar { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(255,255,255,0.05); z-index: 10; }
@@ -147,15 +149,76 @@
         .site-footer { padding: 40px 20px; text-align: center; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; opacity: 0.5; transition: var(--transition); }
         .site-footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
         
-        /* Skeletons Styling */
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .skeleton-card { pointer-events: none; background: rgba(255, 255, 255, 0.02) !important; border-color: rgba(255, 255, 255, 0.03) !important; }
-        .skeleton-avatar { width: 70px; height: 70px; border-radius: 12px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        .skeleton-text { height: 16px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 10px; }
-        .skeleton-text.short { width: 60%; }
-        .skeleton-text.mini { width: 40%; height: 12px; }
-        .skeleton-social { width: 40px; height: 20px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
-        .category-header-skeleton { width: 200px; height: 20px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 25px; }
+        /* Drag & Drop File Upload Dropzone */
+        .upload-dropzone {
+            border: 2px dashed rgba(255, 193, 7, 0.3);
+            background: rgba(255, 193, 7, 0.02);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .upload-dropzone:hover, .upload-dropzone.dragover {
+            border-color: var(--accent);
+            background: rgba(255, 193, 7, 0.08);
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.15);
+        }
+        .upload-dropzone i { font-size: 20px; color: var(--accent); }
+        .upload-dropzone span { font-size: 11px; color: #a0aec0; }
+
+        /* Draggable List Items in Admin */
+        .admin-item-row.draggable {
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .admin-item-row.draggable:active {
+            cursor: grabbing;
+        }
+        .admin-item-row.dragging {
+            opacity: 0.5;
+            background: rgba(255, 193, 7, 0.05);
+            border-color: var(--accent);
+        }
+
+        /* Activity Logs View Panel */
+        .logs-panel {
+            background: var(--admin-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        .logs-panel h3 { font-family: 'Orbitron'; font-size: 13px; color: var(--accent); margin-bottom: 15px; letter-spacing: 1px; }
+        .logs-container {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+        }
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            background: #0f1012;
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .log-item.log-success { border-left-color: var(--success); }
+        .log-item.log-error { border-left-color: var(--danger); }
+        .log-item.log-warning { border-left-color: var(--warning); }
+        .log-item .log-time { font-family: 'Orbitron'; font-size: 10px; color: #718096; }
 
         /* Modern Toast Notifications */
         #toast-container { position: fixed; top: 30px; right: 30px; z-index: 11000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
@@ -181,7 +244,7 @@
         .confirm-btn-no { background: #2d3748; color: #fff; }
         .confirm-btn-no:hover { background: #4a5568; }
 
-        /* Upgrade Admin UI Panel Layout with Sidebar & Tabs */
+        /* Upgrade Admin UI Panel Layout */
         .admin-panel { display: none; position: fixed; inset: 0; background: var(--admin-bg); z-index: 9999; overflow: hidden; }
         .admin-layout { display: flex; width: 100%; height: 100vh; }
         
@@ -222,7 +285,7 @@
         .stat-info h4 { font-family: 'Orbitron'; font-size: 24px; color: #fff; line-height: 1.2; }
         .stat-info p { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px; }
 
-        .analytics-graph { background: var(--admin-card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 30px; }
+        .analytics-graph { background: var(--admin-card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; }
         .analytics-graph h3 { font-family: 'Orbitron'; font-size: 13px; color: var(--accent); margin-bottom: 20px; letter-spacing: 1px; }
 
         /* Input and search adjustments */
@@ -257,6 +320,7 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(26px); }
 
+        /* Media Queries - Disabling backdrop blur on mobile entirely for smooth rendering */
         @media (max-width: 992px) { 
             .admin-layout { flex-direction: column; }
             .admin-sidebar { width: 100%; height: auto; padding: 20px; }
@@ -266,13 +330,19 @@
             .admin-main { height: auto; padding: 20px; }
             .col-4, .col-8 { grid-column: span 12; }
         }
+
+        @media (max-width: 768px) {
+            .member-card, .top-nav {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: rgba(20, 20, 22, 0.96) !important;
+            }
+        }
     </style>
 </head>
 <body>
 
     <canvas id="weather-canvas"></canvas>
-    
-    <!-- Toasts notifications container -->
     <div id="toast-container"></div>
     
     <!-- Confirm Modal -->
@@ -331,11 +401,10 @@
         <a id="footerLinkLabel" href="#" target="_blank">DEATHNOTE</a>
     </footer>
 
-    <!-- central control v2 (sidebar layout) -->
+    <!-- Admin Central Control -->
     <div id="adminPanel" class="admin-panel">
         <div class="admin-layout">
             
-            <!-- Left Sidebar Navigation Menu -->
             <aside class="admin-sidebar">
                 <div>
                     <div class="admin-brand">
@@ -366,18 +435,16 @@
                 <button class="config-btn" style="background:var(--danger); color:#fff; width:100%; border-radius:12px;" onclick="closeAdminPanel()">EXIT CONTROL</button>
             </aside>
 
-            <!-- Main Content Area -->
             <main class="admin-main">
                 <header class="admin-header-v2">
                     <div class="admin-title-area">
                         <h2 id="adminTabTitle">CENTRAL COMMAND</h2>
-                        <p id="adminTabDesc">Real-time Database & Site Management</p>
+                        <p id="adminTabDesc">Real-time Database & Site Analytics</p>
                     </div>
                 </header>
 
                 <!-- TAB: DASHBOARD -->
                 <section id="tab-dashboard" class="tab-content active">
-                    <!-- Mini Analytics -->
                     <div class="analytics-grid">
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
@@ -409,10 +476,18 @@
                         </div>
                     </div>
 
-                    <div class="analytics-graph">
-                        <h3>MEMBER DISTRIBUTION BY ROLE GROUP</h3>
-                        <div id="analyticsDistribution">
-                            <!-- Graph injected dynamically -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+                        <div class="analytics-graph">
+                            <h3>MEMBER DISTRIBUTION BY ROLE GROUP</h3>
+                            <div id="analyticsDistribution"></div>
+                        </div>
+
+                        <!-- Activity Logs Display UI -->
+                        <div class="logs-panel" style="margin-top: 0;">
+                            <h3>SYSTEM ACTIVITY LOGS</h3>
+                            <div class="logs-container" id="logsContainer">
+                                <p style="font-size: 11px; opacity: 0.4; text-align: center; padding-top: 20px;">No system logs captured yet.</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -424,10 +499,34 @@
                             <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">SETTING - WEBSITE</div>
                             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
                                 <div><label>SITE NAME</label><input type="text" id="configSiteName"></div>
-                                <div><label>FAVICON URL</label><input type="text" id="configFavicon"></div>
+                                <div>
+                                    <label>FAVICON IMAGE</label>
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileFavicon').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configFavicon', 64, 64, 0.6)">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span>Click / Drop Favicon File (64x64)</span>
+                                        <input type="file" style="display:none;" id="fileFavicon" accept="image/*" onchange="fileSelectHandler(this, 'configFavicon', 64, 64, 0.6)">
+                                    </div>
+                                    <input type="text" id="configFavicon" placeholder="Or Favicon URL fallback">
+                                </div>
                                 <div><label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;"></div>
-                                <div><label>LOGO URL</label><input type="text" id="configLogoUrl"></div>
-                                <div><label>WALLPAPER URL</label><input type="text" id="configBgUrl"></div>
+                                <div>
+                                    <label>LOGO IMAGE</label>
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileLogo').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configLogoUrl', 300, 300, 0.75)">
+                                        <i class="fa-solid fa-cube"></i>
+                                        <span>Click / Drop Logo File (300x300)</span>
+                                        <input type="file" style="display:none;" id="fileLogo" accept="image/*" onchange="fileSelectHandler(this, 'configLogoUrl', 300, 300, 0.75)">
+                                    </div>
+                                    <input type="text" id="configLogoUrl" placeholder="Or Logo URL fallback">
+                                </div>
+                                <div>
+                                    <label>WALLPAPER / BACKGROUND</label>
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileBg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configBgUrl', 1200, 800, 0.65)">
+                                        <i class="fa-solid fa-panorama"></i>
+                                        <span>Click / Drop Background File (High Compress)</span>
+                                        <input type="file" style="display:none;" id="fileBg" accept="image/*" onchange="fileSelectHandler(this, 'configBgUrl', 1200, 800, 0.65)">
+                                    </div>
+                                    <input type="text" id="configBgUrl" placeholder="Or Wallpaper URL fallback">
+                                </div>
                                 <div><label>ATMOSPHERE EFFECT</label>
                                     <select id="configWeather">
                                         <option value="none">CLEAR</option>
@@ -477,7 +576,15 @@
                             <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">PERSONNEL CONTROL SHEET</div>
                             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px;">
                                 <div><label>FULL NAME</label><input type="text" id="memName"></div>
-                                <div><label>AVATAR URL</label><input type="text" id="memImg"></div>
+                                <div>
+                                    <label>AVATAR IMAGE</label>
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileMemImg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'memImg', 150, 150, 0.7)">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <span>Click / Drop Avatar (Auto Resize & Compress)</span>
+                                        <input type="file" style="display:none;" id="fileMemImg" accept="image/*" onchange="fileSelectHandler(this, 'memImg', 150, 150, 0.7)">
+                                    </div>
+                                    <input type="text" id="memImg" placeholder="Or Avatar URL fallback">
+                                </div>
                                 <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
                                 <div><label>SORT ORDER (ลำดับแสดงผล)</label><input type="number" id="memOrder" value="0"></div>
                                 <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
@@ -491,16 +598,19 @@
                             </div>
                         </div>
 
-                        <!-- Directory list with custom search -->
+                        <!-- Directory drag list -->
                         <div class="admin-card col-12">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
-                                <div style="font-family:'Orbitron'; font-size:14px; color:var(--accent);">REGISTERED PERSONNEL</div>
+                                <div>
+                                    <h4 style="font-family:'Orbitron'; font-size:14px; color:var(--accent);">REGISTERED PERSONNEL</h4>
+                                    <p style="font-size:10px; color:#555; margin-top:4px;">Drag & drop items to realign sorting display order</p>
+                                </div>
                                 <div class="admin-search-wrapper" style="width: 320px; margin-bottom: 0;">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                     <input type="text" id="adminMemberSearch" placeholder="SEARCH MEMBERS..." oninput="filterAdminMembers()">
                                 </div>
                             </div>
-                            <div id="adminMemberList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
+                            <div id="adminMemberList" style="display:flex; flex-direction:column; gap:8px;"></div>
                         </div>
                     </div>
                 </section>
@@ -550,7 +660,6 @@
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let isPlaying = false;
 
-        // Display Loading Skeletons on startup
         document.addEventListener("DOMContentLoaded", () => {
             showSkeletons();
         });
@@ -574,7 +683,7 @@
             clearTimeout(fallbackTimeout);
             
             document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-database" style="color:#ffc107"></i> LOCAL STORAGE';
-            showToast("ระบบสลับมาใช้งาน Local Storage สำรอง เนื่องจากไม่พบการตอบรับฐานข้อมูลหลัก", "warning");
+            showToast("สลับเข้าสู่ Offline Mode จัดเก็บข้อมูลในเบราว์เซอร์ชั่วคราว", "warning");
 
             Object.keys(listeners).forEach(path => {
                 triggerLocalUpdate(path);
@@ -624,6 +733,9 @@
             }
             if (path === 'music') {
                 return { id: "JXg_Qe48cbU", start: 0, auto: true };
+            }
+            if (path === 'activity_logs') {
+                return {};
             }
             return {};
         }
@@ -685,7 +797,7 @@
                             return Promise.resolve();
                         }
                         return db.ref(path).update(value).catch(err => {
-                            showToast("แก้ไขข้อผิดพลาด: " + err.message, "error");
+                            showToast("แก้ไขผิดพลาด: " + err.message, "error");
                         });
                     },
                     push: function(value) {
@@ -737,23 +849,197 @@
             }
         };
 
-        // Check for URL Parameter ?login=deathnote
+        // Auto Open Admin Login Parameters Check
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('login') === 'deathnote') {
                 openModal('loginModal');
-                showToast("ระบบจัดการ: ยินดีต้อนรับแอดมิน กรุณาลงชื่อเข้าใช้งาน", "info");
+                showToast("ยินดีต้อนรับแอดมิน กรุณากรอกรหัสความปลอดภัย", "info");
                 try {
                     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
                 } catch (e) {
-                    console.warn("ไม่สามารถล้าง URL Parameter ในระบบจำลองบางประเภทได้:", e);
+                    console.warn("ไม่สามารถสลับ URL parameter เคลียร์หน้าต่างได้:", e);
                 }
             }
         });
 
         // ----------------------------------------------------
-        // SYSTEM: Loading Skeletons
+        // SYSTEM: Image Upload, Resize, and Compression Core
+        // ----------------------------------------------------
+        function dragOverHandler(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+        function dragLeaveHandler(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+        }
+        function dropHandler(e, targetInputId, maxWidth, maxHeight, quality) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                processUploadedFile(e.dataTransfer.files[0], targetInputId, maxWidth, maxHeight, quality);
+            }
+        }
+        function fileSelectHandler(input, targetInputId, maxWidth, maxHeight, quality) {
+            if (input.files && input.files[0]) {
+                processUploadedFile(input.files[0], targetInputId, maxWidth, maxHeight, quality);
+            }
+        }
+        function processUploadedFile(file, targetInputId, maxWidth, maxHeight, quality) {
+            if (!file.type.match('image.*')) {
+                return showToast("ไฟล์ที่อัปโหลดต้องเป็นรูปภาพเท่านั้น", "error");
+            }
+            showToast("กำลังย่อขนาดและบีบอัดรูปภาพ...", "info");
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Proportion Resize calculations
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // JPEG quality compression
+                    const base64Str = canvas.toDataURL('image/jpeg', quality);
+                    document.getElementById(targetInputId).value = base64Str;
+                    showToast("ย่อรูปภาพและบีบอัดไฟล์เรียบร้อย", "success");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Drag & Drop Sorting Members (Drag Sort)
+        // ----------------------------------------------------
+        let draggedNode = null;
+
+        function bindDragSortEvents() {
+            const draggables = document.querySelectorAll('.admin-item-row.draggable');
+            draggables.forEach(row => {
+                row.addEventListener('dragstart', (e) => {
+                    draggedNode = row;
+                    row.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                row.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const container = document.getElementById('adminMemberList');
+                    const elements = [...container.querySelectorAll('.admin-item-row.draggable:not(.dragging)')];
+                    
+                    const nextElement = elements.find(el => {
+                        const box = el.getBoundingClientRect();
+                        const offset = e.clientY - box.top - box.height / 2;
+                        return offset < 0;
+                    });
+                    
+                    if (nextElement) {
+                        container.insertBefore(draggedNode, nextElement);
+                    } else {
+                        container.appendChild(draggedNode);
+                    }
+                });
+
+                row.addEventListener('dragend', () => {
+                    row.classList.remove('dragging');
+                    draggedNode = null;
+                    saveDraggedOrder();
+                });
+            });
+        }
+
+        function saveDraggedOrder() {
+            const container = document.getElementById('adminMemberList');
+            const sortedRows = [...container.querySelectorAll('.admin-item-row.draggable')];
+            const updates = {};
+            
+            sortedRows.forEach((row, idx) => {
+                const id = row.dataset.id;
+                if (id && currentMembers[id]) {
+                    currentMembers[id].order = idx;
+                    updates[`members/${id}/order`] = idx;
+                }
+            });
+
+            if (useLocalFallback) {
+                localStorage.setItem('deathnote_members', JSON.stringify(currentMembers));
+                triggerLocalUpdate('members');
+                showToast("จัดเก็บสลับลำดับลง Local ความจำเครื่องเสร็จสิ้น", "success");
+            } else {
+                db.ref().update(updates)
+                    .then(() => {
+                        showToast("จัดลำดับสมาชิกใหม่เรียบร้อย", "success");
+                        logActivity("สลับจัดเรียงลำดับตำแหน่งแสดงผลสมาชิกในระบบใหม่", "info");
+                    })
+                    .catch(err => showToast("ไม่สามารถปรับเปลี่ยนลำดับได้: " + err.message, "error"));
+            }
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Activity Log Writers
+        // ----------------------------------------------------
+        function logActivity(text, status = 'info') {
+            const timestamp = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const logEntry = { text, status, timestamp };
+            
+            if (useLocalFallback) {
+                const localLogs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
+                localLogs.unshift(logEntry);
+                if (localLogs.length > 25) localLogs.pop();
+                localStorage.setItem('deathnote_logs', JSON.stringify(localLogs));
+                renderLogsUI(localLogs);
+            } else {
+                db.ref('activity_logs').push(logEntry);
+            }
+        }
+
+        dbHelper.ref('activity_logs').on('value', snap => {
+            const logsData = snap.val() || {};
+            const logsArray = Object.keys(logsData).map(k => logsData[k]).reverse().slice(0, 25);
+            renderLogsUI(logsArray);
+        });
+
+        function renderLogsUI(logs) {
+            const container = document.getElementById('logsContainer');
+            if (!logs || logs.length === 0) {
+                container.innerHTML = '<p style="font-size: 11px; opacity: 0.4; text-align: center; padding-top: 20px;">No system logs captured yet.</p>';
+                return;
+            }
+            let html = '';
+            logs.forEach(log => {
+                html += `
+                    <div class="log-item log-${log.status}">
+                        <span>${log.text}</span>
+                        <span class="log-time">${log.timestamp}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Loading Skeletons Renderer
         // ----------------------------------------------------
         function showSkeletons() {
             const wrapper = document.getElementById('memberSections');
@@ -779,7 +1065,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Custom Toast Notifications
+        // SYSTEM: Modern Toast Notification Core
         // ----------------------------------------------------
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -799,10 +1085,7 @@
             `;
             
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add('toast-show');
-            }, 10);
+            setTimeout(() => { toast.classList.add('toast-show'); }, 10);
 
             setTimeout(() => {
                 toast.classList.remove('toast-show');
@@ -811,7 +1094,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Custom Confirm Dialog Modal
+        // SYSTEM: Custom Confirmation Dialog Modals
         // ----------------------------------------------------
         let confirmActionCallback = null;
         function showConfirm(title, message, callback) {
@@ -830,7 +1113,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Sidebar Navigation Tabs
+        // SYSTEM: Admin Panel Navigation Tabs
         // ----------------------------------------------------
         function switchAdminTab(tabId, el) {
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
@@ -839,7 +1122,6 @@
             el.classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
 
-            // Dynamic header texts
             const titles = {
                 'dashboard': { t: 'CENTRAL COMMAND', d: 'Real-time Database & Site Analytics' },
                 'web-config': { t: 'WEBSITE CONFIGURATION', d: 'Adjust Identity, Wallpaper, Themes & Weather Effects' },
@@ -853,7 +1135,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Mini Analytics
+        // SYSTEM: Dashboard Analytics calculation
         // ----------------------------------------------------
         function updateAnalytics() {
             const memberCount = Object.keys(currentMembers).length;
@@ -864,11 +1146,9 @@
             document.getElementById('statTotalGroups').innerText = groupCount;
             document.getElementById('statTotalRoles').innerText = roleCount;
 
-            // Render distribution visual statistics
             let visualHtml = '';
             Object.keys(currentGroups).forEach(gId => {
                 const group = currentGroups[gId];
-                // Count member matches in this group
                 const matchCount = Object.values(currentMembers).filter(m => {
                     const roleObj = currentRoles[m.roleId];
                     return roleObj && roleObj.groupId === gId;
@@ -891,7 +1171,7 @@
         }
 
         // ----------------------------------------------------
-        // MAIN OPERATIONS
+        // ACTIONS & CONTROLLERS
         // ----------------------------------------------------
         function attemptLogin() {
             const u = document.getElementById('loginUser').value;
@@ -901,9 +1181,10 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 document.body.style.overflow = 'hidden';
                 loadConfigToInputs();
-                showToast("ACCESS GRANTED: ยินดีต้อนรับเข้าสู่แผงควบคุม", "success");
+                showToast("ยินดีต้อนรับสู่แผงควบคุมระบบ", "success");
+                logActivity("แอดมินลงชื่อเข้าสู่ระบบหลังบ้าน Central Command", "success");
             } else {
-                showToast("ACCESS DENIED: รหัสผ่านหรือผู้ใช้งานไม่ถูกต้อง", "error");
+                showToast("ความปลอดภัยล้มเหลว: รหัสผ่านไม่ถูกต้อง", "error");
             }
         }
 
@@ -989,7 +1270,7 @@
             updateAnalytics();
         });
 
-        // Search Admin Directory Listings
+        // Search Admin Members List
         function filterAdminMembers() {
             const term = document.getElementById('adminMemberSearch').value.toLowerCase();
             let adminList = '';
@@ -1005,39 +1286,49 @@
                 const m = currentMembers[id];
                 if (m.name.toLowerCase().includes(term)) {
                     adminList += `
-                        <div class="admin-item-row">
-                            <span>${m.name} <small style="color: #666;">(Order: ${m.order || 0})</small></span>
+                        <div class="admin-item-row draggable" draggable="true" data-id="${id}">
+                            <span style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fa-solid fa-grip-vertical" style="opacity: 0.3; font-size: 11px;"></i>
+                                ${m.name} <small style="color: #666;">(Order: ${m.order || 0})</small>
+                            </span>
                             <div>
-                                <i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i>
+                                <i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:15px;" onclick="editMember('${id}')"></i>
                                 <i class="fa-solid fa-trash-can delete-btn" onclick="deleteMemberConfirm('${id}')"></i>
                             </div>
                         </div>`;
                 }
             });
             document.getElementById('adminMemberList').innerHTML = adminList || '<div style="color:#555; font-size:12px; padding:15px; text-align:center;">NO MATCHING PERSONNEL</div>';
+            bindDragSortEvents();
         }
 
-        // Deletion Confirms (using Custom Modals instead of standard prompt browsers)
+        // Deletion confirmation prompts
         function deleteGroupConfirm(id) {
             showConfirm("Delete Group", `ต้องการลบกลุ่มยศ "${currentGroups[id].name}" และสิทธิยศย่อยที่แนบอยู่ทั้งหมดใช่หรือไม่?`, () => {
+                const name = currentGroups[id].name;
                 dbHelper.ref('roleGroups').child(id).remove().then(() => {
                     showToast("GROUP DELETED", "success");
+                    logActivity(`ลบกลุ่มโครงสร้าง "${name}" ออกจากสารระบบ`, "warning");
                 });
             });
         }
 
         function deleteRoleConfirm(id) {
             showConfirm("Delete Role", `ต้องการลบสิทธิยศ "${currentRoles[id].name}" ออกจากโครงสร้างใช่หรือไม่?`, () => {
+                const name = currentRoles[id].name;
                 dbHelper.ref('roles').child(id).remove().then(() => {
                     showToast("ROLE DELETED", "success");
+                    logActivity(`ลบตำแหน่งหน้าที่ยศ "${name}" ออกจากสารระบบ`, "warning");
                 });
             });
         }
 
         function deleteMemberConfirm(id) {
             showConfirm("Remove Personnel", `ต้องการนำชื่อของ "${currentMembers[id].name}" ออกจากทำเนียบบุคลากรใช่หรือไม่?`, () => {
+                const name = currentMembers[id].name;
                 dbHelper.ref('members').child(id).remove().then(() => {
                     showToast("PERSONNEL DELETED", "success");
+                    logActivity(`นำชื่อ "${name}" ออกจากทำเนียบสมาชิก`, "warning");
                 });
             });
         }
@@ -1049,6 +1340,7 @@
                 document.getElementById('newGroupName').value = '';
                 document.getElementById('newGroupOrder').value = '';
                 showToast("NEW GROUP LAYOUT ADDED", "success");
+                logActivity(`เพิ่มกลุ่มโครงสร้างยศ "${name}" เข้าสู่สารระบบ`, "success");
             });
         }
 
@@ -1061,6 +1353,7 @@
                 document.getElementById('newRoleName').value = '';
                 document.getElementById('newRoleOrder').value = '';
                 showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
+                logActivity(`สร้างยศตำแหน่งหน้าที่ "${name}" ใหม่สำเร็จ`, "success");
             });
         }
 
@@ -1082,6 +1375,7 @@
             const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
             ref.set(data).then(() => { 
                 showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success"); 
+                logActivity(`${id ? 'อัปเดตแก้ไขโปรไฟล์ของ' : 'เพิ่มรายชื่อสมาชิกใหม่'} "${data.name}" ลงสู่หน้าทำเนียบ`, "success");
                 clearMemForm(); 
             });
         }
@@ -1099,7 +1393,6 @@
             document.getElementById('memBtn').innerText = "UPDATE PERSONNEL INFO";
             document.getElementById('memBtn').style.background = "var(--success)";
             
-            // Auto scroll user layout to edit inputs
             document.querySelector('#tab-members-db .admin-card').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1138,13 +1431,15 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Hover Particle Spawner
+        // SYSTEM: Throttled Particle Spawner for Best Performance
         // ----------------------------------------------------
+        let lastParticleTime = 0;
         function handleCardHoverParticles(e) {
-            const card = e.currentTarget;
-            
-            if (Math.random() > 0.15) return; 
+            const now = Date.now();
+            if (now - lastParticleTime < 120) return; // limit to 1 particle per 120ms to save resources
+            lastParticleTime = now;
 
+            const card = e.currentTarget;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -1154,12 +1449,12 @@
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
 
-            const size = Math.random() * 4 + 2; 
+            const size = Math.random() * 3 + 1.5; 
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             
-            const driftX = (Math.random() - 0.5) * 40;
-            const driftY = -(Math.random() * 50 + 30);
+            const driftX = (Math.random() - 0.5) * 30;
+            const driftY = -(Math.random() * 40 + 20);
             particle.style.setProperty('--drift-x', `${driftX}px`);
             particle.style.setProperty('--drift-y', `${driftY}px`);
 
@@ -1167,7 +1462,7 @@
 
             setTimeout(() => {
                 particle.remove();
-            }, 1200);
+            }, 1000);
         }
 
         // ----------------------------------------------------
@@ -1341,7 +1636,10 @@
                 weather: document.getElementById('configWeather').value,
                 footerText: document.getElementById('configFooterText').value,
                 footerLink: document.getElementById('configFooterLink').value
-            }).then(() => showToast("CONFIGURATION DATABASE UPDATED", "success"));
+            }).then(() => {
+                showToast("CONFIGURATION DATABASE UPDATED", "success");
+                logActivity("อัปเดตปรับแก้การตั้งค่าส่วนหน้าบ้านเว็บไซต์หลัก", "info");
+            });
         }
 
         function saveMusic() {
@@ -1349,10 +1647,12 @@
                 id: document.getElementById('musicVidId').value,
                 start: document.getElementById('musicStart').value,
                 auto: document.getElementById('musicAutoToggle').checked
-            }).then(() => showToast("AUDIO CORE SYNCHRONIZED", "success"));
+            }).then(() => {
+                showToast("AUDIO CORE SYNCHRONIZED", "success");
+                logActivity("ปรับเปลี่ยนตั้งค่าระบบบอร์ดเพลงพื้นหลัง (Audio Engine)", "info");
+            });
         }
 
-        // Atmosphere visual effects
         const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
         let particles = [];
         function initWeather() {
