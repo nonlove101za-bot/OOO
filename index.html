@@ -6,7 +6,7 @@
     <title id="pageTitle">DEATHNOTE</title>
     <link id="favicon" rel="icon" href="" type="image/x-icon">
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -18,12 +18,16 @@
             --accent: #ffc107;
             --bg: #0a0a0a;
             --card-bg: rgba(20, 20, 22, 0.45); 
-            --admin-card: #1c1e22;
-            --input-bg: #111214;
+            --admin-bg: #0a0b0d;
+            --admin-card: #141619;
+            --admin-sidebar-bg: #0e1012;
+            --input-bg: #0f1012;
             --border: rgba(255, 255, 255, 0.06); 
-            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+            --transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); 
             --danger: #ff4757;
             --success: #2ed573;
+            --info: #1e90ff;
+            --warning: #ffa502;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -33,9 +37,7 @@
         #weather-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(15px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
         
-        /* ----------------------------------------------------
-           Navbar ลอยแบบโปร่ง (Floating Transparent Navbar Capsule)
-           ---------------------------------------------------- */
+        /* Navbar */
         .top-nav { 
             position: fixed; 
             top: 20px; 
@@ -82,12 +84,10 @@
             filter: blur(0);
         }
 
-        /* หัวข้อกลุ่มสมาชิก */
         .category-header { font-family: 'Orbitron'; font-size: 14px; letter-spacing: 4px; color: var(--accent); margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 15px; text-transform: uppercase; transition: var(--transition); }
-        
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; padding-bottom: 40px; z-index: 100; position: relative; }
         
-        /* Light Glassmorphism Card */
+        /* Card & Effects */
         .member-card { 
             background: var(--card-bg); 
             border: 1px solid var(--border); 
@@ -104,7 +104,6 @@
             overflow: hidden; 
         }
         
-        /* Neon Pulse Animation (อ้างอิงตามสียศ --role-color) */
         .member-card:hover { 
             transform: translateY(-6px) scale(1.02); 
             background: rgba(25, 25, 28, 0.6); 
@@ -115,18 +114,14 @@
         @keyframes neonPulse {
             0% {
                 border-color: var(--role-color, var(--accent));
-                box-shadow: 0 0 10px var(--role-color, var(--accent)),
-                            0 8px 32px rgba(0, 0, 0, 0.4);
+                box-shadow: 0 0 10px var(--role-color, var(--accent)), 0 8px 32px rgba(0, 0, 0, 0.4);
             }
             100% {
                 border-color: var(--role-color, var(--accent));
-                box-shadow: 0 0 20px var(--role-color, var(--accent)),
-                            0 8px 32px rgba(0, 0, 0, 0.5),
-                            inset 0 0 10px var(--role-color, var(--accent));
+                box-shadow: 0 0 20px var(--role-color, var(--accent)), 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 10px var(--role-color, var(--accent));
             }
         }
 
-        /* Hover Particles */
         .hover-particle {
             position: absolute;
             background: var(--role-color, var(--accent));
@@ -138,14 +133,8 @@
             box-shadow: 0 0 8px var(--role-color, var(--accent));
         }
         @keyframes driftUpFade {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: translate(var(--drift-x), var(--drift-y)) scale(0);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+            100% { transform: translate(var(--drift-x), var(--drift-y)) scale(0); opacity: 0; }
         }
         
         .avatar { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(255,255,255,0.05); z-index: 10; }
@@ -158,28 +147,104 @@
         .site-footer { padding: 40px 20px; text-align: center; font-family: 'Orbitron'; font-size: 10px; letter-spacing: 2px; opacity: 0.5; transition: var(--transition); }
         .site-footer a { color: var(--accent); text-decoration: none; font-weight: 700; }
         
-        /* Admin UI */
-        .admin-panel { display: none; position: fixed; inset: 0; background: #0c0d0f; z-index: 9999; overflow-y: auto; padding: 40px 20px; }
-        .admin-container { max-width: 1200px; margin: 0 auto; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #222; }
+        /* Skeletons Styling */
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton-card { pointer-events: none; background: rgba(255, 255, 255, 0.02) !important; border-color: rgba(255, 255, 255, 0.03) !important; }
+        .skeleton-avatar { width: 70px; height: 70px; border-radius: 12px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        .skeleton-text { height: 16px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 10px; }
+        .skeleton-text.short { width: 60%; }
+        .skeleton-text.mini { width: 40%; height: 12px; }
+        .skeleton-social { width: 40px; height: 20px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+        .category-header-skeleton { width: 200px; height: 20px; background: linear-gradient(90deg, #18191c 25%, #27292e 50%, #18191c 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; margin-bottom: 25px; }
+
+        /* Modern Toast Notifications */
+        #toast-container { position: fixed; top: 30px; right: 30px; z-index: 11000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { pointer-events: auto; width: 340px; padding: 15px 20px; border-radius: 12px; background: #141619; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: flex-start; gap: 12px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s; opacity: 0; }
+        .toast.toast-show { transform: translateX(0); opacity: 1; }
+        .toast i { font-size: 18px; margin-top: 2px; }
+        .toast-content { font-size: 13px; font-weight: 500; color: #e2e8f0; line-height: 1.4; }
+        .toast-success { border-left: 4px solid var(--success); } .toast-success i { color: var(--success); }
+        .toast-error { border-left: 4px solid var(--danger); } .toast-error i { color: var(--danger); }
+        .toast-warning { border-left: 4px solid var(--warning); } .toast-warning i { color: var(--warning); }
+        .toast-info { border-left: 4px solid var(--info); } .toast-info i { color: var(--info); }
+
+        /* Custom Confirm Modal */
+        #confirmModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10500; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .confirm-card { background: var(--admin-card); border: 1px solid var(--border); border-radius: 20px; width: 90%; max-width: 440px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
+        .confirm-icon { font-size: 40px; color: var(--danger); margin-bottom: 20px; }
+        .confirm-title { font-family: 'Orbitron'; font-size: 18px; margin-bottom: 12px; color: #fff; letter-spacing: 1px; }
+        .confirm-msg { font-size: 14px; color: #a0aec0; margin-bottom: 25px; line-height: 1.5; }
+        .confirm-buttons { display: flex; gap: 12px; }
+        .confirm-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-family: 'Orbitron'; font-size: 11px; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .confirm-btn-yes { background: var(--danger); color: #fff; }
+        .confirm-btn-yes:hover { opacity: 0.9; }
+        .confirm-btn-no { background: #2d3748; color: #fff; }
+        .confirm-btn-no:hover { background: #4a5568; }
+
+        /* Upgrade Admin UI Panel Layout with Sidebar & Tabs */
+        .admin-panel { display: none; position: fixed; inset: 0; background: var(--admin-bg); z-index: 9999; overflow: hidden; }
+        .admin-layout { display: flex; width: 100%; height: 100vh; }
+        
+        .admin-sidebar { 
+            width: 280px; 
+            background: var(--admin-sidebar-bg); 
+            border-right: 1px solid var(--border); 
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        
+        .admin-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .admin-brand i { font-size: 24px; color: var(--accent); }
+        .admin-brand div h3 { font-family: 'Orbitron'; font-size: 15px; letter-spacing: 2px; }
+        .admin-brand div p { font-size: 10px; color: #4a5568; }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 14px 20px; border-radius: 12px; color: #718096; text-decoration: none; font-size: 13px; font-weight: 500; transition: var(--transition); border: 1px solid transparent; cursor: pointer; }
+        .menu-item:hover, .menu-item.active { color: #fff; background: rgba(255, 255, 255, 0.02); }
+        .menu-item.active { border-color: rgba(255, 193, 7, 0.2); border-left: 3px solid var(--accent); color: var(--accent); }
+        .menu-item i { font-size: 16px; width: 20px; text-align: center; }
+
+        .admin-main { flex: 1; height: 100vh; overflow-y: auto; padding: 40px; }
+        .admin-header-v2 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
+        .admin-title-area h2 { font-family: 'Orbitron'; font-size: 22px; color: #fff; letter-spacing: 2px; }
+        .admin-title-area p { font-size: 12px; color: #718096; margin-top: 2px; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideIn 0.4s ease forwards; }
+
+        /* Dashboard & Analytics Widgets */
+        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--admin-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; align-items: center; gap: 20px; }
+        .stat-icon { width: 54px; height: 54px; border-radius: 12px; background: rgba(255,193,7,0.05); border: 1px solid rgba(255,193,7,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--accent); }
+        .stat-info h4 { font-family: 'Orbitron'; font-size: 24px; color: #fff; line-height: 1.2; }
+        .stat-info p { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 1px; }
+
+        .analytics-graph { background: var(--admin-card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; margin-bottom: 30px; }
+        .analytics-graph h3 { font-family: 'Orbitron'; font-size: 13px; color: var(--accent); margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* Input and search adjustments */
+        .admin-search-wrapper { position: relative; margin-bottom: 20px; }
+        .admin-search-wrapper i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #4a5568; font-size: 14px; }
+        .admin-search-wrapper input { padding-left: 45px; margin-bottom: 0; }
+
+        /* Utility classes */
         .admin-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
         .admin-card { background: var(--admin-card); padding: 28px; border-radius: 20px; border: 1px solid var(--border); }
-        
         .col-4 { grid-column: span 4; }
         .col-8 { grid-column: span 8; }
         .col-12 { grid-column: span 12; }
         
         label { display: block; font-family: 'Orbitron'; font-size: 10px; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; }
-        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d2f34; color: #fff; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
-        input:focus { border-color: var(--accent); outline: none; }
+        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #1a1c1f; color: #fff; border-radius: 10px; margin-bottom: 20px; font-size: 14px; transition: var(--transition); }
+        input:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px rgba(255,193,7,0.1); }
         
         .btn-save { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-weight: 700; transition: var(--transition); background: var(--accent); color: #000; }
-        .admin-item-row { background: #111214; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .delete-btn { color: var(--danger); cursor: pointer; padding: 8px; }
-        
-        /* Notification */
-        #notification-container { position: fixed; bottom: 30px; left: 30px; z-index: 10000; }
-        .notify { background: var(--accent); color: #000; border-radius: 8px; padding: 14px 24px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 12px; margin-top: 10px; animation: slideIn 0.3s ease; }
+        .admin-item-row { background: #0f1012; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .delete-btn { color: var(--danger); cursor: pointer; padding: 8px; transition: var(--transition); }
+        .delete-btn:hover { transform: scale(1.1); }
         
         /* Music Control Button */
         .music-ctrl { position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 50px; height: 50px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: var(--transition); }
@@ -192,13 +257,36 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        @media (max-width: 992px) { .col-4, .col-8 { grid-column: span 12; } }
+        @media (max-width: 992px) { 
+            .admin-layout { flex-direction: column; }
+            .admin-sidebar { width: 100%; height: auto; padding: 20px; }
+            .admin-brand { margin-bottom: 20px; }
+            .sidebar-menu { flex-direction: row; flex-wrap: wrap; }
+            .menu-item { padding: 10px 15px; font-size: 12px; flex: 1 1 auto; justify-content: center; }
+            .admin-main { height: auto; padding: 20px; }
+            .col-4, .col-8 { grid-column: span 12; }
+        }
     </style>
 </head>
 <body>
 
     <canvas id="weather-canvas"></canvas>
-    <div id="notification-container"></div>
+    
+    <!-- Toasts notifications container -->
+    <div id="toast-container"></div>
+    
+    <!-- Confirm Modal -->
+    <div id="confirmModal">
+        <div class="confirm-card">
+            <div class="confirm-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="confirm-title" id="confirmTitle">ARE YOU SURE?</div>
+            <div class="confirm-msg" id="confirmMessage">This action cannot be undone.</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn confirm-btn-no" onclick="handleConfirm(false)">CANCEL</button>
+                <button class="confirm-btn confirm-btn-yes" id="confirmYesBtn" onclick="handleConfirm(true)">CONFIRM</button>
+            </div>
+        </div>
+    </div>
     
     <div class="music-ctrl" onclick="toggleMusic()">
         <i id="musicIcon" class="fa-solid fa-play"></i>
@@ -243,97 +331,210 @@
         <a id="footerLinkLabel" href="#" target="_blank">DEATHNOTE</a>
     </footer>
 
+    <!-- central control v2 (sidebar layout) -->
     <div id="adminPanel" class="admin-panel">
-        <div class="admin-container">
-            <header class="admin-header">
+        <div class="admin-layout">
+            
+            <!-- Left Sidebar Navigation Menu -->
+            <aside class="admin-sidebar">
                 <div>
-                    <h2 style="font-family:'Orbitron'; color:var(--accent); font-size:24px;">CENTRAL COMMAND</h2>
-                    <p style="font-size:12px; color:#555;">Real-time Database & Site Management</p>
-                </div>
-                <button class="config-btn" style="background:var(--danger); color:#fff;" onclick="closeAdminPanel()">CLOSE</button>
-            </header>
-
-            <div class="admin-grid">
-                <div class="admin-card col-4">
-                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">SETTING - WEBSITE</div>
-                    <label>SITE NAME</label><input type="text" id="configSiteName">
-                    <label>FAVICON URL</label><input type="text" id="configFavicon">
-                    <label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;">
-                    <label>LOGO URL</label><input type="text" id="configLogoUrl">
-                    <label>WALLPAPER URL</label><input type="text" id="configBgUrl">
-                    <label>ATMOSPHERE EFFECT</label>
-                    <select id="configWeather">
-                        <option value="none">CLEAR</option>
-                        <option value="snow">SNOWFLAKES</option>
-                        <option value="rain">RAIN SHOWER</option>
-                    </select>
-                    <label>FOOTER TEXT</label><input type="text" id="configFooterText">
-                    <label>FOOTER LINK</label><input type="text" id="configFooterLink">
-                    <button class="btn-save" onclick="saveConfig()">SYNC DATABASE</button>
-                </div>
-
-                <div class="col-8" style="display:flex; flex-direction:column; gap:24px;">
-                    <div class="admin-card">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ROLE GROUPS</div>
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="newGroupName" placeholder="NEW GROUP NAME" style="margin-bottom:0; flex: 2;">
-                            <input type="number" id="newGroupOrder" placeholder="ORDER (e.g. 1)" style="margin-bottom:0; flex: 1;">
-                            <button class="config-btn" onclick="addGroup()">ADD</button>
+                    <div class="admin-brand">
+                        <i class="fa-solid fa-terminal"></i>
+                        <div>
+                            <h3>DEATHNOTE</h3>
+                            <p>DATABASE SYSTEM V2</p>
                         </div>
-                        <div id="groupListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr; gap:10px;"></div>
+                    </div>
+                    <nav class="sidebar-menu">
+                        <div class="menu-item active" onclick="switchAdminTab('dashboard', this)">
+                            <i class="fa-solid fa-chart-simple"></i> Dashboard
+                        </div>
+                        <div class="menu-item" onclick="switchAdminTab('web-config', this)">
+                            <i class="fa-solid fa-sliders"></i> Web Settings
+                        </div>
+                        <div class="menu-item" onclick="switchAdminTab('roles-groups', this)">
+                            <i class="fa-solid fa-sitemap"></i> Structure & Roles
+                        </div>
+                        <div class="menu-item" onclick="switchAdminTab('members-db', this)">
+                            <i class="fa-solid fa-users-gear"></i> Member Directory
+                        </div>
+                        <div class="menu-item" onclick="switchAdminTab('music-config', this)">
+                            <i class="fa-solid fa-music"></i> Audio Engine
+                        </div>
+                    </nav>
+                </div>
+                <button class="config-btn" style="background:var(--danger); color:#fff; width:100%; border-radius:12px;" onclick="closeAdminPanel()">EXIT CONTROL</button>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="admin-main">
+                <header class="admin-header-v2">
+                    <div class="admin-title-area">
+                        <h2 id="adminTabTitle">CENTRAL COMMAND</h2>
+                        <p id="adminTabDesc">Real-time Database & Site Management</p>
+                    </div>
+                </header>
+
+                <!-- TAB: DASHBOARD -->
+                <section id="tab-dashboard" class="tab-content active">
+                    <!-- Mini Analytics -->
+                    <div class="analytics-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-info">
+                                <h4 id="statTotalMembers">0</h4>
+                                <p>Total Members</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="stat-info">
+                                <h4 id="statTotalRoles">0</h4>
+                                <p>Total Roles</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="stat-info">
+                                <h4 id="statTotalGroups">0</h4>
+                                <p>Role Groups</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="stat-info">
+                                <h4>ONLINE</h4>
+                                <p>System State</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="admin-card">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">RANK & ROLES</div>
-                        <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr auto; gap:10px;">
-                            <input type="text" id="newRoleName" placeholder="ROLE NAME" style="margin-bottom:0;">
-                            <select id="roleGroupSelect" style="margin-bottom:0;"></select>
-                            <input type="number" id="newRoleOrder" placeholder="ORDER" style="margin-bottom:0;">
-                            <input type="color" id="newRoleColor" value="#ffc107" style="height:46px; margin-bottom:0;">
-                            <button class="config-btn" onclick="addRole()">ADD</button>
+                    <div class="analytics-graph">
+                        <h3>MEMBER DISTRIBUTION BY ROLE GROUP</h3>
+                        <div id="analyticsDistribution">
+                            <!-- Graph injected dynamically -->
                         </div>
-                        <div id="roleListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr; gap:10px;"></div>
                     </div>
+                </section>
 
-                    <div class="admin-card">
-                        <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">AUDIO MUSIC</div>
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                            <label class="switch"><input type="checkbox" id="musicAutoToggle"><span class="slider"></span></label>
-                            <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
+                <!-- TAB: WEB CONFIG -->
+                <section id="tab-web-config" class="tab-content">
+                    <div class="admin-grid">
+                        <div class="admin-card col-12">
+                            <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">SETTING - WEBSITE</div>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                                <div><label>SITE NAME</label><input type="text" id="configSiteName"></div>
+                                <div><label>FAVICON URL</label><input type="text" id="configFavicon"></div>
+                                <div><label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px; cursor:pointer;"></div>
+                                <div><label>LOGO URL</label><input type="text" id="configLogoUrl"></div>
+                                <div><label>WALLPAPER URL</label><input type="text" id="configBgUrl"></div>
+                                <div><label>ATMOSPHERE EFFECT</label>
+                                    <select id="configWeather">
+                                        <option value="none">CLEAR</option>
+                                        <option value="snow">SNOWFLAKES</option>
+                                        <option value="rain">RAIN SHOWER</option>
+                                    </select>
+                                </div>
+                                <div><label>FOOTER TEXT</label><input type="text" id="configFooterText"></div>
+                                <div><label>FOOTER LINK</label><input type="text" id="configFooterLink"></div>
+                            </div>
+                            <button class="btn-save" style="margin-top:20px;" onclick="saveConfig()">SYNC DATABASE</button>
                         </div>
-                        <div style="display:grid; grid-template-columns: 2fr 1fr auto; gap:15px;">
-                            <input type="text" id="musicVidId" placeholder="YOUTUBE VIDEO ID" style="margin-bottom:0;">
-                            <input type="number" id="musicStart" placeholder="START (SEC)" style="margin-bottom:0;">
+                    </div>
+                </section>
+
+                <!-- TAB: ROLES & GROUPS -->
+                <section id="tab-roles-groups" class="tab-content">
+                    <div class="admin-grid">
+                        <div class="admin-card col-6" style="grid-column: span 6;">
+                            <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">ROLE GROUPS</div>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="newGroupName" placeholder="NEW GROUP NAME" style="margin-bottom:0; flex: 2;">
+                                <input type="number" id="newGroupOrder" placeholder="ORDER (e.g. 1)" style="margin-bottom:0; flex: 1;">
+                                <button class="config-btn" onclick="addGroup()">ADD</button>
+                            </div>
+                            <div id="groupListContainer" style="margin-top:20px; display:grid; grid-template-columns:1fr; gap:10px;"></div>
+                        </div>
+
+                        <div class="admin-card col-6" style="grid-column: span 6;">
+                            <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">RANK & ROLES</div>
+                            <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr 1fr auto; gap:10px; margin-bottom: 20px;">
+                                <input type="text" id="newRoleName" placeholder="ROLE NAME" style="margin-bottom:0;">
+                                <select id="roleGroupSelect" style="margin-bottom:0;"></select>
+                                <input type="number" id="newRoleOrder" placeholder="ORDER" style="margin-bottom:0;">
+                                <input type="color" id="newRoleColor" value="#ffc107" style="height:46px; margin-bottom:0;">
+                                <button class="config-btn" onclick="addRole()">ADD</button>
+                            </div>
+                            <div id="roleListContainer" style="display:grid; grid-template-columns:1fr; gap:10px;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: MEMBERS DATABASE -->
+                <section id="tab-members-db" class="tab-content">
+                    <div class="admin-grid">
+                        <div class="admin-card col-12">
+                            <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">PERSONNEL CONTROL SHEET</div>
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px;">
+                                <div><label>FULL NAME</label><input type="text" id="memName"></div>
+                                <div><label>AVATAR URL</label><input type="text" id="memImg"></div>
+                                <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
+                                <div><label>SORT ORDER (ลำดับแสดงผล)</label><input type="number" id="memOrder" value="0"></div>
+                                <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
+                                <div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
+                                <div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
+                            </div>
+                            <input type="hidden" id="editMemId">
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <button id="memBtn" class="btn-save" style="flex:3;" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
+                                <button class="btn-save" style="flex:1; background:#333; color:#fff;" onclick="clearMemForm()">CLEAR FORM</button>
+                            </div>
+                        </div>
+
+                        <!-- Directory list with custom search -->
+                        <div class="admin-card col-12">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
+                                <div style="font-family:'Orbitron'; font-size:14px; color:var(--accent);">REGISTERED PERSONNEL</div>
+                                <div class="admin-search-wrapper" style="width: 320px; margin-bottom: 0;">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="adminMemberSearch" placeholder="SEARCH MEMBERS..." oninput="filterAdminMembers()">
+                                </div>
+                            </div>
+                            <div id="adminMemberList" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: MUSIC CONFIG -->
+                <section id="tab-music-config" class="tab-content">
+                    <div class="admin-grid">
+                        <div class="admin-card col-12">
+                            <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent);">AUDIO ENGINE MUSIC</div>
+                            <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                                <label class="switch"><input type="checkbox" id="musicAutoToggle"><span class="slider"></span></label>
+                                <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
+                            </div>
+                            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; margin-bottom: 20px;">
+                                <div>
+                                    <label>YOUTUBE VIDEO ID</label>
+                                    <input type="text" id="musicVidId" placeholder="YOUTUBE VIDEO ID" style="margin-bottom:0;">
+                                </div>
+                                <div>
+                                    <label>START (SEC)</label>
+                                    <input type="number" id="musicStart" placeholder="START (SEC)" style="margin-bottom:0;">
+                                </div>
+                            </div>
                             <button class="btn-save" onclick="saveMusic()">UPDATE AUDIO</button>
                         </div>
                     </div>
-                </div>
-
-                <div class="admin-card col-12">
-                    <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">ADMIN SETTING - ต้องเลือก Role และใส่ Link Facebook</div>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:20px;">
-                        <div><label>FULL NAME</label><input type="text" id="memName"></div>
-                        <div><label>AVATAR URL</label><input type="text" id="memImg"></div>
-                        <div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
-                        <div><label>SORT ORDER (ลำดับการแสดงผล)</label><input type="number" id="memOrder" value="0"></div>
-                        <div><label><i class="fa-brands fa-facebook"></i> FB URL (REQUIRED)</label><input type="text" id="memFb"></div>
-                        <div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
-                        <div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
-                    </div>
-                    <input type="hidden" id="editMemId">
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        <button id="memBtn" class="btn-save" style="flex:3;" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
-                        <button class="btn-save" style="flex:1; background:#333; color:#fff;" onclick="clearMemForm()">CLEAR FORM</button>
-                    </div>
-                    <div id="adminMemberList" style="margin-top:30px; display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:12px;"></div>
-                </div>
-            </div>
+                </section>
+            </main>
         </div>
     </div>
 
     <script>
         // ----------------------------------------------------
-        // CONFIGURATION: ข้อมูลตั้งค่าระบบเชื่อมต่อ Firebase
+        // CONFIGURATION: Realtime Database Firebase
         // ----------------------------------------------------
         const firebaseConfig = { 
             databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
@@ -349,8 +550,13 @@
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let isPlaying = false;
 
+        // Display Loading Skeletons on startup
+        document.addEventListener("DOMContentLoaded", () => {
+            showSkeletons();
+        });
+
         // ----------------------------------------------------
-        // SYSTEM: ระบบป้องกันการค้างหน้าโหลด (LocalStorage Fallback)
+        // SYSTEM: LocalStorage Fallback Local Connection Mode
         // ----------------------------------------------------
         let useLocalFallback = false;
         const listeners = {};
@@ -368,7 +574,7 @@
             clearTimeout(fallbackTimeout);
             
             document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-database" style="color:#ffc107"></i> LOCAL STORAGE';
-            showNotify("เชื่อมต่อฐานข้อมูลหลักไม่ได้: ระบบสลับมาใช้โหมดความจำในเครื่องแทน");
+            showToast("ระบบสลับมาใช้งาน Local Storage สำรอง เนื่องจากไม่พบการตอบรับฐานข้อมูลหลัก", "warning");
 
             Object.keys(listeners).forEach(path => {
                 triggerLocalUpdate(path);
@@ -467,7 +673,7 @@
                             return Promise.resolve();
                         }
                         return db.ref(path).set(value).catch(err => {
-                            showNotify("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
+                            showToast("บันทึกผิดพลาด: " + err.message, "error");
                         });
                     },
                     update: function(value) {
@@ -479,7 +685,7 @@
                             return Promise.resolve();
                         }
                         return db.ref(path).update(value).catch(err => {
-                            showNotify("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
+                            showToast("แก้ไขข้อผิดพลาด: " + err.message, "error");
                         });
                     },
                     push: function(value) {
@@ -531,27 +737,162 @@
             }
         };
 
-        // ----------------------------------------------------
-        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=deathnote
-        // ----------------------------------------------------
+        // Check for URL Parameter ?login=deathnote
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('login') === 'deathnote') {
                 openModal('loginModal');
-                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
+                showToast("ระบบจัดการ: ยินดีต้อนรับแอดมิน กรุณาลงชื่อเข้าใช้งาน", "info");
                 try {
                     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
                 } catch (e) {
-                    console.warn("ไม่สามารถล้าง URL Parameter ในพื้นที่เครื่องเซิร์ฟเวอร์จำลองบางประเภท:", e);
+                    console.warn("ไม่สามารถล้าง URL Parameter ในระบบจำลองบางประเภทได้:", e);
                 }
             }
         });
 
         // ----------------------------------------------------
-        // FUNCTIONS
+        // SYSTEM: Loading Skeletons
         // ----------------------------------------------------
+        function showSkeletons() {
+            const wrapper = document.getElementById('memberSections');
+            let skeletonHtml = `
+                <section class="category-section reveal-active" style="opacity: 1; transform: none; filter: none;">
+                    <div class="category-header-skeleton"></div>
+                    <div class="member-grid">
+            `;
+            for(let i=0; i<3; i++) {
+                skeletonHtml += `
+                    <div class="member-card skeleton-card">
+                        <div class="skeleton-avatar"></div>
+                        <div style="flex:1;">
+                            <div class="skeleton-text short"></div>
+                            <div class="skeleton-text mini"></div>
+                        </div>
+                        <div class="skeleton-social"></div>
+                    </div>
+                `;
+            }
+            skeletonHtml += `</div></section>`;
+            wrapper.innerHTML = skeletonHtml;
+        }
 
+        // ----------------------------------------------------
+        // SYSTEM: Custom Toast Notifications
+        // ----------------------------------------------------
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'fa-solid fa-circle-check',
+                error: 'fa-solid fa-circle-exclamation',
+                warning: 'fa-solid fa-triangle-exclamation',
+                info: 'fa-solid fa-circle-info'
+            };
+
+            toast.innerHTML = `
+                <i class="${icons[type]}"></i>
+                <div class="toast-content">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('toast-show');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-show');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Custom Confirm Dialog Modal
+        // ----------------------------------------------------
+        let confirmActionCallback = null;
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirmTitle').innerText = title.toUpperCase();
+            document.getElementById('confirmMessage').innerText = message;
+            document.getElementById('confirmModal').style.display = 'flex';
+            confirmActionCallback = callback;
+        }
+
+        function handleConfirm(isConfirmed) {
+            document.getElementById('confirmModal').style.display = 'none';
+            if (isConfirmed && confirmActionCallback) {
+                confirmActionCallback();
+            }
+            confirmActionCallback = null;
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Sidebar Navigation Tabs
+        // ----------------------------------------------------
+        function switchAdminTab(tabId, el) {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            el.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Dynamic header texts
+            const titles = {
+                'dashboard': { t: 'CENTRAL COMMAND', d: 'Real-time Database & Site Analytics' },
+                'web-config': { t: 'WEBSITE CONFIGURATION', d: 'Adjust Identity, Wallpaper, Themes & Weather Effects' },
+                'roles-groups': { t: 'STRUCTURE & ROLES', d: 'Create and Manage Group Layouts and Rank Positions' },
+                'members-db': { t: 'PERSONNEL DIRECTORY', d: 'Add, Update, Search and Remove Gang Personnel' },
+                'music-config': { t: 'AUDIO MUSIC ENGINE', d: 'Configure YouTube Media Integration Background Audio' }
+            };
+            
+            document.getElementById('adminTabTitle').innerText = titles[tabId].t;
+            document.getElementById('adminTabDesc').innerText = titles[tabId].d;
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Mini Analytics
+        // ----------------------------------------------------
+        function updateAnalytics() {
+            const memberCount = Object.keys(currentMembers).length;
+            const groupCount = Object.keys(currentGroups).length;
+            const roleCount = Object.keys(currentRoles).length;
+
+            document.getElementById('statTotalMembers').innerText = memberCount;
+            document.getElementById('statTotalGroups').innerText = groupCount;
+            document.getElementById('statTotalRoles').innerText = roleCount;
+
+            // Render distribution visual statistics
+            let visualHtml = '';
+            Object.keys(currentGroups).forEach(gId => {
+                const group = currentGroups[gId];
+                // Count member matches in this group
+                const matchCount = Object.values(currentMembers).filter(m => {
+                    const roleObj = currentRoles[m.roleId];
+                    return roleObj && roleObj.groupId === gId;
+                }).length;
+
+                const percent = memberCount > 0 ? (matchCount / memberCount) * 100 : 0;
+                visualHtml += `
+                    <div style="margin-bottom:18px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px; font-family:'Orbitron';">
+                            <span>${group.name}</span>
+                            <span style="opacity:0.8;">${matchCount} Personnel (${Math.round(percent)}%)</span>
+                        </div>
+                        <div style="height:8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+                            <div style="width: ${percent}%; height:100%; background:var(--accent); border-radius:4px; box-shadow: 0 0 10px var(--accent); transition: width 0.6s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('analyticsDistribution').innerHTML = visualHtml || '<p style="font-size:12px; color:#555; padding: 10px 0;">No active structure layout to compute</p>';
+        }
+
+        // ----------------------------------------------------
+        // MAIN OPERATIONS
+        // ----------------------------------------------------
         function attemptLogin() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
@@ -560,16 +901,10 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 document.body.style.overflow = 'hidden';
                 loadConfigToInputs();
-            } else showNotify("ACCESS DENIED: WRONG CREDENTIALS");
-        }
-
-        function showNotify(msg) {
-            const container = document.getElementById('notification-container');
-            const el = document.createElement('div');
-            el.className = 'notify';
-            el.innerHTML = `<i class="fa-solid fa-bell"></i> ${msg}`;
-            container.appendChild(el);
-            setTimeout(() => el.remove(), 3000);
+                showToast("ACCESS GRANTED: ยินดีต้อนรับเข้าสู่แผงควบคุม", "success");
+            } else {
+                showToast("ACCESS DENIED: รหัสผ่านหรือผู้ใช้งานไม่ถูกต้อง", "error");
+            }
         }
 
         function loadConfigToInputs() {
@@ -603,41 +938,62 @@
             currentGroups = snap.val() || {};
             let list = '', opt = '<option value="">SELECT GROUP</option>';
             
-            // เรียงลำดับกลุ่มยศตามตัวเลขลำดับ (Order) ก่อนแสดงผล
             const sortedGroupKeys = Object.keys(currentGroups).sort((a,b) => (currentGroups[a].order || 0) - (currentGroups[b].order || 0));
             
             sortedGroupKeys.forEach(id => {
-                list += `<div class="admin-item-row"><span>${currentGroups[id].name} <small style="color: #666;">(Order: ${currentGroups[id].order || 0})</small></span><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roleGroups').child('${id}').remove()"></i></div>`;
+                list += `
+                    <div class="admin-item-row">
+                        <span>${currentGroups[id].name} <small style="color: #666;">(Order: ${currentGroups[id].order || 0})</small></span>
+                        <i class="fa-solid fa-trash-can delete-btn" onclick="deleteGroupConfirm('${id}')"></i>
+                    </div>`;
                 opt += `<option value="${id}">${currentGroups[id].name}</option>`;
             });
             document.getElementById('groupListContainer').innerHTML = list;
             document.getElementById('roleGroupSelect').innerHTML = opt;
             filterMembers();
+            updateAnalytics();
         });
 
         dbHelper.ref('roles').on('value', snap => {
             currentRoles = snap.val() || {};
             let opt = '<option value="">SELECT ROLE</option>', list = '';
             
-            // เรียงลำดับยศตามตัวเลขลำดับ (Order) ก่อนแสดงผล
             const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
             
             sortedRoleKeys.forEach(id => {
                 const gName = currentGroups[currentRoles[id].groupId]?.name || 'UNKNOWN';
                 opt += `<option value="${id}">${currentRoles[id].name}</option>`;
-                list += `<div class="admin-item-row"><div><b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b> <small style="color: #666;">(Order: ${currentRoles[id].order || 0})</small><br><small>${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roles').child('${id}').remove()"></i></div>`;
+                list += `
+                    <div class="admin-item-row">
+                        <div>
+                            <b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b> 
+                            <small style="color: #666;">(Order: ${currentRoles[id].order || 0})</small><br>
+                            <small>${gName}</small>
+                        </div>
+                        <i class="fa-solid fa-trash-can delete-btn" onclick="deleteRoleConfirm('${id}')"></i>
+                    </div>`;
             });
             document.getElementById('memRole').innerHTML = opt;
             document.getElementById('roleListContainer').innerHTML = list;
-            renderTabs(); filterMembers();
+            renderTabs(); 
+            filterMembers();
+            updateAnalytics();
         });
 
         dbHelper.ref('members').on('value', snap => {
             currentMembers = snap.val() || {};
             document.getElementById('countNum').innerText = Object.keys(currentMembers).length;
+            
+            filterAdminMembers();
+            filterMembers();
+            updateAnalytics();
+        });
+
+        // Search Admin Directory Listings
+        function filterAdminMembers() {
+            const term = document.getElementById('adminMemberSearch').value.toLowerCase();
             let adminList = '';
             
-            // เรียงลำดับสมาชิกตามลำดับเลข (Order) ก่อนแสดงผลในหลังบ้าน
             const sortedMemberKeys = Object.keys(currentMembers).sort((a,b) => {
                 const orderA = currentMembers[a].order || 0;
                 const orderB = currentMembers[b].order || 0;
@@ -646,11 +1002,45 @@
             });
             
             sortedMemberKeys.forEach(id => {
-                adminList += `<div class="admin-item-row"><span>${currentMembers[id].name} <small style="color: #666;">(Order: ${currentMembers[id].order || 0})</small></span><div><i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('members').child('${id}').remove()"></i></div></div>`;
+                const m = currentMembers[id];
+                if (m.name.toLowerCase().includes(term)) {
+                    adminList += `
+                        <div class="admin-item-row">
+                            <span>${m.name} <small style="color: #666;">(Order: ${m.order || 0})</small></span>
+                            <div>
+                                <i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i>
+                                <i class="fa-solid fa-trash-can delete-btn" onclick="deleteMemberConfirm('${id}')"></i>
+                            </div>
+                        </div>`;
+                }
             });
-            document.getElementById('adminMemberList').innerHTML = adminList;
-            filterMembers();
-        });
+            document.getElementById('adminMemberList').innerHTML = adminList || '<div style="color:#555; font-size:12px; padding:15px; text-align:center;">NO MATCHING PERSONNEL</div>';
+        }
+
+        // Deletion Confirms (using Custom Modals instead of standard prompt browsers)
+        function deleteGroupConfirm(id) {
+            showConfirm("Delete Group", `ต้องการลบกลุ่มยศ "${currentGroups[id].name}" และสิทธิยศย่อยที่แนบอยู่ทั้งหมดใช่หรือไม่?`, () => {
+                dbHelper.ref('roleGroups').child(id).remove().then(() => {
+                    showToast("GROUP DELETED", "success");
+                });
+            });
+        }
+
+        function deleteRoleConfirm(id) {
+            showConfirm("Delete Role", `ต้องการลบสิทธิยศ "${currentRoles[id].name}" ออกจากโครงสร้างใช่หรือไม่?`, () => {
+                dbHelper.ref('roles').child(id).remove().then(() => {
+                    showToast("ROLE DELETED", "success");
+                });
+            });
+        }
+
+        function deleteMemberConfirm(id) {
+            showConfirm("Remove Personnel", `ต้องการนำชื่อของ "${currentMembers[id].name}" ออกจากทำเนียบบุคลากรใช่หรือไม่?`, () => {
+                dbHelper.ref('members').child(id).remove().then(() => {
+                    showToast("PERSONNEL DELETED", "success");
+                });
+            });
+        }
 
         function addGroup() {
             const name = document.getElementById('newGroupName').value.toUpperCase();
@@ -658,7 +1048,7 @@
             if(name) dbHelper.ref('roleGroups').push({ name, order }).then(() => {
                 document.getElementById('newGroupName').value = '';
                 document.getElementById('newGroupOrder').value = '';
-                showNotify("GROUP ADDED");
+                showToast("NEW GROUP LAYOUT ADDED", "success");
             });
         }
 
@@ -670,7 +1060,7 @@
             if(name && gId) dbHelper.ref('roles').push({ name, groupId: gId, color, order }).then(() => {
                 document.getElementById('newRoleName').value = '';
                 document.getElementById('newRoleOrder').value = '';
-                showNotify("ROLE CREATED");
+                showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
             });
         }
 
@@ -686,12 +1076,12 @@
                 tk: document.getElementById('memTk').value || ""
             };
 
-            if(!data.name || !data.roleId) return showNotify("ERROR: NAME & ROLE REQUIRED");
-            if(!data.fb) return showNotify("ERROR: FACEBOOK LINK IS REQUIRED TO ADD MEMBER");
+            if(!data.name || !data.roleId) return showToast("ERROR: จำเป็นต้องระบุชื่อและเลือกตำแหน่งยศ", "error");
+            if(!data.fb) return showToast("ERROR: จำเป็นต้องแนบลิงก์ Facebook ของสมาชิกเป็นอย่างน้อย", "warning");
 
             const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
             ref.set(data).then(() => { 
-                showNotify("PERSONNEL DATABASE UPDATED"); 
+                showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success"); 
                 clearMemForm(); 
             });
         }
@@ -708,6 +1098,9 @@
             document.getElementById('memTk').value = m.tk;
             document.getElementById('memBtn').innerText = "UPDATE PERSONNEL INFO";
             document.getElementById('memBtn').style.background = "var(--success)";
+            
+            // Auto scroll user layout to edit inputs
+            document.querySelector('#tab-members-db .admin-card').scrollIntoView({ behavior: 'smooth' });
         }
 
         function clearMemForm() {
@@ -778,7 +1171,7 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Member Filter, Sorting & Section Header Dynamic Mapping
+        // SYSTEM: Front-End Filter & Sorting Category
         // ----------------------------------------------------
         function filterMembers() {
             const term = document.getElementById('memberSearch').value.toLowerCase();
@@ -792,7 +1185,7 @@
                 if(!role) return;
                 const gId = role.groupId;
                 const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
-                const gOrder = currentGroups[gId]?.order || 0; // ดึงค่าน้ำหนักกลุ่มมาจัดลำดับ
+                const gOrder = currentGroups[gId]?.order || 0;
                 
                 if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
                     if(!structure[gId]) {
@@ -802,14 +1195,12 @@
                 }
             });
             
-            // แปลงโครงสร้างเป็น Array เพื่อทำการจัดเรียงหัวข้อตาม Order
             const sortedSections = Object.keys(structure).map(gId => ({
                 id: gId,
                 ...structure[gId]
             })).sort((a, b) => (a.order || 0) - (b.order || 0));
 
             sortedSections.forEach(group => {
-                // จัดลำดับรายชื่อสมาชิกภายในกลุ่มตามน้ำหนักเลข (Sort Order) ลำดับน้อยไปมาก
                 group.items.sort((a, b) => {
                     const orderA = a.order || 0;
                     const orderB = b.order || 0;
@@ -817,7 +1208,6 @@
                     return a.name.localeCompare(b.name);
                 });
 
-                // ดึงค่าสีของยศแรกในกลุ่มนี้ เพื่อกำหนดสีให้กับเส้นขีดซ้ายและชื่อหัวข้อกลุ่มแบบไดนามิก
                 const groupColor = group.items[0]?.role?.color || 'var(--accent)';
                 
                 let html = `
@@ -831,7 +1221,7 @@
                     const roleColor = m.role?.color || '#ffc107';
                     html += `
                         <div class="member-card" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
-                            <img src="${m.img || 'https://via.placeholder.com/70'}" class="avatar">
+                            <img src="${m.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}" class="avatar">
                             <div>
                                 <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
                                 <span class="rank-tag" style="background:${roleColor}">${m.role.name}</span>
@@ -858,20 +1248,18 @@
         }
 
         // ----------------------------------------------------
-        // SYSTEM: Category Tabs Renderer (ดึงลำดับ Order มาจัดทิศทางเรียงลำดับ)
+        // SYSTEM: Category Tabs Selector Front
         // ----------------------------------------------------
         function renderTabs() {
             const container = document.getElementById('categoryTabs');
             
-            let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#222'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
+            let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#161719'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
             
-            // เรียงลำดับเมนูปุ่มตัวกรองตามลำดับ Order
             const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
             
             sortedRoleKeys.forEach(id => {
                 const active = activeTab === id;
-                // คืนค่าปุ่มแบบเรียบง่ายเดิม ๆ: Active ใช้สี Accent ของเว็บ, Inactive ใช้พื้นหลังเข้มตัวหนังสือสีเทา #888
-                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#222'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
+                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#161719'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
             });
             container.innerHTML = html;
         }
@@ -953,7 +1341,7 @@
                 weather: document.getElementById('configWeather').value,
                 footerText: document.getElementById('configFooterText').value,
                 footerLink: document.getElementById('configFooterLink').value
-            }).then(() => showNotify("CONFIGURATION SYNCHRONIZED"));
+            }).then(() => showToast("CONFIGURATION DATABASE UPDATED", "success"));
         }
 
         function saveMusic() {
@@ -961,9 +1349,10 @@
                 id: document.getElementById('musicVidId').value,
                 start: document.getElementById('musicStart').value,
                 auto: document.getElementById('musicAutoToggle').checked
-            }).then(() => showNotify("AUDIO ENGINE UPDATED"));
+            }).then(() => showToast("AUDIO CORE SYNCHRONIZED", "success"));
         }
 
+        // Atmosphere visual effects
         const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
         let particles = [];
         function initWeather() {
