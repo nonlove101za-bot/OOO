@@ -66,8 +66,8 @@
         .config-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); }
         
         .hero { padding: 140px 20px 60px; text-align: center; animation: slideIn 1s cubic-bezier(0.22, 1, 0.36, 1); }
-        #siteLogo { max-width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 25px var(--accent)); }
-        .hero h1 { font-family: 'Orbitron'; font-size: clamp(28px, 6vw, 52px); letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        #siteLogo { max-width: 140px; margin-bottom: 25px; filter: drop-shadow(0 0 25px var(--accent)); cursor: pointer; }
+        .hero h1 { font-family: 'Orbitron'; font-size: clamp(28px, 6vw, 52px); letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; cursor: pointer; user-select: none; }
         
         /* Category section dynamic reveal */
         .category-section { 
@@ -515,8 +515,8 @@
     </nav>
 
     <header class="hero">
-        <img src="" id="siteLogo">
-        <h1 id="siteNameDisplay">LOADING...</h1>
+        <img src="" id="siteLogo" ondblclick="openModal('loginModal')" title="Double click to login">
+        <h1 id="siteNameDisplay" ondblclick="openModal('loginModal')" title="Double click to login">LOADING...</h1>
         <p id="siteDescDisplay" style="font-family:'Orbitron'; font-size:11px; opacity:0.6; letter-spacing:6px;">Not a perfect gang but try to be the best.</p>
     </header>
 
@@ -725,7 +725,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: MEMBERS DATABASE (FULLY DEDICATED MANAGEMENT) -->
+                <!-- TAB: MEMBERS DATABASE -->
                 <section id="tab-members-db" class="tab-content">
                     <div class="admin-grid">
                         <div class="admin-card col-12">
@@ -1150,7 +1150,6 @@
             showToast("กำลังอัปโหลดรูปภาพขึ้นสารระบบคลาวด์...", "info");
             
             const nameWithoutExt = file.name.split('.').slice(0, -1).join('.') || file.name;
-            const sizeInKb = (file.size / 1024).toFixed(1);
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1313,7 +1312,6 @@
             });
         }
 
-        // Fixed PERMISSION_DENIED: write directly to 'members' child folders
         function saveDraggedOrder() {
             const container = document.getElementById('adminMemberList');
             const sortedRows = [...container.querySelectorAll('.member-table-row.draggable')];
@@ -1341,7 +1339,6 @@
             }
         }
 
-        // Filter and Render Members on Back-end
         function filterAdminMembers() {
             const term = document.getElementById('adminMemberSearch').value.toLowerCase();
             const filterRole = document.getElementById('adminFilterRole').value;
@@ -1448,7 +1445,7 @@
 
             dbHelper.ref('members').update(updates).then(() => {
                 showToast(`อัปเดตสถานะกลุ่ม ${selectedMemberIds.size} คนเรียบร้อย`, "success");
-                logActivity(`เปลี่ยนสถานะแบบกลุ่มสมาชิก ${selectedMemberIds.size} รายการ เป็น ${status}`, "info");
+                logActivity("เปลี่ยนสถานะแบบกลุ่มสมาชิก " + selectedMemberIds.size + " รายการ", "info");
                 selectedMemberIds.clear();
                 document.getElementById('selectAllMembers').checked = false;
                 filterAdminMembers();
@@ -1456,7 +1453,7 @@
         }
 
         function applyBulkDelete() {
-            showConfirm("Bulk Delete", `คุณต้องการยืนยันการลบรายชื่อผู้ได้รับการคัดเลือกทั้งหมด ${selectedMemberIds.size} คน ใช่หรือไม่?`, () => {
+            showConfirm("Bulk Delete", `คุณต้องการยืนยันการลบรายชื่อที่เลือกทั้งหมด ${selectedMemberIds.size} คน ใช่หรือไม่?`, () => {
                 const deletePromises = [];
                 selectedMemberIds.forEach(id => {
                     deletePromises.push(dbHelper.ref('members').child(id).remove());
@@ -1511,7 +1508,6 @@
             
             renderPlaylistUI();
             
-            // Re-bootstrap playlist on YT Player if active
             if (player && playlist.length > 0) {
                 const ids = playlist.map(item => item.videoId);
                 player.cuePlaylist(ids, currentTrackIndex);
@@ -1544,7 +1540,6 @@
             });
         }
 
-        // Frontend Music controller functions
         function nextSong() {
             if (!player || playlist.length === 0) return;
             player.nextVideo();
@@ -1729,7 +1724,7 @@
             const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
             ref.set(data).then(() => { 
                 showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success"); 
-                logActivity(`${id ? 'อัปเดตแก้ไขโปรไฟล์ของ' : 'เพิ่มรายชื่อสมาชิกใหม่'} "${data.name}" ลงสู่หน้าทำเนียบ`, "success");
+                logActivity((id ? 'อัปเดตแก้ไขโปรไฟล์ของ' : 'เพิ่มรายชื่อสมาชิกใหม่') + ' "' + data.name + '" ลงสู่หน้าทำเนียบ', "success");
                 clearMemForm(); 
             });
         }
@@ -2055,6 +2050,108 @@
         }
         window.addEventListener('resize', initWeather);
         drawWeather();
+
+        function attemptLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            if(u === 'deathnote' && p === 'deathnote9871') {
+                closeModal('loginModal'); 
+                document.getElementById('adminPanel').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                loadConfigToInputs();
+                showToast("ยินดีต้อนรับสู่แผงควบคุมระบบ", "success");
+                logActivity("แอดมินลงชื่อเข้าสู่ระบบหลังบ้าน Central Command", "success");
+            } else {
+                showToast("ความปลอดภัยล้มเหลว: รหัสผ่านไม่ถูกต้อง", "error");
+            }
+        }
+
+        // Auto Open Admin Login Parameters Check without URL deletion
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'deathnote') {
+                openModal('loginModal');
+                showToast("ยินดีต้อนรับแอดมิน กรุณากรอกรหัสความปลอดภัย", "info");
+            }
+        });
+
+        // ----------------------------------------------------
+        // SYSTEM: Custom Confirm Dialog Modal Action Callbacks
+        // ----------------------------------------------------
+        let confirmActionCallback = null;
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirmTitle').innerText = title.toUpperCase();
+            document.getElementById('confirmMessage').innerText = message;
+            document.getElementById('confirmModal').style.display = 'flex';
+            confirmActionCallback = callback;
+        }
+
+        function handleConfirm(isConfirmed) {
+            document.getElementById('confirmModal').style.display = 'none';
+            if (isConfirmed && confirmActionCallback) {
+                confirmActionCallback();
+            }
+            confirmActionCallback = null;
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Dashboard Tabs Switches
+        // ----------------------------------------------------
+        function switchAdminTab(tabId, el) {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            el.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            const titles = {
+                'dashboard': { t: 'CENTRAL COMMAND', d: 'Real-time Database & Site Analytics' },
+                'media-manager': { t: 'MEDIA CLOUD MANAGER', d: 'Upload, Rename, Truncate, and Copy Base64 hosted files' },
+                'web-config': { t: 'WEBSITE CONFIGURATION', d: 'Adjust Identity, Wallpaper, Themes & Weather Effects' },
+                'roles-groups': { t: 'STRUCTURE & ROLES', d: 'Create and Manage Group Layouts and Rank Positions' },
+                'members-db': { t: 'PERSONNEL DIRECTORY', d: 'Add, Update, Search and Remove Gang Personnel' },
+                'music-config': { t: 'AUDIO MUSIC ENGINE', d: 'Configure YouTube Media Integration Background Audio' }
+            };
+            
+            document.getElementById('adminTabTitle').innerText = titles[tabId].t;
+            document.getElementById('adminTabDesc').innerText = titles[tabId].d;
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Analytics Widget Counter
+        // ----------------------------------------------------
+        function updateAnalytics() {
+            const memberCount = Object.keys(currentMembers).length;
+            const groupCount = Object.keys(currentGroups).length;
+            const roleCount = Object.keys(currentRoles).length;
+
+            document.getElementById('statTotalMembers').innerText = memberCount;
+            document.getElementById('statTotalGroups').innerText = groupCount;
+            document.getElementById('statTotalRoles').innerText = roleCount;
+
+            let visualHtml = '';
+            Object.keys(currentGroups).forEach(gId => {
+                const group = currentGroups[gId];
+                const matchCount = Object.values(currentMembers).filter(m => {
+                    const roleObj = currentRoles[m.roleId];
+                    return roleObj && roleObj.groupId === gId;
+                }).length;
+
+                const percent = memberCount > 0 ? (matchCount / memberCount) * 100 : 0;
+                visualHtml += `
+                    <div style="margin-bottom:18px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:6px; font-family:'Orbitron';">
+                            <span>${group.name}</span>
+                            <span style="opacity:0.8;">${matchCount} Personnel (${Math.round(percent)}%)</span>
+                        </div>
+                        <div style="height:8px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:4px; overflow:hidden;">
+                            <div style="width: ${percent}%; height:100%; background:var(--accent); border-radius:4px; box-shadow: 0 0 10px var(--accent); transition: width 0.6s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('analyticsDistribution').innerHTML = visualHtml || '<p style="font-size:12px; color:#555; padding: 10px 0;">No active structure layout to compute</p>';
+        }
     </script>
 </body>
 </html>
