@@ -117,10 +117,13 @@
     </div>
 
     <nav class="top-nav">
-        <div style="font-family:'Orbitron'; font-size:11px; letter-spacing:2px;">
-            <i class="fa-solid fa-users" style="color:var(--accent)"></i> MEMBER: <span id="countNum">0</span>
+        <div style="font-family:'Orbitron'; font-size:11px; letter-spacing:2px; display: flex; align-items: center; gap: 15px;">
+            <span><i class="fa-solid fa-users" style="color:var(--accent)"></i> MEMBER: <span id="countNum">0</span></span>
+            <span id="dbStatus" style="font-size: 9px; color: var(--accent); background: rgba(255,193,7,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,193,7,0.2)">
+                <i class="fa-solid fa-circle-nodes"></i> CONNECTING...
+            </span>
         </div>
-        <button class="config-btn" onclick="openModal('loginModal')"><i class="fa-solid fa-lock"></i> ADMIN</button>
+        <!-- ปุ่ม ADMIN สีเหลืองถูกถอดออกเพื่อซ่อนระบบ เพื่อความปลอดภัยตามคำขอของคุณ -->
     </nav>
 
     <header class="hero">
@@ -227,7 +230,225 @@
     </div>
 
     <script>
-     
+        // ----------------------------------------------------
+        // CONFIGURATION: ข้อมูลตั้งค่าระบบเชื่อมต่อ Firebase
+        // ----------------------------------------------------
+        const firebaseConfig = { 
+            databaseURL: "https://demoadmin-a4b1f-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+        };
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+        } catch(e) {
+            console.error("Firebase init error:", e);
+        }
+        const db = firebase.database();
+
+        let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
+        let isPlaying = false;
+
+        // ----------------------------------------------------
+        // SYSTEM: ระบบป้องกันการค้างหน้าโหลด (LocalStorage Fallback)
+        // ----------------------------------------------------
+        let useLocalFallback = false;
+        const listeners = {};
+        const firebaseLoaded = { config: false, roleGroups: false, roles: false, members: false };
+
+        const fallbackTimeout = setTimeout(() => {
+            if (!firebaseLoaded.config) {
+                triggerFallbackMode();
+            }
+        }, 2500);
+
+        function triggerFallbackMode() {
+            if (useLocalFallback) return;
+            useLocalFallback = true;
+            clearTimeout(fallbackTimeout);
+            
+            document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-database" style="color:#ffc107"></i> LOCAL STORAGE';
+            showNotify("เชื่อมต่อฐานข้อมูลหลักไม่ได้: ระบบสลับมาใช้โหมดความจำในเครื่องแทน");
+
+            Object.keys(listeners).forEach(path => {
+                triggerLocalUpdate(path);
+            });
+        }
+
+        function triggerLocalUpdate(path) {
+            if (listeners[path]) {
+                const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || getDefaultData(path);
+                const snap = {
+                    val: () => localData,
+                    once: (evt, cb) => cb({ val: () => localData })
+                };
+                listeners[path].forEach(cb => cb(snap));
+            }
+        }
+
+        function getDefaultData(path) {
+            if (path === 'config') {
+                return {
+                    name: 'GHETTOTROPHY',
+                    favicon: '',
+                    themeColor: '#ffc107',
+                    logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150',
+                    bgUrl: '',
+                    weather: 'snow',
+                    footerText: 'Designed by GHETTOTROPHY',
+                    footerLink: '#'
+                };
+            }
+            if (path === 'roleGroups') {
+                return {
+                    "g1": { name: "HIGH COMMAND" },
+                    "g2": { name: "MEMBERS" }
+                };
+            }
+            if (path === 'roles') {
+                return {
+                    "r1": { name: "FOUNDER", groupId: "g1", color: "#ff4757" },
+                    "r2": { name: "MEMBER", groupId: "g2", color: "#ffc107" }
+                };
+            }
+            if (path === 'members') {
+                return {
+                    "m1": { name: "GHETTO PERSONNEL", img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150", roleId: "r1", fb: "https://facebook.com", yt: "", tk: "" }
+                };
+            }
+            if (path === 'music') {
+                return { id: "dQw4w9WgXcQ", start: 0, auto: false };
+            }
+            return {};
+        }
+
+        const dbHelper = {
+            ref: function(path) {
+                return {
+                    on: function(event, successCallback, failureCallback) {
+                        if (!listeners[path]) listeners[path] = [];
+                        if (listeners[path].indexOf(successCallback) === -1) {
+                            listeners[path].push(successCallback);
+                        }
+
+                        if (useLocalFallback) {
+                            triggerLocalUpdate(path);
+                            return;
+                        }
+
+                        db.ref(path).on(event, (snap) => {
+                            firebaseLoaded[path] = true;
+                            if (path === 'config') {
+                                document.getElementById('dbStatus').innerHTML = '<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE';
+                                clearTimeout(fallbackTimeout);
+                            }
+                            successCallback(snap);
+                        }, (err) => {
+                            console.warn(`Firebase error on [${path}]:`, err.message);
+                            triggerFallbackMode();
+                            if (failureCallback) failureCallback(err);
+                        });
+                    },
+                    once: function(event, successCallback) {
+                        if (useLocalFallback) {
+                            const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || getDefaultData(path);
+                            successCallback({ val: () => localData });
+                            return;
+                        }
+                        db.ref(path).once(event, successCallback, (err) => {
+                            console.warn(`Firebase once error on [${path}]:`, err.message);
+                            triggerFallbackMode();
+                        });
+                    },
+                    set: function(value) {
+                        if (useLocalFallback) {
+                            localStorage.setItem('ghetto_' + path, JSON.stringify(value));
+                            triggerLocalUpdate(path);
+                            return Promise.resolve();
+                        }
+                        return db.ref(path).set(value).catch(err => {
+                            showNotify("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
+                        });
+                    },
+                    update: function(value) {
+                        if (useLocalFallback) {
+                            const existing = JSON.parse(localStorage.getItem('ghetto_' + path)) || {};
+                            const updated = { ...existing, ...value };
+                            localStorage.setItem('ghetto_' + path, JSON.stringify(updated));
+                            triggerLocalUpdate(path);
+                            return Promise.resolve();
+                        }
+                        return db.ref(path).update(value).catch(err => {
+                            showNotify("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
+                        });
+                    },
+                    push: function(value) {
+                        if (useLocalFallback) {
+                            const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || {};
+                            const newId = 'local_' + Math.random().toString(36).substr(2, 9);
+                            if (value) {
+                                localData[newId] = value;
+                                localStorage.setItem('ghetto_' + path, JSON.stringify(localData));
+                                triggerLocalUpdate(path);
+                            }
+                            return {
+                                then: function(cb) { cb(); return this; },
+                                set: function(val) {
+                                    localData[newId] = val;
+                                    localStorage.setItem('ghetto_' + path, JSON.stringify(localData));
+                                    triggerLocalUpdate(path);
+                                    return Promise.resolve();
+                                }
+                            };
+                        }
+                        return db.ref(path).push(value);
+                    },
+                    child: function(childPath) {
+                        return {
+                            remove: function() {
+                                if (useLocalFallback) {
+                                    const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || {};
+                                    delete localData[childPath];
+                                    localStorage.setItem('ghetto_' + path, JSON.stringify(localData));
+                                    triggerLocalUpdate(path);
+                                    return Promise.resolve();
+                                }
+                                return db.ref(path).child(childPath).remove();
+                            },
+                            set: function(value) {
+                                if (useLocalFallback) {
+                                    const localData = JSON.parse(localStorage.getItem('ghetto_' + path)) || {};
+                                    localData[childPath] = value;
+                                    localStorage.setItem('ghetto_' + path, JSON.stringify(localData));
+                                    triggerLocalUpdate(path);
+                                    return Promise.resolve();
+                                }
+                                return db.ref(path).child(childPath).set(value);
+                            }
+                        };
+                    }
+                };
+            }
+        };
+
+        // ----------------------------------------------------
+        // SYSTEM: ตรวจสอบการเข้าผ่านลิงก์ลับ ?login=ghetto
+        // ----------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'ghetto') {
+                openModal('loginModal');
+                showNotify("ระบบบัญชาการ: ยินดีต้อนรับแอดมิน");
+                try {
+                    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                } catch (e) {
+                    console.warn("ไม่สามารถล้าง URL Parameter ในพื้นที่เครื่องเซิร์ฟเวอร์จำลองบางประเภท:", e);
+                }
+            }
+        });
+
+        // ----------------------------------------------------
+        // FUNCTIONS
+        // ----------------------------------------------------
 
         function attemptLogin() {
             const u = document.getElementById('loginUser').value;
@@ -250,7 +471,7 @@
         }
 
         function loadConfigToInputs() {
-            db.ref('config').once('value', snap => {
+            dbHelper.ref('config').once('value', snap => {
                 const d = snap.val() || {};
                 document.getElementById('configSiteName').value = d.name || '';
                 document.getElementById('configFavicon').value = d.favicon || '';
@@ -261,7 +482,7 @@
                 document.getElementById('configFooterText').value = d.footerText || '';
                 document.getElementById('configFooterLink').value = d.footerLink || '';
             });
-            db.ref('music').once('value', snap => {
+            dbHelper.ref('music').once('value', snap => {
                 const m = snap.val() || {};
                 document.getElementById('musicVidId').value = m.id || '';
                 document.getElementById('musicStart').value = m.start || 0;
@@ -276,11 +497,11 @@
             document.body.style.overflow = 'auto'; 
         }
 
-        db.ref('roleGroups').on('value', snap => {
+        dbHelper.ref('roleGroups').on('value', snap => {
             currentGroups = snap.val() || {};
             let list = '', opt = '<option value="">SELECT GROUP</option>';
             Object.keys(currentGroups).forEach(id => {
-                list += `<div class="admin-item-row"><span>${currentGroups[id].name}</span><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('roleGroups').child('${id}').remove()"></i></div>`;
+                list += `<div class="admin-item-row"><span>${currentGroups[id].name}</span><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roleGroups').child('${id}').remove()"></i></div>`;
                 opt += `<option value="${id}">${currentGroups[id].name}</option>`;
             });
             document.getElementById('groupListContainer').innerHTML = list;
@@ -288,25 +509,25 @@
             filterMembers();
         });
 
-        db.ref('roles').on('value', snap => {
+        dbHelper.ref('roles').on('value', snap => {
             currentRoles = snap.val() || {};
             let opt = '<option value="">SELECT ROLE</option>', list = '';
             Object.keys(currentRoles).forEach(id => {
                 const gName = currentGroups[currentRoles[id].groupId]?.name || 'UNKNOWN';
                 opt += `<option value="${id}">${currentRoles[id].name}</option>`;
-                list += `<div class="admin-item-row"><div><b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b><br><small>${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('roles').child('${id}').remove()"></i></div>`;
+                list += `<div class="admin-item-row"><div><b style="color:${currentRoles[id].color}">${currentRoles[id].name}</b><br><small>${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roles').child('${id}').remove()"></i></div>`;
             });
             document.getElementById('memRole').innerHTML = opt;
             document.getElementById('roleListContainer').innerHTML = list;
             renderTabs(); filterMembers();
         });
 
-        db.ref('members').on('value', snap => {
+        dbHelper.ref('members').on('value', snap => {
             currentMembers = snap.val() || {};
             document.getElementById('countNum').innerText = Object.keys(currentMembers).length;
             let adminList = '';
             Object.keys(currentMembers).forEach(id => {
-                adminList += `<div class="admin-item-row"><span>${currentMembers[id].name}</span><div><i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" onclick="db.ref('members').child('${id}').remove()"></i></div></div>`;
+                adminList += `<div class="admin-item-row"><span>${currentMembers[id].name}</span><div><i class="fa-solid fa-pen-to-square" style="color:var(--accent); cursor:pointer; margin-right:10px;" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('members').child('${id}').remove()"></i></div></div>`;
             });
             document.getElementById('adminMemberList').innerHTML = adminList;
             filterMembers();
@@ -314,7 +535,7 @@
 
         function addGroup() {
             const name = document.getElementById('newGroupName').value.toUpperCase();
-            if(name) db.ref('roleGroups').push({ name }).then(() => {
+            if(name) dbHelper.ref('roleGroups').push({ name }).then(() => {
                 document.getElementById('newGroupName').value = ''; showNotify("GROUP ADDED");
             });
         }
@@ -323,7 +544,7 @@
             const name = document.getElementById('newRoleName').value.toUpperCase();
             const gId = document.getElementById('roleGroupSelect').value;
             const color = document.getElementById('newRoleColor').value;
-            if(name && gId) db.ref('roles').push({ name, groupId: gId, color }).then(() => {
+            if(name && gId) dbHelper.ref('roles').push({ name, groupId: gId, color }).then(() => {
                 document.getElementById('newRoleName').value = ''; showNotify("ROLE CREATED");
             });
         }
@@ -339,11 +560,10 @@
                 tk: document.getElementById('memTk').value || ""
             };
 
-            // Requirement: Name, Role, and Facebook Link must be provided
             if(!data.name || !data.roleId) return showNotify("ERROR: NAME & ROLE REQUIRED");
             if(!data.fb) return showNotify("ERROR: FACEBOOK LINK IS REQUIRED TO ADD MEMBER");
 
-            const ref = id ? db.ref('members').child(id) : db.ref('members').push();
+            const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
             ref.set(data).then(() => { 
                 showNotify("PERSONNEL DATABASE UPDATED"); 
                 clearMemForm(); 
@@ -441,7 +661,7 @@
         }
 
         function onYouTubeIframeAPIReady() {
-            db.ref('music').once('value', snap => {
+            dbHelper.ref('music').once('value', snap => {
                 const m = snap.val() || {};
                 if(!m.id) return;
                 player = new YT.Player('player', {
@@ -460,7 +680,7 @@
             });
         }
 
-        db.ref('config').on('value', snap => {
+        dbHelper.ref('config').on('value', snap => {
             const d = snap.val() || {};
             document.title = d.name || 'GHETTOTROPHY';
             document.getElementById('siteNameDisplay').innerText = d.name || 'GHETTOTROPHY';
@@ -474,7 +694,7 @@
         });
 
         function saveConfig() {
-            db.ref('config').update({
+            dbHelper.ref('config').update({
                 name: document.getElementById('configSiteName').value,
                 favicon: document.getElementById('configFavicon').value,
                 themeColor: document.getElementById('configThemeColor').value,
@@ -487,7 +707,7 @@
         }
 
         function saveMusic() {
-            db.ref('music').set({
+            dbHelper.ref('music').set({
                 id: document.getElementById('musicVidId').value,
                 start: document.getElementById('musicStart').value,
                 auto: document.getElementById('musicAutoToggle').checked
