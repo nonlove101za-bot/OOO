@@ -123,7 +123,6 @@
                 <i class="fa-solid fa-circle-nodes"></i> CONNECTING...
             </span>
         </div>
-        <!-- ปุ่ม ADMIN สีเหลืองถูกถอดออกเพื่อซ่อนระบบ เพื่อความปลอดภัยตามคำขอของคุณ -->
     </nav>
 
     <header class="hero">
@@ -234,7 +233,7 @@
         // CONFIGURATION: ข้อมูลตั้งค่าระบบเชื่อมต่อ Firebase
         // ----------------------------------------------------
         const firebaseConfig = { 
-            databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app//" 
+            databaseURL: "https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/" 
         };
 
         try {
@@ -315,7 +314,7 @@
                 };
             }
             if (path === 'music') {
-                return { id: "dQw4w9WgXcQ", start: 0, auto: false };
+                return { id: "JXg_Qe48cbU", start: 0, auto: true };
             }
             return {};
         }
@@ -502,7 +501,7 @@
             let list = '', opt = '<option value="">SELECT GROUP</option>';
             Object.keys(currentGroups).forEach(id => {
                 list += `<div class="admin-item-row"><span>${currentGroups[id].name}</span><i class="fa-solid fa-trash-can delete-btn" onclick="dbHelper.ref('roleGroups').child('${id}').remove()"></i></div>`;
-                opt += `<option value="${id}">${currentGroups[id].name}</option>`;
+                opt += `<option value="${id}">${currentGroups[id].name}</option>';`;
             });
             document.getElementById('groupListContainer').innerHTML = list;
             document.getElementById('roleGroupSelect').innerHTML = opt;
@@ -662,14 +661,33 @@
 
         function onYouTubeIframeAPIReady() {
             dbHelper.ref('music').once('value', snap => {
-                const m = snap.val() || {};
-                if(!m.id) return;
+                let m = snap.val() || {};
+                
+                // หากในฐานข้อมูลออนไลน์ยังไม่มีข้อมูลเพลง ให้เล่นเพลง Reminder (The Weeknd) เป็นค่าเริ่มต้น
+                if(!m.id) {
+                    m = { id: "JXg_Qe48cbU", start: 0, auto: true };
+                }
+                
                 player = new YT.Player('player', {
                     height: '0', width: '0', videoId: m.id,
                     playerVars: { 'autoplay': m.auto ? 1 : 0, 'start': m.start || 0, 'loop': 1, 'playlist': m.id },
                     events: { 
                         'onReady': (e) => { 
-                            if(m.auto) { e.target.playVideo(); isPlaying = true; document.getElementById('musicIcon').className = 'fa-solid fa-pause'; }
+                            if(m.auto) { 
+                                // สั่งให้ผู้เล่นพยายามเล่นเพลงทันที
+                                e.target.playVideo(); 
+                                
+                                // ป้องกันกฎ Autoplay บราวเซอร์: หากโดนบราวเซอร์บล็อก ให้เปิดเพลงทันทีที่คลิกอะไรก็ได้บนจอครั้งแรก
+                                setTimeout(() => {
+                                    if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                                        const playOnInteraction = () => {
+                                            player.playVideo();
+                                            document.removeEventListener('click', playOnInteraction);
+                                        };
+                                        document.addEventListener('click', playOnInteraction);
+                                    }
+                                }, 1000);
+                            }
                         },
                         'onStateChange': (e) => {
                             if(e.data === YT.PlayerState.PLAYING) { isPlaying = true; document.getElementById('musicIcon').className = 'fa-solid fa-pause'; }
