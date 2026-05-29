@@ -2002,6 +2002,502 @@
             });
         }
 
+        function addRole() {
+            const name = document.getElementById('newRoleName').value.toUpperCase();
+            const gId = document.getElementById('roleGroupSelect').value;
+            const color = document.getElementById('newRoleColor').value;
+            const order = parseInt(document.getElementById('newRoleOrder').value) || 0;
+            if(name && gId) dbHelper.ref('roles').push({ name: name, groupId: gId, color: color, order: order }).then(() => {
+                document.getElementById('newRoleName').value = '';
+                document.getElementById('newRoleOrder').value = '';
+                showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
+                logActivity("สร้างยศตำแหน่งหน้าที่ \"" + name + "\" ใหม่สำเร็จ", "success");
+            });
+        }
+
+        function saveMember() {
+            const id = document.getElementById('editMemId').value;
+            const originalJoinDate = document.getElementById('editMemJoinDate').value;
+            const currentDate = new Date().toLocaleDateString('th-TH');
+            
+            // Auto calculate order based on current list size on creation
+            const calculatedOrder = id ? (currentMembers[id].order || 0) : Object.keys(currentMembers).length;
+
+            const data = {
+                name: document.getElementById('memName').value,
+                img: document.getElementById('memImg').value,
+                roleId: document.getElementById('memRole').value,
+                order: calculatedOrder,
+                status: document.getElementById('memStatus').value || "active",
+                fb: document.getElementById('memFb').value || "",
+                yt: document.getElementById('memYt').value || "",
+                tk: document.getElementById('memTk').value || "",
+                joinDate: id ? originalJoinDate : currentDate,
+                lastEdit: new Date().toLocaleString('th-TH')
+            };
+
+            if(!data.name || !data.roleId) return showToast("ERROR: จำเป็นต้องระบุชื่อและเลือกตำแหน่งยศ", "error");
+            if(!data.fb) return showToast("ERROR: จำเป็นต้องแนบลิงก์ Facebook ของสมาชิกเป็นอย่างน้อย", "warning");
+
+            const ref = id ? dbHelper.ref('members').child(id) : dbHelper.ref('members').push();
+            ref.set(data).then(() => { 
+                showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success"); 
+                logActivity((id ? 'อัปเดตแก้ไขโปรไฟล์ของ' : 'เพิ่มรายชื่อสมาชิกใหม่') + ' "' + data.name + '" ลงสู่หน้าทำเนียบ', "success");
+                clearMemForm(); 
+            });
+        }
+
+        function editMember(id) {
+            const m = currentMembers[id];
+            document.getElementById('editMemId').value = id;
+            document.getElementById('editMemJoinDate').value = m.joinDate || '2026-05-20';
+            document.getElementById('memName').value = m.name;
+            document.getElementById('memImg').value = m.img;
+            document.getElementById('memRole').value = m.roleId;
+            document.getElementById('memStatus').value = m.status || "active";
+            document.getElementById('memFb').value = m.fb;
+            document.getElementById('memYt').value = m.yt;
+            document.getElementById('memTk').value = m.tk;
+            document.getElementById('memBtn').innerText = "UPDATE PERSONNEL INFO";
+            document.getElementById('memBtn').style.background = "var(--success)";
+            
+            document.querySelector('#tab-members-db .admin-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearMemForm() {
+            document.getElementById('editMemId').value = '';
+            document.getElementById('editMemJoinDate').value = '';
+            document.getElementById('memName').value = '';
+            document.getElementById('memImg').value = '';
+            document.getElementById('memRole').value = '';
+            document.getElementById('memStatus').value = 'active';
+            document.getElementById('memFb').value = '';
+            document.getElementById('memYt').value = '';
+            document.getElementById('memTk').value = '';
+            document.getElementById('memBtn').innerText = "DEPLOY TO DIRECTORY";
+            document.getElementById('memBtn').style.background = "var(--accent)";
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Scroll Reveal Intersection Observer Setup
+        // ----------------------------------------------------
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                }
+            });
+        }, {
+            threshold: 0.05,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        function updateScrollReveals() {
+            const sections = document.querySelectorAll('.category-section');
+            sections.forEach(section => {
+                revealObserver.observe(section);
+            });
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Throttled Particle Spawner for Best Performance
+        // ----------------------------------------------------
+        let lastParticleTime = 0;
+        function handleCardHoverParticles(e) {
+            const now = Date.now();
+            if (now - lastParticleTime < 120) return; 
+            lastParticleTime = now;
+
+            const card = e.currentTarget;
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const particle = document.createElement('span');
+            particle.className = 'hover-particle';
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+
+            const size = Math.random() * 3 + 1.5; 
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            const driftX = (Math.random() - 0.5) * 30;
+            const driftY = -(Math.random() * 40 + 20);
+            particle.style.setProperty('--drift-x', `${driftX}px`);
+            particle.style.setProperty('--drift-y', `${driftY}px`);
+
+            card.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Front-End Filter & Sorting Category (Active only on Front)
+        // ----------------------------------------------------
+        function filterMembers() {
+            const term = document.getElementById('memberSearch').value.toLowerCase();
+            const wrapper = document.getElementById('memberSections');
+            wrapper.innerHTML = '';
+            const structure = {};
+            
+            Object.keys(currentMembers).forEach(id => {
+                const m = currentMembers[id];
+                if (m.status === 'inactive') return; // Hide inactive users from frontend view
+
+                const role = currentRoles[m.roleId];
+                if(!role) return;
+                const gId = role.groupId;
+                const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
+                const gOrder = currentGroups[gId]?.order || 0;
+                
+                if(m.name.toLowerCase().includes(term) && (activeTab === 'all' || m.roleId === activeTab)) {
+                    if(!structure[gId]) {
+                        structure[gId] = { name: gName, order: gOrder, items: [] };
+                    }
+                    structure[gId].items.push({...m, role: role});
+                }
+            });
+            
+            const sortedSections = Object.keys(structure).map(gId => ({
+                id: gId,
+                ...structure[gId]
+            })).sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            sortedSections.forEach(group => {
+                group.items.sort((a, b) => {
+                    const orderA = a.order || 0;
+                    const orderB = b.order || 0;
+                    if (orderA !== orderB) return orderA - orderB;
+                    return a.name.localeCompare(b.name);
+                });
+
+                const groupColor = group.items[0]?.role?.color || 'var(--accent)';
+                
+                let html = `
+                    <section class="category-section">
+                        <div class="category-header" style="color: ${groupColor}; border-left-color: ${groupColor};">
+                            ${group.name}
+                        </div>
+                        <div class="member-grid">`;
+                        
+                group.items.forEach((m, i) => {
+                    const roleColor = m.role?.color || '#ffc107';
+                    html += `
+                        <div class="member-card" style="animation-delay:${i*0.05}s; --role-color: ${roleColor};">
+                            <img src="${m.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}" class="avatar">
+                            <div>
+                                <div style="font-weight:600; font-size:15px; position:relative; z-index:10;">${m.name}</div>
+                                <span class="rank-tag" style="background:${roleColor}">${m.role.name}</span>
+                            </div>
+                            <div class="social-links">
+                                ${m.fb ? `<a href="${m.fb}" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>` : ''}
+                                ${m.yt ? `<a href="${m.yt}" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>` : ''}
+                                ${m.tk ? `<a href="${m.tk}" target="_blank" style="color:#fff;"><i class="fa-brands fa-tiktok"></i></a>` : ''}
+                            </div>
+                        </div>`;
+                });
+                html += `</div></section>`;
+                wrapper.innerHTML += html;
+            });
+
+            const cards = document.querySelectorAll('.member-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', handleCardHoverParticles);
+            });
+
+            updateScrollReveals();
+
+            if(!sortedSections.length) wrapper.innerHTML = '<p style="text-align:center; opacity:0.2; padding:100px; font-family:\'Orbitron\'">NO RECORDS FOUND</p>';
+        }
+
+        // ----------------------------------------------------
+        // SYSTEM: Category Tabs Selector Front
+        // ----------------------------------------------------
+        function renderTabs() {
+            const container = document.getElementById('categoryTabs');
+            
+            let html = `<button class="config-btn" style="background:${activeTab==='all'?'var(--accent)':'#161719'}; color:${activeTab==='all'?'#000':'#888'}" onclick="setActiveTab('all')">ALL</button>`;
+            
+            const sortedRoleKeys = Object.keys(currentRoles).sort((a,b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0));
+            
+            sortedRoleKeys.forEach(id => {
+                const active = activeTab === id;
+                html += `<button class="config-btn" style="background:${active?'var(--accent)':'#161719'}; color:${active?'#000':'#888'}" onclick="setActiveTab('${id}')">${currentRoles[id].name}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function setActiveTab(id) { activeTab = id; renderTabs(); filterMembers(); }
+
+        function toggleNotebook() {
+            const widget = document.getElementById('dnBookWidget');
+            widget.classList.toggle('open');
+        }
+
+        function toggleMusic() {
+            if(!player) return;
+            const icon = document.getElementById('musicIcon');
+            if(isPlaying) {
+                player.pauseVideo();
+                if(icon) icon.className = 'fa-solid fa-play';
+                isPlaying = false;
+            } else {
+                player.playVideo();
+                if(icon) icon.className = 'fa-solid fa-pause';
+                isPlaying = true;
+            }
+        }
+
+        function updateCurrentTrackDisplay() {
+            if (!player || playlist.length === 0) return;
+            try {
+                const index = player.getPlaylistIndex();
+                if (index !== -1 && playlist[index]) {
+                    const trackTitle = playlist[index].title.toUpperCase();
+                    const titleEl = document.getElementById('dnNowPlayingTitle');
+                    if (titleEl) titleEl.innerText = trackTitle;
+                } else {
+                    const titleEl = document.getElementById('dnNowPlayingTitle');
+                    if (titleEl) titleEl.innerText = "PLAYING AUDIO";
+                }
+            } catch(e) {
+                const titleEl = document.getElementById('dnNowPlayingTitle');
+                if (titleEl) titleEl.innerText = "DEATHNOTE AUDIO";
+            }
+        }
+
+        function playTrackByIndex(index) {
+            if (!player || playlist.length === 0) return;
+            if (index < 0) index = playlist.length - 1;
+            if (index >= playlist.length) index = 0;
+            currentTrackIndex = index;
+            
+            const track = playlist[index];
+            const startSec = parseInt(track.startSecond) || 0;
+            
+            // สั่งเล่นเพลงเจาะจงวินาทีที่บันทึกไว้ในหลังบ้าน
+            player.loadVideoById({
+                videoId: track.videoId,
+                startSeconds: startSec
+            });
+            
+            setTimeout(() => {
+                updateCurrentTrackDisplay();
+                renderNotebookPlaylist();
+            }, 500);
+        }
+
+        function renderNotebookPlaylist() {
+            const container = document.getElementById('notebookTracks');
+            if (!container) return;
+            if (playlist.length === 0) {
+                container.innerHTML = '<li style="font-family:\'Reenie Beanie\'; font-size:24px; color:#555; text-align:center;">No victim songs written...</li>';
+                return;
+            }
+            
+            let html = '';
+            playlist.forEach((track, index) => {
+                let isCurrent = false;
+                if (player) {
+                    try {
+                        isCurrent = player.getPlaylistIndex() === index;
+                    } catch(e) {}
+                }
+                const activeClass = isCurrent ? 'playing-track' : '';
+                html += `
+                    <li class="${activeClass}" onclick="playTrackByIndex(${index})">
+                        ${index + 1}. ${track.title}
+                    </li>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function onYouTubeIframeAPIReady() {
+            dbHelper.ref('music').once('value', snap => {
+                let m = snap.val() || {};
+                
+                dbHelper.ref('playlist').once('value', playlistSnap => {
+                    const pData = playlistSnap.val() || {};
+                    playlist = Object.keys(pData).map(k => ({ id: k, ...pData[k] }));
+                    const autoStart = m.auto !== undefined ? m.auto : true;
+                    
+                    const startTrack = playlist[currentTrackIndex];
+                    const startId = startTrack ? startTrack.videoId : "JXg_Qe48cbU";
+                    const startSec = startTrack ? (parseInt(startTrack.startSecond) || 0) : 0;
+                    
+                    player = new YT.Player('player', {
+                        height: '0', width: '0', videoId: startId,
+                        playerVars: { 
+                            'autoplay': autoStart ? 1 : 0, 
+                            'start': startSec,
+                            'loop': 0, // ปิดรูปลูปของ youtube เพื่อใช้ระบบแมนวลในการควบคุมเวลาและข้ามเพลงให้ลื่นไหล
+                            'controls': 0
+                        },
+                        events: { 
+                            'onReady': (e) => { 
+                                if(autoStart && playlist.length > 0) { 
+                                    player.loadVideoById({
+                                        videoId: startId,
+                                        startSeconds: startSec
+                                    });
+                                    
+                                    setTimeout(() => {
+                                        if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                                            const playOnInteraction = () => {
+                                                player.playVideo();
+                                                document.removeEventListener('click', playOnInteraction);
+                                            };
+                                            document.addEventListener('click', playOnInteraction);
+                                        }
+                                    }, 1000);
+                                }
+                            },
+                            'onStateChange': (e) => {
+                                const icon = document.getElementById('musicIcon');
+                                if(e.data === YT.PlayerState.PLAYING) { 
+                                    isPlaying = true; 
+                                    if(icon) icon.className = 'fa-solid fa-pause'; 
+                                    updateCurrentTrackDisplay();
+                                    renderNotebookPlaylist();
+                                } else if(e.data === YT.PlayerState.ENDED) {
+                                    // เมื่อเพลงจบให้เลื่อนไปเล่นเพลงถัดไปตามคิวระบบ
+                                    nextSong();
+                                } else { 
+                                    isPlaying = false; 
+                                    if(icon) icon.className = 'fa-solid fa-play'; 
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        dbHelper.ref('config').on('value', snap => {
+            const d = snap.val() || {};
+            document.title = d.name || 'DEATHNOTE';
+            document.getElementById('siteNameDisplay').innerText = d.name || 'DEATHNOTE';
+            document.getElementById('favicon').href = d.favicon || '';
+            document.getElementById('siteLogo').src = d.logo || '';
+            if(d.bgUrl) document.body.style.backgroundImage = "url('" + d.bgUrl + "')";
+            if(d.themeColor) {
+                document.documentElement.style.setProperty('--accent', d.themeColor);
+            }
+            weatherType = d.weather || 'none'; initWeather();
+            document.getElementById('footerTextDisplay').innerText = d.footerText || 'Designed by DEATHNOTE';
+            document.getElementById('footerLinkLabel').href = d.footerLink || '#';
+        });
+
+        function saveConfig() {
+            dbHelper.ref('config').update({
+                name: document.getElementById('configSiteName').value,
+                favicon: document.getElementById('configFavicon').value,
+                themeColor: document.getElementById('configThemeColor').value,
+                logo: document.getElementById('configLogoUrl').value,
+                bgUrl: document.getElementById('configBgUrl').value,
+                weather: document.getElementById('configWeather').value,
+                footerText: document.getElementById('configFooterText').value,
+                footerLink: document.getElementById('configFooterLink').value
+            }).then(() => {
+                showToast("CONFIGURATION DATABASE UPDATED", "success");
+                logActivity("อัปเดตปรับแก้การตั้งค่าส่วนหน้าบ้านเว็บไซต์หลัก", "info");
+            });
+        }
+
+        function saveMusic() {
+            dbHelper.ref('music').update({
+                auto: document.getElementById('musicAutoToggle').checked
+            }).then(() => {
+                showToast("AUDIO CORE SYNCHRONIZED", "success");
+                logActivity("ปรับเปลี่ยนตั้งค่าระบบบอร์ดเพลงพื้นหลัง (Audio Engine)", "info");
+            });
+        }
+
+        const canvas = document.getElementById('weather-canvas'), ctx = canvas.getContext('2d');
+        let particles = [];
+        function initWeather() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            particles = []; if(weatherType === 'none') return;
+            for(let i=0; i<80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    speed: Math.random() * 2 + 1,
+                    radius: Math.random() * 2 + 1
+                });
+            }
+        }
+
+        function drawWeather() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(weatherType === 'none') return requestAnimationFrame(drawWeather);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.speed;
+                if(p.y > canvas.height) p.y = -10;
+            });
+            requestAnimationFrame(drawWeather);
+        }
+        window.addEventListener('resize', initWeather);
+        drawWeather();
+
+        // ฟังก์ชันคำนวณแฮช SHA-256 สำหรับความปลอดภัยสูงสุด ป้องกันคนกด F12 แอบดูรหัส
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ล็อกอินหลังบ้านแบบปลอดภัยด้วย SHA-256
+        async function attemptLogin() {
+            const u = document.getElementById('loginUser').value;
+            const p = document.getElementById('loginPass').value;
+            
+            const userHash = await sha256(u);
+            const passHash = await sha256(p);
+            
+            // เปรียบเทียบรหัสผ่านด้วยแฮชของไอดี 'deathnote' และรหัส 'deathnote9871'
+            if(userHash === '7531776c5b967dc1f85cfec58957ba54117079cbaf6e479d2df8fc2e4dfa609d' && 
+               passHash === '5f1512bf6dfbf519a4e3fa3831b5443fa4c4b92b67f139d67fbca83ee7c001cf') {
+                closeModal('loginModal'); 
+                document.getElementById('adminPanel').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                loadConfigToInputs();
+                showToast("ยินดีต้อนรับสู่แผงควบคุมระบบ", "success");
+                logActivity("แอดมินลงชื่อเข้าสู่ระบบหลังบ้าน Central Command", "success");
+            } else {
+                showToast("ความปลอดภัยล้มเหลว: รหัสผ่านไม่ถูกต้อง", "error");
+            }
+        }
+
+        // Auto Open Admin Login Parameters Check without URL deletion
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('login') === 'deathnote') {
+                openModal('loginModal');
+                showToast("ยินดีต้อนรับแอดมิน กรุณากรอกรหัสความปลอดภัย", "info");
+            }
+        });
+
+        // ----------------------------------------------------
+        // SYSTEM: Custom Confirm Dialog Modal Action Callbacks
+        // ----------------------------------------------------
+        let confirmActionCallback = null;
+        function showConfirm(title, message, callback) {
+            document.getElementById('confirmTitle').innerText = title.toUpperCase();
+            document.getElementById('confirmMessage').innerText = message;
+            document.getElementById('confirmModal').style.display = 'flex';
+            confirmActionCallback = callback;
+        }
+
         // ระบบความปลอดภัยเพิ่มเติม: ปิดกั้นการคลิกขวา และคำสั่งลัด F12 / Ctrl+U / Ctrl+S / Ctrl+Shift+I (Inspect Element) เพื่อป้องกันการแอบขโมยโค้ด
         document.addEventListener('contextmenu', e => {
             e.preventDefault();
