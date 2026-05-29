@@ -1718,12 +1718,24 @@ async function sha256(message) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function attemptLogin() {
   const u = document.getElementById("loginUser").value;
   const p = document.getElementById("loginPass").value;
-  
-  // เปลี่ยนมาตรวจสอบชื่อผู้ใช้และรหัสผ่านตรง ๆ ตามที่คุณต้องการ
-  if (u === "b79bb8bd1670509b4fe13ebaa27e22f32aa9231814a24e332a6f6e8d4126e5df" && p === "002271d9f0804ca6fda4b218ec0175ccfa760a410592e698a7bdfc3e9478b581") {
+
+  const userHash = await sha256(u);
+  const passHash = await sha256(p);
+
+  if (
+    userHash === "b79bb8bd1670509b4fe13ebaa27e22f32aa9231814a24e332a6f6e8d4126e5df" &&
+    passHash === "b307110e2d41c49f350cb8b893fa491d6b29a5c7ee59efb8c227f98e175eccf2"
+  ) {
     closeModal("loginModal");
     document.getElementById("adminPanel").style.display = "block";
     document.body.style.overflow = "hidden";
