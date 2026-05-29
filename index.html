@@ -1,3 +1,40 @@
+ขออภัยอย่างยิ่งครับ
+ผมเข้าใจความต้องการของคุณผิดพลาดไปเองที่นำส่งระบบแผ่นเสียงให้ก่อนหน้านี้
+
+ตามที่คุณแจ้งมาเลยครับ ระบบเพลงที่เหมาะและเติมเต็มความเป็นหน้าเว็บแก๊งธีม Death
+Note ได้สมบูรณ์ที่สุดคือ "สมุดบันทึกเดธโน้ต" (Custom Death Note Player)
+
+ผมได้ทำการรื้อระบบเครื่องเล่นเดิมออกทั้งหมด และเปลี่ยนมาเป็น
+สมุดโน้ตสีดำที่จะวางไว้ที่มุมซ้ายล่าง
+แทนอย่างสมบูรณ์:
+
+1.  การดีไซน์ภายนอก (Closed Book): มีลักษณะเป็นสมุดบันทึกสีดำเย็บเล่มสลักคำว่า
+    "DEATH NOTE" คลาสสิก เมื่อนำเมาส์ไปชี้
+    ตัวสมุดจะยกตัวลอยขึ้นเล็กน้อยพร้อมเรืองแสงเงาสีแดงดาร์ก
+    ๆ ชวนกด
+2.  การทำงานเมื่อคลิกเปิด (Click to Open): ตัวสมุดจะกางแผ่ออกเป็นหน้ากระดาษคู่
+    (ซ้าย-ขวา) สีขาวนวลมีลวดลายและคราบเก่ากระดาษที่เสมือนจริงขึ้นมาอย่างสวยงาม
+      - หน้าซ้าย (Rules & Controls): แสดงข้อกำหนด "HOW TO USE IT"
+        ในสไตล์พิมพ์ดีดโบราณ
+        พร้อมระบุฟังก์ชันการเล่นเพลง
+        และมีแผงปุ่มควบคุมสไตล์คลาสสิก (ย้อนกลับ / เล่น-หยุด / ข้ามเพลง)
+        รวมถึงสถานะเพลงที่กำลังเล่นอยู่
+      - หน้าขวา (Handwritten Tracklist):
+        แสดงรายชื่อเพลงทั้งหมดในฐานข้อมูลของคุณด้วย
+        ฟอนต์ลายมือภาษาอังกฤษแบบขีดเขียนที่ชวนขนลุก (Reenie Beanie)
+        โดยเมื่อเพลงไหนกำลังเล่นอยู่
+        รายชื่อเพลงนั้นจะมี
+        รอยปากกาสีแดงขีดฆ่าทับ
+        (Strike-through) เหมือนกับชื่อผู้ที่ถูกเขียนลงในสมุดเดธโน้ตจริง ๆ
+        และคุณสามารถคลิกที่ชื่อเพลงเพื่อเลือกเล่นเพลงนั้นได้โดยตรงทันที
+3.  ความลื่นไหลระดับสากล:
+    ดีไซน์นี้สามารถรองรับการย่อหน้าจอไปใช้งานบนมือถือได้อย่างเหมาะสม
+    (Responsive Layout)
+    โดยตัวสมุดจะกางตัวจากบนลงล่างอย่างเป็นระเบียบเมื่อเปิดใช้งานบนโทรศัพท์
+
+นี่คือไฟล์โค้ดแบบแก้ไขเป็นระบบสมุดบันทึกเดธโน้ตสำเร็จเรียบร้อยแล้วครับ
+คุณสามารถนำไปบันทึกทับและใช้งานได้ทันทีครับ:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +43,8 @@
     <title id="pageTitle">DEATHNOTE</title>
     <link id="favicon" rel="icon" href="" type="image/x-icon">
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- นำเข้าฟอนต์ Reenie Beanie (ลายมือขีดเขียนแบบดาร์กๆ) และ Special Elite (เครื่องพิมพ์ดีดโบราณ) เพิ่มเติมเพื่อความสมบูรณ์แบบ -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Reenie+Beanie&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -447,113 +485,178 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* CUSTOM DEATH NOTE VINYL PLAYER */
-        .dn-player-container {
+        /* DEATH NOTE CUSTOM NOTEBOOK PLAYER */
+        .dn-book-widget {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 30px;
             z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(10, 10, 12, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 71, 87, 0.2); 
-            padding: 10px 20px 10px 12px;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 71, 87, 0.1);
-            transition: var(--transition);
+            perspective: 1000px;
         }
-        .dn-player-container:hover {
-            border-color: var(--accent); 
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 193, 7, 0.2);
-        }
-        .vinyl-wrapper {
-            position: relative;
-            width: 52px;
-            height: 52px;
-            flex-shrink: 0;
-        }
-        .vinyl-disc {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle, #252528 30%, #111113 60%, #050506 100%);
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8), 0 4px 10px rgba(0, 0, 0, 0.5);
-            border: 2px solid #000;
-            position: relative;
+
+        /* Closed Book Styling */
+        .dn-book-cover {
+            width: 70px;
+            height: 95px;
+            background: #0d0d0f;
+            border-radius: 3px 8px 8px 3px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), inset -3px 0 5px rgba(255,255,255,0.05);
+            border-left: 4px solid #050505;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .vinyl-disc::before {
-            content: '';
-            position: absolute;
-            inset: 6px;
-            border-radius: 50%;
-            border: 1px double rgba(255, 255, 255, 0.04);
-        }
-        .vinyl-disc::after {
-            content: '';
-            position: absolute;
-            inset: 14px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.02);
-        }
-        .vinyl-center {
-            width: 16px;
-            height: 16px;
-            background: #ff4757; 
-            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
             position: relative;
-            border: 1px solid #000;
         }
-        .vinyl-center::after {
+        .dn-book-cover:hover {
+            transform: translateY(-8px) rotate(-5deg);
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.35);
+        }
+        .dn-book-cover::before {
             content: '';
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #000;
-            border-radius: 50%;
-            top: 50%;
+            left: 5px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .dn-book-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 2px;
+            text-align: center;
+            line-height: 1.4;
+            transform: scaleY(1.2);
+            font-weight: 700;
+        }
+
+        /* Open Notebook Overlay/Panel */
+        .dn-open-notebook {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 500px;
+            height: 340px;
+            background: #141416;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.15);
+            overflow: hidden;
+            transform-origin: bottom left;
+            animation: openBookAnim 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes openBookAnim {
+            from {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        .dn-book-widget.open .dn-book-cover {
+            display: none;
+        }
+        .dn-book-widget.open .dn-open-notebook {
+            display: flex;
+        }
+
+        /* Two-Page Spread Layout */
+        .dn-pages-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background: #f4f1ea; 
+            position: relative;
+        }
+        /* Middle spine shadow */
+        .dn-pages-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
             left: 50%;
-            transform: translate(-50%, -50%);
+            width: 30px;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, rgba(0,0,0,0.15), rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.15));
+            z-index: 5;
+            pointer-events: none;
         }
-        @keyframes spinVinyl {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .vinyl-wrapper.playing .vinyl-disc {
-            animation: spinVinyl 4s linear infinite;
-        }
-        .dn-player-hud {
+
+        .dn-page {
+            flex: 1;
+            padding: 22px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            color: #1a1a1c;
+            position: relative;
+            overflow-y: auto;
         }
-        .dn-track-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
+        .dn-page-left {
+            border-right: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* Left Page: Rules & Cyber Controls */
+        .dn-rules-header {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
             font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1.5px;
-            max-width: 150px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            text-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1.5px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
         }
-        .dn-player-hud .music-hud-group {
+        .dn-rules-text {
+            font-family: 'Special Elite', monospace;
+            font-size: 9.5px;
+            line-height: 1.4;
+            color: #2b2b2e;
+            margin-bottom: 25px;
+        }
+        
+        /* Book Style Controls */
+        .dn-book-controls {
+            margin-top: auto;
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .dn-now-playing-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 9px;
+            color: #666;
+            letter-spacing: 1px;
+        }
+        .dn-now-playing-title {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 20px;
+            color: #ff3344;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: bold;
+        }
+        .dn-book-hud {
+            display: flex;
+            gap: 10px;
             align-items: center;
         }
-        .dn-player-hud .music-ctrl-btn {
-            width: 32px;
-            height: 32px;
-            background: rgba(20, 20, 22, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .dn-book-ctrl-btn {
+            width: 34px;
+            height: 34px;
+            background: #111;
+            border: none;
             color: #fff;
             border-radius: 50%;
             display: flex;
@@ -562,24 +665,110 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 11px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .dn-player-hud .music-ctrl-btn:hover {
-            background: #ff4757; 
-            border-color: #ff4757;
+        .dn-book-ctrl-btn:hover {
+            background: #ff4757;
+            transform: scale(1.1);
+        }
+        .dn-book-ctrl-btn.play-btn {
+            background: #000;
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+        .dn-book-ctrl-btn.play-btn:hover {
+            background: #ff4757;
             color: #fff;
-            transform: scale(1.08);
-            box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
         }
-        .dn-player-hud .music-ctrl-btn.play-pause-btn {
-            background: var(--accent);
+
+        /* Right Page: Creepy Handwritten Playlist */
+        .dn-playlist-header {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            font-weight: 700;
             color: #000;
-            border-color: var(--accent);
+            letter-spacing: 1px;
+            border-bottom: 1.5px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .dn-player-hud .music-ctrl-btn.play-pause-btn:hover {
-            background: #fff;
-            border-color: #fff;
-            color: #000;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+        .dn-close-btn {
+            background: none;
+            border: none;
+            color: #777;
+            font-family: 'Special Elite', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .dn-close-btn:hover {
+            color: #ff4757;
+        }
+
+        .dn-playlist-songs {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-right: 5px;
+        }
+        .dn-playlist-songs li {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 24px;
+            color: #111113;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1.2;
+            word-break: break-all;
+            user-select: none;
+        }
+        .dn-playlist-songs li:hover {
+            color: #ff4757;
+            transform: translateX(3px) scale(1.02);
+        }
+        
+        /* Thematic Death Note Strike-Through for current track */
+        .dn-playlist-songs li.playing-track {
+            color: #b3001e;
+            text-decoration: line-through;
+            text-decoration-color: #ff3344;
+            text-decoration-thickness: 3px;
+            font-weight: bold;
+        }
+
+        /* Responsive notebook for mobile */
+        @media (max-width: 600px) {
+            .dn-open-notebook {
+                width: calc(100vw - 40px);
+                height: 420px;
+                bottom: -10px;
+                left: -10px;
+            }
+            .dn-pages-container {
+                flex-direction: column;
+            }
+            .dn-page-left {
+                border-right: none;
+                border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+                height: 50%;
+                padding: 15px;
+            }
+            .dn-page-right {
+                height: 50%;
+                padding: 15px;
+            }
+            .dn-rules-text {
+                display: none;
+            }
+            .dn-book-controls {
+                margin-top: 0;
+            }
+            .dn-pages-container::before {
+                display: none;
+            }
         }
 
         @media (max-width: 992px) { 
@@ -619,21 +808,43 @@
         </div>
     </div>
     
-    <!-- Custom Death Note Music Player Widget (Vinyl & Cyber Style) -->
-    <div class="dn-player-container">
-        <!-- Vinyl Disc -->
-        <div class="vinyl-wrapper" id="vinylDisc">
-            <div class="vinyl-disc">
-                <div class="vinyl-center"></div>
-            </div>
+    <!-- Custom Death Note Music Player Widget (Notebook Style) -->
+    <div class="dn-book-widget" id="dnBookWidget">
+        <!-- Closed Book Cover (Button) -->
+        <div class="dn-book-cover" onclick="toggleNotebook()">
+            <div class="dn-book-title">DEATH<br>NOTE</div>
         </div>
-        <!-- Controller HUD -->
-        <div class="dn-player-hud">
-            <div class="dn-track-title" id="dnTrackTitle">DEATHNOTE AUDIO</div>
-            <div class="music-hud-group">
-                <button class="music-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-                <button class="music-ctrl-btn play-pause-btn" onclick="toggleMusic()"><i id="musicIcon" class="fa-solid fa-play"></i></button>
-                <button class="music-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+
+        <!-- Opened Book Spread Panel -->
+        <div class="dn-open-notebook">
+            <div class="dn-pages-container">
+                <!-- LEFT PAGE: Rule & Controls -->
+                <div class="dn-page dn-page-left">
+                    <div class="dn-rules-header">HOW TO USE IT</div>
+                    <div class="dn-rules-text">
+                        The songs written in this notebook shall play in the background. Click on any title to execute immediately.
+                    </div>
+                    <div class="dn-book-controls">
+                        <div class="dn-now-playing-label">CURRENT ACTIVE SONG:</div>
+                        <div class="dn-now-playing-title" id="dnNowPlayingTitle">DEATHNOTE AUDIO</div>
+                        <div class="dn-book-hud">
+                            <button class="dn-book-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                            <button class="dn-book-ctrl-btn play-btn" onclick="toggleMusic()"><i id="musicIcon" class="fa-solid fa-play"></i></button>
+                            <button class="dn-book-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PAGE: Handwritten Interactive Playlist -->
+                <div class="dn-page dn-page-right">
+                    <div class="dn-playlist-header">
+                        <span>VICTIMS LIST</span>
+                        <button class="dn-close-btn" onclick="toggleNotebook()"><i class="fa-solid fa-xmark"></i> CLOSE</button>
+                    </div>
+                    <ul class="dn-playlist-songs" id="notebookTracks">
+                        <li style="font-size:20px; color:#555;">Opening notebook archives...</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -804,7 +1015,7 @@
                                 <div><label>SITE NAME</label><input type="text" id="configSiteName"></div>
                                 <div>
                                     <label>FAVICON IMAGE</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileFavicon').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'configFavicon', 64, 64, 0.6)">
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileFavicon').click()" ondragover="dragOverHandler(event)" ondragleave="generativeMediaHandler(event, 'configFavicon', 64, 64, 0.6)">
                                         <i class="fa-solid fa-image"></i>
                                         <span>Click / Drop Favicon File (64x64)</span>
                                     </div>
@@ -1601,6 +1812,7 @@
             }));
             
             renderPlaylistUI();
+            renderNotebookPlaylist(); // คอยอัปเดตรายชื่อเพลงในหน้าสมุดโน้ตด้วย
             
             if (player && playlist.length > 0) {
                 const ids = playlist.map(item => item.videoId);
@@ -1637,12 +1849,18 @@
         function nextSong() {
             if (!player || playlist.length === 0) return;
             player.nextVideo();
-            setTimeout(updateCurrentTrackDisplay, 800);
+            setTimeout(() => {
+                updateCurrentTrackDisplay();
+                renderNotebookPlaylist();
+            }, 800);
         }
         function prevSong() {
             if (!player || playlist.length === 0) return;
             player.previousVideo();
-            setTimeout(updateCurrentTrackDisplay, 800);
+            setTimeout(() => {
+                updateCurrentTrackDisplay();
+                renderNotebookPlaylist();
+            }, 800);
         }
 
         // ----------------------------------------------------
@@ -1892,7 +2110,7 @@
             const card = e.currentTarget;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const y = e.clientY - top;
 
             const particle = document.createElement('span');
             particle.className = 'hover-particle';
@@ -2013,6 +2231,11 @@
 
         function setActiveTab(id) { activeTab = id; renderTabs(); filterMembers(); }
 
+        function toggleNotebook() {
+            const widget = document.getElementById('dnBookWidget');
+            widget.classList.toggle('open');
+        }
+
         function toggleMusic() {
             if(!player) return;
             const icon = document.getElementById('musicIcon');
@@ -2032,13 +2255,53 @@
             try {
                 const index = player.getPlaylistIndex();
                 if (index !== -1 && playlist[index]) {
-                    document.getElementById('dnTrackTitle').innerText = playlist[index].title.toUpperCase();
+                    const trackTitle = playlist[index].title.toUpperCase();
+                    const titleEl = document.getElementById('dnNowPlayingTitle');
+                    if (titleEl) titleEl.innerText = trackTitle;
                 } else {
-                    document.getElementById('dnTrackTitle').innerText = "PLAYING AUDIO";
+                    const titleEl = document.getElementById('dnNowPlayingTitle');
+                    if (titleEl) titleEl.innerText = "PLAYING AUDIO";
                 }
             } catch(e) {
-                document.getElementById('dnTrackTitle').innerText = "DEATHNOTE AUDIO";
+                const titleEl = document.getElementById('dnNowPlayingTitle');
+                if (titleEl) titleEl.innerText = "DEATHNOTE AUDIO";
             }
+        }
+
+        function playTrackByIndex(index) {
+            if (!player || playlist.length === 0) return;
+            player.playVideoAt(index);
+            currentTrackIndex = index;
+            setTimeout(() => {
+                updateCurrentTrackDisplay();
+                renderNotebookPlaylist();
+            }, 500);
+        }
+
+        function renderNotebookPlaylist() {
+            const container = document.getElementById('notebookTracks');
+            if (!container) return;
+            if (playlist.length === 0) {
+                container.innerHTML = '<li style="font-family:\'Reenie Beanie\'; font-size:24px; color:#555; text-align:center;">No victim songs written...</li>';
+                return;
+            }
+            
+            let html = '';
+            playlist.forEach((track, index) => {
+                let isCurrent = false;
+                if (player) {
+                    try {
+                        isCurrent = player.getPlaylistIndex() === index;
+                    } catch(e) {}
+                }
+                const activeClass = isCurrent ? 'playing-track' : '';
+                html += `
+                    <li class="${activeClass}" onclick="playTrackByIndex(${index})">
+                        ${index + 1}. ${track.title}
+                    </li>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         function onYouTubeIframeAPIReady() {
@@ -2078,16 +2341,14 @@
                             },
                             'onStateChange': (e) => {
                                 const icon = document.getElementById('musicIcon');
-                                const vinyl = document.getElementById('vinylDisc');
                                 if(e.data === YT.PlayerState.PLAYING) { 
                                     isPlaying = true; 
                                     if(icon) icon.className = 'fa-solid fa-pause'; 
-                                    if(vinyl) vinyl.classList.add('playing');
                                     updateCurrentTrackDisplay();
+                                    renderNotebookPlaylist();
                                 } else { 
                                     isPlaying = false; 
                                     if(icon) icon.className = 'fa-solid fa-play'; 
-                                    if(vinyl) vinyl.classList.remove('playing');
                                 }
                             }
                         }
