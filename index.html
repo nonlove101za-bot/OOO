@@ -422,7 +422,7 @@
         .col-12 { grid-column: span 12; }
         
         label { display: block; font-family: 'Orbitron'; font-size: 11px; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; font-weight: 700; }
-        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d3139; color: var(--text-main); border-radius: 10px; margin-bottom: 20px; font-size: 14px; transition: var(--transition); margin-bottom: 20px; }
+        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d3139; color: var(--text-main); border-radius: 10px; margin-bottom: 20px; font-size: 14px; transition: var(--transition); }
         input::placeholder { color: #64748b; }
         input:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px rgba(255,193,7,0.15); }
         
@@ -814,7 +814,8 @@
         </div>
     </div>
 
-    <div id="yt-player-container" style="display:none;"><div id="player"></div></div>
+    <!-- ย้ายตัวรัน iframe ออกไปคำนวณนอกหน้าจอแทน display: none เพื่อป้องกันไม่ให้เบราว์เซอร์ระงับเสียงเพลงแบบไร้เหตุผล -->
+    <div id="yt-player-container" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; pointer-events: none; opacity: 0;"><div id="player"></div></div>
 
     <div id="loginModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
         <div class="admin-card" style="width:100%; max-width:400px;">
@@ -954,7 +955,7 @@
                         <div class="admin-card col-12">
                             <div style="margin-bottom:20px; font-family:'Orbitron'; font-size:14px; color:var(--accent); border-bottom:1px solid #333; padding-bottom:10px;">MEDIA MANAGER UPLOAD CENTER</div>
                             
-                            <div class="upload-dropzone" style="height: 140px;" onclick="document.getElementById('fileMediaUpload').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropMediaHandler(event)">
+                            <div class="upload-dropzone" style="height: 140px;" onclick="document.getElementById('fileMediaUpload').click()" ondragover="dragOverHandler(event)" ondrag-leave="dragLeaveHandler(event)" ondrop="dropMediaHandler(event)">
                                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 32px; margin-bottom: 5px;"></i>
                                 <span style="font-size: 13px; font-weight: bold; color: var(--text-main);">DRAG & DROP IMAGE HERE</span>
                                 <span>Or click to select photo file (Auto compressed to lightweight cloud storage)</span>
@@ -1134,7 +1135,7 @@
                     </div>
                 </section>
 
-                <!-- TAB: MUSIC CONFIG -->
+                <!-- TAB: MUSIC CONFIG (หลังบ้านสำหรับบอร์ดเครื่องเสียง) -->
                 <section id="tab-music-config" class="tab-content">
                     <div class="admin-grid">
                         <div class="admin-card col-12">
@@ -1145,7 +1146,7 @@
                                 <span style="font-size:11px; font-family:'Orbitron';">AUTO-START ON LOAD</span>
                             </div>
 
-                            <div style="display:grid; grid-template-columns: 2fr 1.5fr auto; gap:15px; margin-bottom: 20px; align-items: flex-end;">
+                            <div style="display:grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap:15px; margin-bottom: 20px; align-items: flex-end;">
                                 <div>
                                     <label>SONG TITLE (ชื่อเพลง)</label>
                                     <input type="text" id="musicTitle" placeholder="e.g. Lost in Tokyo" style="margin-bottom:0;">
@@ -1153,6 +1154,10 @@
                                 <div>
                                     <label>YOUTUBE VIDEO ID</label>
                                     <input type="text" id="musicVidId" placeholder="e.g. JXg_Qe48cbU" style="margin-bottom:0;">
+                                </div>
+                                <div>
+                                    <label>START AT (เริ่มเล่นวินาทีที่)</label>
+                                    <input type="number" id="musicStartSecond" placeholder="0" value="0" style="margin-bottom:0;">
                                 </div>
                                 <button class="config-btn" onclick="addSongPlaylist()" style="height: 48px;">ADD TO PLAYLIST</button>
                             </div>
@@ -1289,7 +1294,7 @@
             }
             if (path === 'playlist') {
                 return {
-                    "p1": { title: "Background LoFi", videoId: "JXg_Qe48cbU" }
+                    "p1": { title: "Background LoFi", videoId: "JXg_Qe48cbU", startSecond: 0 }
                 };
             }
             if (path === 'media') {
@@ -1758,14 +1763,16 @@
         function addSongPlaylist() {
             const title = document.getElementById('musicTitle').value.trim();
             const videoId = document.getElementById('musicVidId').value.trim();
+            const startSecond = parseInt(document.getElementById('musicStartSecond').value) || 0;
             
             if (!title || !videoId) return showToast("กรุณากรอกชื่อเพลงและ Video ID ให้ครบถ้วน", "warning");
 
-            dbHelper.ref('playlist').push({ title: title, videoId: videoId }).then(() => {
+            dbHelper.ref('playlist').push({ title: title, videoId: videoId, startSecond: startSecond }).then(() => {
                 document.getElementById('musicTitle').value = '';
                 document.getElementById('musicVidId').value = '';
+                document.getElementById('musicStartSecond').value = '0';
                 showToast("เพิ่มเพลงเข้าสู่รายการเพลงเรียบร้อย", "success");
-                logActivity("เพิ่มเพลงใหม่ลงระบบคอร์: " + title, "success");
+                logActivity("เพิ่มเพลงใหม่ลงระบบคอร์: " + title + " (เริ่มเล่นวินาทีที่ " + startSecond + ")", "success");
             });
         }
 
@@ -1780,8 +1787,13 @@
             renderNotebookPlaylist(); // คอยอัปเดตรายชื่อเพลงในหน้าสมุดโน้ตด้วย
             
             if (player && playlist.length > 0) {
-                const ids = playlist.map(item => item.videoId);
-                player.cuePlaylist(ids, currentTrackIndex);
+                const startTrack = playlist[currentTrackIndex];
+                if (startTrack) {
+                    player.cueVideoById({
+                        videoId: startTrack.videoId,
+                        startSeconds: parseInt(startTrack.startSecond) || 0
+                    });
+                }
             }
         });
 
@@ -1793,9 +1805,10 @@
             }
             let html = '';
             playlist.forEach((track, index) => {
+                const startSec = track.startSecond || 0;
                 html += `
                     <div class="playlist-item">
-                        <span class="playlist-info"><b>${index+1}. ${track.title}</b> <small style="color:#64748b;">(ID: ${track.videoId})</small></span>
+                        <span class="playlist-info"><b>${index+1}. ${track.title}</b> <small style="color:#64748b;">(ID: ${track.videoId}) [เริ่มวิที่: ${startSec}]</small></span>
                         <i class="fa-solid fa-trash-can delete-btn" onclick="deleteSongPlaylist('${track.id}')"></i>
                     </div>
                 `;
@@ -1813,19 +1826,15 @@
 
         function nextSong() {
             if (!player || playlist.length === 0) return;
-            player.nextVideo();
-            setTimeout(() => {
-                updateCurrentTrackDisplay();
-                renderNotebookPlaylist();
-            }, 800);
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= playlist.length) nextIndex = 0;
+            playTrackByIndex(nextIndex);
         }
         function prevSong() {
             if (!player || playlist.length === 0) return;
-            player.previousVideo();
-            setTimeout(() => {
-                updateCurrentTrackDisplay();
-                renderNotebookPlaylist();
-            }, 800);
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = playlist.length - 1;
+            playTrackByIndex(prevIndex);
         }
 
         // ----------------------------------------------------
@@ -2235,8 +2244,19 @@
 
         function playTrackByIndex(index) {
             if (!player || playlist.length === 0) return;
-            player.playVideoAt(index);
+            if (index < 0) index = playlist.length - 1;
+            if (index >= playlist.length) index = 0;
             currentTrackIndex = index;
+            
+            const track = playlist[index];
+            const startSec = parseInt(track.startSecond) || 0;
+            
+            // สั่งเล่นเพลงเจาะจงวินาทีที่บันทึกไว้ในหลังบ้าน
+            player.loadVideoById({
+                videoId: track.videoId,
+                startSeconds: startSec
+            });
+            
             setTimeout(() => {
                 updateCurrentTrackDisplay();
                 renderNotebookPlaylist();
@@ -2278,20 +2298,25 @@
                     playlist = Object.keys(pData).map(k => ({ id: k, ...pData[k] }));
                     const autoStart = m.auto !== undefined ? m.auto : true;
                     
-                    const videoIds = playlist.map(item => item.videoId);
-                    const startId = videoIds[0] || "JXg_Qe48cbU";
+                    const startTrack = playlist[currentTrackIndex];
+                    const startId = startTrack ? startTrack.videoId : "JXg_Qe48cbU";
+                    const startSec = startTrack ? (parseInt(startTrack.startSecond) || 0) : 0;
                     
                     player = new YT.Player('player', {
                         height: '0', width: '0', videoId: startId,
                         playerVars: { 
                             'autoplay': autoStart ? 1 : 0, 
-                            'playlist': videoIds.join(','),
-                            'loop': 1 
+                            'start': startSec,
+                            'loop': 0, // ปิดรูปลูปของ youtube เพื่อใช้ระบบแมนวลในการควบคุมเวลาและข้ามเพลงให้ลื่นไหล
+                            'controls': 0
                         },
                         events: { 
                             'onReady': (e) => { 
                                 if(autoStart && playlist.length > 0) { 
-                                    e.target.playVideo(); 
+                                    player.loadVideoById({
+                                        videoId: startId,
+                                        startSeconds: startSec
+                                    });
                                     
                                     setTimeout(() => {
                                         if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
@@ -2311,6 +2336,9 @@
                                     if(icon) icon.className = 'fa-solid fa-pause'; 
                                     updateCurrentTrackDisplay();
                                     renderNotebookPlaylist();
+                                } else if(e.data === YT.PlayerState.ENDED) {
+                                    // เมื่อเพลงจบให้เลื่อนไปเล่นเพลงถัดไปตามคิวระบบ
+                                    nextSong();
                                 } else { 
                                     isPlaying = false; 
                                     if(icon) icon.className = 'fa-solid fa-play'; 
