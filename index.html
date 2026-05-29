@@ -447,6 +447,141 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(26px); }
 
+        /* CUSTOM DEATH NOTE VINYL PLAYER */
+        .dn-player-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 71, 87, 0.2); 
+            padding: 10px 20px 10px 12px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 71, 87, 0.1);
+            transition: var(--transition);
+        }
+        .dn-player-container:hover {
+            border-color: var(--accent); 
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 193, 7, 0.2);
+        }
+        .vinyl-wrapper {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+        }
+        .vinyl-disc {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #252528 30%, #111113 60%, #050506 100%);
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.8), 0 4px 10px rgba(0, 0, 0, 0.5);
+            border: 2px solid #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vinyl-disc::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border-radius: 50%;
+            border: 1px double rgba(255, 255, 255, 0.04);
+        }
+        .vinyl-disc::after {
+            content: '';
+            position: absolute;
+            inset: 14px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .vinyl-center {
+            width: 16px;
+            height: 16px;
+            background: #ff4757; 
+            border-radius: 50%;
+            position: relative;
+            border: 1px solid #000;
+        }
+        .vinyl-center::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes spinVinyl {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .vinyl-wrapper.playing .vinyl-disc {
+            animation: spinVinyl 4s linear infinite;
+        }
+        .dn-player-hud {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .dn-track-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1.5px;
+            max-width: 150px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+        }
+        .dn-player-hud .music-hud-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .dn-player-hud .music-ctrl-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(20, 20, 22, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 11px;
+        }
+        .dn-player-hud .music-ctrl-btn:hover {
+            background: #ff4757; 
+            border-color: #ff4757;
+            color: #fff;
+            transform: scale(1.08);
+            box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+        }
+        .dn-player-hud .music-ctrl-btn.play-pause-btn {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+        .dn-player-hud .music-ctrl-btn.play-pause-btn:hover {
+            background: #fff;
+            border-color: #fff;
+            color: #000;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+        }
+
         @media (max-width: 992px) { 
             .admin-layout { flex-direction: column; }
             .admin-sidebar { width: 100%; height: auto; padding: 20px; }
@@ -484,12 +619,22 @@
         </div>
     </div>
     
-    <!-- Music Player Navigation UI -->
-    <div class="music-ctrl" style="width: auto; border-radius: 50px; padding: 6px 14px; right: 30px; bottom: 30px;">
-        <div class="music-hud-group">
-            <button class="music-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-            <button class="music-ctrl-btn" onclick="toggleMusic()" style="background:var(--accent); color:#000;"><i id="musicIcon" class="fa-solid fa-play"></i></button>
-            <button class="music-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+    <!-- Custom Death Note Music Player Widget (Vinyl & Cyber Style) -->
+    <div class="dn-player-container">
+        <!-- Vinyl Disc -->
+        <div class="vinyl-wrapper" id="vinylDisc">
+            <div class="vinyl-disc">
+                <div class="vinyl-center"></div>
+            </div>
+        </div>
+        <!-- Controller HUD -->
+        <div class="dn-player-hud">
+            <div class="dn-track-title" id="dnTrackTitle">DEATHNOTE AUDIO</div>
+            <div class="music-hud-group">
+                <button class="music-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="music-ctrl-btn play-pause-btn" onclick="toggleMusic()"><i id="musicIcon" class="fa-solid fa-play"></i></button>
+                <button class="music-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+            </div>
         </div>
     </div>
 
@@ -1492,10 +1637,12 @@
         function nextSong() {
             if (!player || playlist.length === 0) return;
             player.nextVideo();
+            setTimeout(updateCurrentTrackDisplay, 800);
         }
         function prevSong() {
             if (!player || playlist.length === 0) return;
             player.previousVideo();
+            setTimeout(updateCurrentTrackDisplay, 800);
         }
 
         // ----------------------------------------------------
@@ -1871,12 +2018,26 @@
             const icon = document.getElementById('musicIcon');
             if(isPlaying) {
                 player.pauseVideo();
-                icon.className = 'fa-solid fa-play';
+                if(icon) icon.className = 'fa-solid fa-play';
                 isPlaying = false;
             } else {
                 player.playVideo();
-                icon.className = 'fa-solid fa-pause';
+                if(icon) icon.className = 'fa-solid fa-pause';
                 isPlaying = true;
+            }
+        }
+
+        function updateCurrentTrackDisplay() {
+            if (!player || playlist.length === 0) return;
+            try {
+                const index = player.getPlaylistIndex();
+                if (index !== -1 && playlist[index]) {
+                    document.getElementById('dnTrackTitle').innerText = playlist[index].title.toUpperCase();
+                } else {
+                    document.getElementById('dnTrackTitle').innerText = "PLAYING AUDIO";
+                }
+            } catch(e) {
+                document.getElementById('dnTrackTitle').innerText = "DEATHNOTE AUDIO";
             }
         }
 
@@ -1916,12 +2077,17 @@
                                 }
                             },
                             'onStateChange': (e) => {
+                                const icon = document.getElementById('musicIcon');
+                                const vinyl = document.getElementById('vinylDisc');
                                 if(e.data === YT.PlayerState.PLAYING) { 
                                     isPlaying = true; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-pause'; 
+                                    if(icon) icon.className = 'fa-solid fa-pause'; 
+                                    if(vinyl) vinyl.classList.add('playing');
+                                    updateCurrentTrackDisplay();
                                 } else { 
                                     isPlaying = false; 
-                                    document.getElementById('musicIcon').className = 'fa-solid fa-play'; 
+                                    if(icon) icon.className = 'fa-solid fa-play'; 
+                                    if(vinyl) vinyl.classList.remove('playing');
                                 }
                             }
                         }
