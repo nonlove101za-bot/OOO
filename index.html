@@ -1721,9 +1721,9 @@ async function sha256(message) {
 async function attemptLogin() {
   const u = document.getElementById("loginUser").value;
   const p = document.getElementById("loginPass").value;
-  const userHash = await sha256(u);
-  const passHash = await sha256(p);
-  if (userHash === _0x1a8b(3) && passHash === _0x1a8b(4)) {
+  
+  // เปลี่ยนมาตรวจสอบชื่อผู้ใช้และรหัสผ่านตรง ๆ ตามที่คุณต้องการ
+  if (u === "b79bb8bd1670509b4fe13ebaa27e22f32aa9231814a24e332a6f6e8d4126e5df" && p === "002271d9f0804ca6fda4b218ec0175ccfa760a410592e698a7bdfc3e9478b581") {
     closeModal("loginModal");
     document.getElementById("adminPanel").style.display = "block";
     document.body.style.overflow = "hidden";
