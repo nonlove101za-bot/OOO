@@ -1,374 +1,372 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang=en>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title id="pageTitle">DEATHNOTE</title>
-<link id="favicon" rel="icon" href="" type="image/x-icon">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Reenie+Beanie&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
-<style>
-:root{--accent:#ffc107;--bg:#0a0a0a;--card-bg:rgba(20,20,22,0.45);--admin-bg:#07080a;--admin-card:#111317;--admin-sidebar-bg:#0b0c0e;--input-bg:#07080a;--border:rgba(255,255,255,0.08);--transition:all 0.3s cubic-bezier(0.25,1,0.5,1);--danger:#ff4757;--success:#2ed573;--info:#1e90ff;--warning:#ffa502;--text-main:#f8fafc;--text-sub:#94a3b8;--text-muted:#64748b}*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}body{background-color:var(--bg);background-size:cover;background-position:center;background-attachment:fixed;color:var(--text-main);font-family:'Inter',sans-serif;overflow-x:hidden;line-height:1.6;transition:background .5s ease;opacity:0;animation:fadeInPage 1.2s ease forwards;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}input,select,textarea,.admin-panel,.admin-panel *{user-select:text!important;-webkit-user-select:text!important;-moz-user-select:text!important;-ms-user-select:text!important}@keyframes fadeInPage{from{opacity:0}to{opacity:1}}#weather-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50}@keyframes slideIn{from{opacity:0;transform:translateY(15px);filter:blur(10px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}.top-nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:90%;max-width:1300px;padding:12px 30px;display:flex;justify-content:space-between;align-items:center;z-index:1000;background:rgba(10,10,10,0.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.08);border-radius:50px;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:var(--transition)}.config-btn{background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-family:'Orbitron';cursor:pointer;transition:var(--transition);font-size:11px;font-weight:700;text-transform:uppercase}.config-btn:hover{transform:scale(1.02);box-shadow:0 0 20px rgba(255,193,7,0.4)}.hero{padding:140px 20px 60px;text-align:center;animation:slideIn 1s cubic-bezier(0.22,1,0.36,1)}#siteLogo{max-width:140px;margin-bottom:25px;filter:drop-shadow(0 0 25px var(--accent))}.hero h1{font-family:'Orbitron';font-size:clamp(28px,6vw,52px);letter-spacing:10px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}.category-section{max-width:1440px;margin:40px auto;padding:0 8%;opacity:0;transform:translateY(40px) scale(0.97);filter:blur(5px);transition:opacity .8s cubic-bezier(0.25,1,0.5,1),transform .8s cubic-bezier(0.25,1,0.5,1),filter .8s cubic-bezier(0.25,1,0.5,1)}.category-section.reveal-active{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}.category-header{font-family:'Orbitron';font-size:14px;letter-spacing:4px;color:var(--accent);margin-bottom:25px;border-left:3px solid var(--accent);padding-left:15px;text-transform:uppercase;transition:var(--transition)}.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;padding-bottom:40px;z-index:100;position:relative}.member-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:18px;transition:var(--transition);backdrop-filter:blur(4px) saturate(120%);-webkit-backdrop-filter:blur(4px) saturate(120%);box-shadow:0 8px 32px 0 rgba(0,0,0,0.3);position:relative;overflow:hidden}.member-card:hover{transform:translateY(-6px) scale(1.02);background:rgba(25,25,28,0.6);border-color:var(--role-color,var(--accent));animation:neonPulse 1.8s infinite alternate cubic-bezier(0.4,0,0.2,1)}@keyframes neonPulse{0%{border-color:var(--role-color,var(--accent));box-shadow:0 0 10px var(--role-color,var(--accent)),0 8px 32px rgba(0,0,0,0.4)}100%{border-color:var(--role-color,var(--accent));box-shadow:0 0 20px var(--role-color,var(--accent)),0 8px 32px rgba(0,0,0,0.5),inset 0 0 10px var(--role-color,var(--accent))}}.hover-particle{position:absolute;background:var(--role-color,var(--accent));border-radius:50%;pointer-events:none;opacity:0.7;z-index:5;animation:driftUpFade 1s cubic-bezier(0.1,0.8,0.3,1) forwards;box-shadow:0 0 6px var(--role-color,var(--accent));will-change:transform,opacity}@keyframes driftUpFade{0%{transform:translate3d(0,0,0) scale(1);opacity:0.7}100%{transform:translate3d(var(--drift-x),var(--drift-y),0) scale(0);opacity:0}}.avatar{width:70px;height:70px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,0.05);z-index:10}.rank-tag{font-family:'Orbitron';font-size:9px;font-weight:800;padding:4px 12px;border-radius:5px;color:#000;letter-spacing:1px;margin-top:6px;display:inline-block;z-index:10}.social-links{margin-left:auto;display:flex;gap:12px;font-size:20px;z-index:10}.social-links a{transition:var(--transition)}.social-links a:hover{transform:scale(1.2)}.site-footer{padding:40px 20px;text-align:center;font-family:'Orbitron';font-size:10px;letter-spacing:2px;opacity:0.5;transition:var(--transition)}.site-footer a{color:var(--accent);text-decoration:none;font-weight:700}.upload-dropzone{border:2px dashed rgba(255,193,7,0.3);background:rgba(255,193,7,0.02);border-radius:10px;padding:15px;text-align:center;cursor:pointer;transition:var(--transition);margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}.upload-dropzone:hover,.upload-dropzone.dragover{border-color:var(--accent);background:rgba(255,193,7,0.08);box-shadow:0 0 12px rgba(255,193,7,0.15)}.upload-dropzone i{font-size:20px;color:var(--accent)}.upload-dropzone span{font-size:11px;color:var(--text-sub)}.admin-item-row.draggable{cursor:grab;user-select:none;transition:transform 0.2s,background 0.2s}.admin-item-row.draggable:active{cursor:grabbing}.admin-item-row.dragging{opacity:0.5;background:rgba(255,193,7,0.05);border-color:var(--accent)}.logs-panel{background:var(--admin-card);border:1px solid var(--border);border-radius:16px;padding:25px;margin-top:25px}.logs-panel h3{font-family:'Orbitron';font-size:13px;color:var(--accent);margin-bottom:15px;letter-spacing:1px}.logs-container{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:5px}.log-item{display:flex;justify-content:space-between;align-items:center;padding:8px 15px;background:#0f1012;border-left:3px solid var(--accent);border-radius:4px;font-size:12px}.log-item.log-success{border-left-color:var(--success)}.log-item.log-error{border-left-color:var(--danger)}.log-item.log-warning{border-left-color:var(--warning)}.log-item .log-time{font-family:'Orbitron';font-size:10px;color:var(--text-muted)}.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;margin-top:20px}.media-file-card{background:#0a0b0d;border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;position:relative}.media-preview-container{width:100%;height:110px;background:#141619;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}.media-preview-img{width:100%;height:100%;object-fit:cover}.media-details{display:flex;flex-direction:column;gap:4px}.media-name-input{background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,0.1);color:var(--text-main);font-size:12px;padding:2px 0;margin-bottom:0;border-radius:0}.media-name-input:focus{border-bottom:1px solid var(--accent);outline:none}.media-size-tag{font-size:10px;color:var(--text-muted);font-family:'Orbitron'}.media-card-actions{display:flex;gap:6px}.media-card-btn{flex:1;padding:6px;border:none;border-radius:4px;font-size:10px;cursor:pointer;transition:var(--transition);font-family:'Orbitron'}.toast-container{position:fixed;top:30px;right:30px;z-index:11000;display:flex;flex-direction:column;gap:10px;pointer-events:none}.toast{pointer-events:auto;width:340px;padding:15px 20px;border-radius:12px;background:#141619;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,0.5);display:flex;align-items:flex-start;gap:12px;transform:translateX(120%);transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s;opacity:0}.toast.toast-show{transform:translateX(0);opacity:1}.toast i{font-size:18px;margin-top:2px}.toast-content{font-size:13px;font-weight:500;color:#e2e8f0;line-height:1.4}.toast-success{border-left:4px solid var(--success)}.toast-success i{color:var(--success)}.toast-error{border-left:4px solid var(--danger)}.toast-error i{color:var(--danger)}.toast-warning{border-left:4px solid var(--warning)}.toast-warning i{color:var(--warning)}.toast-info{border-left:4px solid var(--info)}.toast-info i{color:var(--info)}#confirmModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10500;align-items:center;justify-content:center;backdrop-filter:blur(8px)}.confirm-card{background:var(--admin-card);border:1px solid var(--border);border-radius:20px;width:90%;max-width:440px;padding:30px;box-shadow:0 20px 50px rgba(0,0,0,0.8);text-align:center}.confirm-icon{font-size:40px;color:var(--danger);margin-bottom:20px}.confirm-title{font-family:'Orbitron';font-size:18px;margin-bottom:12px;color:#fff;letter-spacing:1px}.confirm-msg{font-size:14px;color:var(--text-sub);margin-bottom:25px;line-height:1.5}.confirm-buttons{display:flex;gap:12px}.confirm-btn{flex:1;padding:12px;border:none;border-radius:8px;font-family:'Orbitron';font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition)}.confirm-btn-yes{background:var(--danger);color:#fff}.confirm-btn-yes:hover{opacity:0.9}.confirm-btn-no{background:#2d3748;color:#fff}.confirm-btn-no:hover{background:#4a5568}.admin-panel{display:none;position:fixed;inset:0;background:var(--admin-bg);z-index:9999;overflow:hidden}.admin-layout{display:flex;width:100%;height:100vh}.admin-sidebar{width:280px;background:var(--admin-sidebar-bg);border-right:1px solid var(--border);padding:30px 20px;display:flex;flex-direction:column;justify-content:space-between;transition:var(--transition)}.admin-brand{display:flex;align-items:center;gap:12px;margin-bottom:40px}.admin-brand i{font-size:24px;color:var(--accent)}.admin-brand div h3{font-family:'Orbitron';font-size:15px;letter-spacing:2px;color:var(--text-main)}.admin-brand div p{font-size:10px;color:var(--text-muted)}.sidebar-menu{display:flex;flex-direction:column;gap:8px}.menu-item{display:flex;align-items:center;gap:15px;padding:14px 20px;border-radius:12px;color:var(--text-sub);text-decoration:none;font-size:13px;font-weight:500;transition:var(--transition);border:1px solid transparent;cursor:pointer}.menu-item:hover,.menu-item.active{color:#fff;background:rgba(255,255,255,0.02)}.menu-item.active{border-color:rgba(255,193,7,0.2);border-left:3px solid var(--accent);color:var(--accent)}.menu-item i{font-size:16px;width:20px;text-align:center}.admin-main{flex:1;height:100vh;overflow-y:auto;padding:40px}.admin-header-v2{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:20px}.admin-title-area h2{font-family:'Orbitron';font-size:22px;color:#fff;letter-spacing:2px}.admin-title-area p{font-size:12px;color:var(--text-sub);margin-top:2px}.tab-content{display:none}.tab-content.active{display:block;animation:slideIn 0.4s ease forwards}.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:30px}.stat-card{background:var(--admin-card);border:1px solid var(--border);border-radius:166px;padding:22px;display:flex;align-items:center;gap:20px}.stat-icon{width:54px;height:54px;border-radius:12px;background:rgba(255,193,7,0.05);border:1px solid rgba(255,193,7,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--accent)}.stat-info h4{font-family:'Orbitron';font-size:24px;color:var(--text-main);line-height:1.2}.stat-info p{font-size:11px;color:var(--text-sub);text-transform:uppercase;letter-spacing:1px}.analytics-graph{background:var(--admin-card);border:1px solid var(--border);border-radius:16px;padding:25px}.analytics-graph h3{font-family:'Orbitron';font-size:13px;color:var(--accent);margin-bottom:20px;letter-spacing:1px}.admin-search-wrapper{position:relative;margin-bottom:20px}.admin-search-wrapper i{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-sub);font-size:14px}.admin-search-wrapper input{padding-left:45px;margin-bottom:0;background:var(--input-bg);border-color:#2d3139;color:var(--text-main)}.bulk-actions-panel{background:rgba(255,193,7,0.05);border:1px solid rgba(255,193,7,0.2);padding:15px 20px;border-radius:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.bulk-info{font-size:13px;font-weight:500;color:var(--text-main)}.bulk-buttons{display:flex;gap:10px;align-items:center}.member-table-row{background:var(--admin-card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;transition:var(--transition)}.member-table-left{display:flex;align-items:center;gap:15px;flex:2;min-width:250px}.member-table-mid{display:flex;align-items:center;gap:30px;flex:3;justify-content:space-around;flex-wrap:wrap}.member-table-right{display:flex;align-items:center;gap:12px}.status-badge{font-family:'Orbitron';font-size:9px;font-weight:bold;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}.status-active{background:rgba(46,213,115,0.1);color:var(--success);border:1px solid rgba(46,213,115,0.2)}.status-inactive{background:rgba(255,71,87,0.1);color:var(--danger);border:1px solid rgba(255,71,87,0.2)}.admin-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}.admin-card{background:var(--admin-card);padding:28px;border-radius:20px;border:1px solid var(--border)}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}label{display:block;font-family:'Orbitron';font-size:11px;color:var(--accent);margin-bottom:8px;letter-spacing:1px;font-weight:700}input,select{width:100%;padding:14px;background:var(--input-bg);border:1px solid #2d3139;color:var(--text-main);border-radius:10px;margin-bottom:20px;font-size:14px;transition:var(--transition)}input::placeholder{color:#64748b}input:focus,select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 10px rgba(255,193,7,0.15)}.btn-save{width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;font-family:'Orbitron';font-weight:700;transition:var(--transition);background:var(--accent);color:#000}.admin-item-row{background:#0c0d10;padding:15px 20px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);color:var(--text-main)}.delete-btn{color:var(--danger);cursor:pointer;padding:8px;transition:var(--transition)}.delete-btn:hover{transform:scale(1.1)}.playlist-wrapper{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow-y:auto;margin-top:15px}.playlist-item{display:flex;justify-content:space-between;align-items:center;background:#0c0d10;padding:10px 15px;border-radius:8px;border:1px solid var(--border)}.playlist-info{font-size:12px;font-weight:500}.music-hud-group{display:flex;gap:8px;align-items:center}.music-ctrl-btn{width:38px;height:38px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition)}.music-ctrl-btn:hover{background:var(--accent);color:#000;transform:scale(1.1)}.switch{position:relative;display:inline-block;width:50px;height:24px;margin-bottom:15px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background-color:#333;transition:.4s;border-radius:34px}.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:white;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--success)}input:checked+.slider:before{transform:translateX(26px)}.dn-book-widget{position:fixed;bottom:30px;right:30px;z-index:9999;perspective:1000px}.dn-book-cover{width:70px;height:95px;background:#0d0d0f;border-radius:3px 8px 8px 3px;box-shadow:0 8px 20px rgba(0,0,0,0.7),inset -3px 0 5px rgba(255,255,255,0.05);border-left:4px solid #050505;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),box-shadow 0.4s;position:relative}.dn-book-cover:hover{transform:translateY(-8px) rotate(-5deg);box-shadow:0 15px 30px rgba(255,71,87,0.35)}.dn-book-cover::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.1)}.dn-book-title{font-family:'Orbitron',sans-serif;font-size:8px;color:rgba(255,255,255,0.85);letter-spacing:2px;text-align:center;line-height:1.4;transform:scaleY(1.2);font-weight:700}.dn-open-notebook{display:none;position:absolute;bottom:0;right:0;width:500px;height:340px;background:#141416;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.9),0 0 30px rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.15);overflow:hidden;transform-origin:bottom right;animation:openBookAnim .5s cubic-bezier(0.25,1,0.5,1) forwards}@keyframes openBookAnim{from{opacity:0;transform:scale(0.5) rotate(-10deg)}to{opacity:1;transform:scale(1) rotate(0)}}.dn-book-widget.open .dn-book-cover{display:none}.dn-book-widget.open .dn-open-notebook{display:flex}.dn-pages-container{display:flex;width:100%;height:100%;background:#f4f1ea;position:relative}.dn-pages-container::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:30px;transform:translateX(-50%);background:linear-gradient(to right,rgba(0,0,0,0.15),rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.15));z-index:5;pointer-events:none}.dn-page{flex:1;padding:22px;display:flex;flex-direction:column;color:#1a1a1c;position:relative;overflow-y:auto}.dn-page-left{border-right:1px solid rgba(0,0,0,0.08)}.dn-rules-header{font-family:'Special Elite',monospace;font-size:11px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:1px;border-bottom:1.5px solid #000;padding-bottom:5px;margin-bottom:12px}.dn-rules-text{font-family:'Special Elite',monospace;font-size:9.5px;line-height:1.4;color:#2b2b2e;margin-bottom:25px}.dn-book-controls{margin-top:auto;display:flex;flex-direction:column;gap:12px}.dn-now-playing-label{font-family:'Special Elite',monospace;font-size:9px;color:#666;letter-spacing:1px}.dn-now-playing-title{font-family:'Reenie Beanie',cursive;font-size:20px;color:#ff3344;line-height:1.2;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:bold}.dn-book-hud{display:flex;gap:10px;align-items:center}.dn-book-ctrl-btn{width:34px;height:34px;background:#111;border:none;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition);font-size:11px;box-shadow:0 4px 8px rgba(0,0,0,0.2)}.dn-book-ctrl-btn:hover{background:#ff4757;transform:scale(1.1)}.dn-book-ctrl-btn.play-btn{background:#000;border:1px solid #ff4757;color:#ff4757}.dn-book-ctrl-btn.play-btn:hover{background:#ff4757;color:#fff}.dn-playlist-header{font-family:'Special Elite',monospace;font-size:11px;font-weight:700;color:#000;letter-spacing:1px;border-bottom:1.5px solid #000;padding-bottom:5px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}.dn-close-btn{background:none;border:none;color:#777;font-family:'Special Elite',monospace;font-size:12px;cursor:pointer;transition:var(--transition)}.dn-close-btn:hover{color:#ff4757}.dn-playlist-songs{list-style:none;display:flex;flex-direction:column;gap:2px;padding-right:5px}.dn-playlist-songs li{font-family:'Reenie Beanie',cursive;font-size:24px;color:#111113;cursor:pointer;transition:color 0.2s,transform 0.2s;line-height:1.2;word-break:break-all;user-select:none}.dn-playlist-songs li:hover{color:#ff4757;transform:translateX(3px) scale(1.02)}.dn-playlist-songs li.playing-track{color:#b3001e;text-decoration:line-through;text-decoration-color:#ff3344;text-decoration-thickness:3px;font-weight:bold}@media(max-width:600px){.dn-open-notebook{width:calc(100vw - 40px);height:420px;bottom:-10px;right:-10px;left:auto}.dn-pages-container{flex-direction:column}.dn-page-left{border-right:none;border-bottom:1px dashed rgba(0,0,0,0.15);height:50%;padding:15px}.dn-page-right{height:50%;padding:15px}.dn-rules-text{display:none}.dn-book-controls{margin-top:0}.dn-pages-container::before{display:none}}@media(max-width:992px){.admin-layout{flex-direction:column}.admin-sidebar{width:100%;height:auto;padding:20px}.admin-brand{margin-bottom:20px}.sidebar-menu{flex-direction:row;flex-wrap:wrap}.menu-item{padding:10px 15px;font-size:12px;flex:1 1 auto;justify-content:center}.admin-main{height:auto;padding:20px}.col-4,.col-6,.col-8{grid-column:span 12}}@media(max-width:768px){.member-card,.top-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(20,20,22,0.96)!important}}
-</style>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title id=pageTitle>DEATHNOTE</title>
+<link id=favicon rel=icon href="" type=image/x-icon>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Reenie+Beanie&family=Special+Elite&display=swap" rel=stylesheet>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css>
+<script src=https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js></script>
+<script src=https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js></script>
+<script src=https://www.youtube.com/iframe_api></script>
+<style>:root{--accent:#ffc107;--bg:#0a0a0a;--card-bg:rgba(20,20,22,0.45);--admin-bg:#07080a;--admin-card:#111317;--admin-sidebar-bg:#0b0c0e;--input-bg:#07080a;--border:rgba(255,255,255,0.08);--transition:all 0.3s cubic-bezier(0.25,1,0.5,1);--danger:#ff4757;--success:#2ed573;--info:#1e90ff;--warning:#ffa502;--text-main:#f8fafc;--text-sub:#94a3b8;--text-muted:#64748b}*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}body{background-color:var(--bg);background-size:cover;background-position:center;background-attachment:fixed;color:var(--text-main);font-family:Inter,sans-serif;overflow-x:hidden;line-height:1.6;transition:background .5s ease;opacity:0;animation:fadeInPage 1.2s ease forwards;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}.admin-panel,.admin-panel *,input,select,textarea{user-select:text!important;-webkit-user-select:text!important;-moz-user-select:text!important;-ms-user-select:text!important}@keyframes fadeInPage{from{opacity:0}to{opacity:1}}#weather-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:50}@keyframes slideIn{from{opacity:0;transform:translateY(15px);filter:blur(10px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}.top-nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);width:90%;max-width:1300px;padding:12px 30px;display:flex;justify-content:space-between;align-items:center;z-index:1000;background:rgba(10,10,10,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.08);border-radius:50px;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:var(--transition)}.config-btn{background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-family:Orbitron;cursor:pointer;transition:var(--transition);font-size:11px;font-weight:700;text-transform:uppercase}.config-btn:hover{transform:scale(1.02);box-shadow:0 0 20px rgba(255,193,7,.4)}.hero{padding:140px 20px 60px;text-align:center;animation:slideIn 1s cubic-bezier(.22,1,.36,1)}#siteLogo{max-width:140px;margin-bottom:25px;filter:drop-shadow(0 0 25px var(--accent))}.hero h1{font-family:Orbitron;font-size:clamp(28px,6vw,52px);letter-spacing:10px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}.category-section{max-width:1440px;margin:40px auto;padding:0 8%;opacity:0;transform:translateY(40px) scale(.97);filter:blur(5px);transition:opacity .8s cubic-bezier(.25,1,.5,1),transform .8s cubic-bezier(.25,1,.5,1),filter .8s cubic-bezier(.25,1,.5,1)}.category-section.reveal-active{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}.category-header{font-family:Orbitron;font-size:14px;letter-spacing:4px;color:var(--accent);margin-bottom:25px;border-left:3px solid var(--accent);padding-left:15px;text-transform:uppercase;transition:var(--transition)}.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;padding-bottom:40px;z-index:100;position:relative}.member-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:18px;transition:var(--transition);backdrop-filter:blur(4px) saturate(120%);-webkit-backdrop-filter:blur(4px) saturate(120%);box-shadow:0 8px 32px 0 rgba(0,0,0,.3);position:relative;overflow:hidden}.member-card:hover{transform:translateY(-6px) scale(1.02);background:rgba(25,25,28,.6);border-color:var(--role-color,var(--accent));animation:neonPulse 1.8s infinite alternate cubic-bezier(.4,0,.2,1)}@keyframes neonPulse{0%{border-color:var(--role-color,var(--accent));box-shadow:0 0 10px var(--role-color,var(--accent)),0 8px 32px rgba(0,0,0,.4)}100%{border-color:var(--role-color,var(--accent));box-shadow:0 0 20px var(--role-color,var(--accent)),0 8px 32px rgba(0,0,0,.5),inset 0 0 10px var(--role-color,var(--accent))}}.hover-particle{position:absolute;background:var(--role-color,var(--accent));border-radius:50%;pointer-events:none;opacity:.7;z-index:5;animation:driftUpFade 1s cubic-bezier(.1,.8,.3,1) forwards;box-shadow:0 0 6px var(--role-color,var(--accent));will-change:transform,opacity}@keyframes driftUpFade{0%{transform:translate3d(0,0,0) scale(1);opacity:.7}100%{transform:translate3d(var(--drift-x),var(--drift-y),0) scale(0);opacity:0}}.avatar{width:70px;height:70px;border-radius:12px;object-fit:cover;border:2px solid rgba(255,255,255,.05);z-index:10}.rank-tag{font-family:Orbitron;font-size:9px;font-weight:800;padding:4px 12px;border-radius:5px;color:#000;letter-spacing:1px;margin-top:6px;display:inline-block;z-index:10}.social-links{margin-left:auto;display:flex;gap:12px;font-size:20px;z-index:10}.social-links a{transition:var(--transition)}.social-links a:hover{transform:scale(1.2)}.site-footer{padding:40px 20px;text-align:center;font-family:Orbitron;font-size:10px;letter-spacing:2px;opacity:.5;transition:var(--transition)}.site-footer a{color:var(--accent);text-decoration:none;font-weight:700}.upload-dropzone{border:2px dashed rgba(255,193,7,.3);background:rgba(255,193,7,.02);border-radius:10px;padding:15px;text-align:center;cursor:pointer;transition:var(--transition);margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}.upload-dropzone.dragover,.upload-dropzone:hover{border-color:var(--accent);background:rgba(255,193,7,.08);box-shadow:0 0 12px rgba(255,193,7,.15)}.upload-dropzone i{font-size:20px;color:var(--accent)}.upload-dropzone span{font-size:11px;color:var(--text-sub)}.admin-item-row.draggable{cursor:grab;user-select:none;transition:transform .2s,background .2s}.admin-item-row.draggable:active{cursor:grabbing}.admin-item-row.dragging{opacity:.5;background:rgba(255,193,7,.05);border-color:var(--accent)}.logs-panel{background:var(--admin-card);border:1px solid var(--border);border-radius:16px;padding:25px;margin-top:25px}.logs-panel h3{font-family:Orbitron;font-size:13px;color:var(--accent);margin-bottom:15px;letter-spacing:1px}.logs-container{max-height:250px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:5px}.log-item{display:flex;justify-content:space-between;align-items:center;padding:8px 15px;background:#0f1012;border-left:3px solid var(--accent);border-radius:4px;font-size:12px}.log-item.log-success{border-left-color:var(--success)}.log-item.log-error{border-left-color:var(--danger)}.log-item.log-warning{border-left-color:var(--warning)}.log-item .log-time{font-family:Orbitron;font-size:10px;color:var(--text-muted)}.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;margin-top:20px}.media-file-card{background:#0a0b0d;border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;position:relative}.media-preview-container{width:100%;height:110px;background:#141619;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}.media-preview-img{width:100%;height:100%;object-fit:cover}.media-details{display:flex;flex-direction:column;gap:4px}.media-name-input{background:0 0;border:none;border-bottom:1px dashed rgba(255,255,255,.1);color:var(--text-main);font-size:12px;padding:2px 0;margin-bottom:0;border-radius:0}.media-name-input:focus{border-bottom:1px solid var(--accent);outline:0}.media-size-tag{font-size:10px;color:var(--text-muted);font-family:Orbitron}.media-card-actions{display:flex;gap:6px}.media-card-btn{flex:1;padding:6px;border:none;border-radius:4px;font-size:10px;cursor:pointer;transition:var(--transition);font-family:Orbitron}.toast-container{position:fixed;top:30px;right:30px;z-index:11000;display:flex;flex-direction:column;gap:10px;pointer-events:none}.toast{pointer-events:auto;width:340px;padding:15px 20px;border-radius:12px;background:#141619;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.5);display:flex;align-items:flex-start;gap:12px;transform:translateX(120%);transition:transform .4s cubic-bezier(.175,.885,.32,1.275),opacity .4s;opacity:0}.toast.toast-show{transform:translateX(0);opacity:1}.toast i{font-size:18px;margin-top:2px}.toast-content{font-size:13px;font-weight:500;color:#e2e8f0;line-height:1.4}.toast-success{border-left:4px solid var(--success)}.toast-success i{color:var(--success)}.toast-error{border-left:4px solid var(--danger)}.toast-error i{color:var(--danger)}.toast-warning{border-left:4px solid var(--warning)}.toast-warning i{color:var(--warning)}.toast-info{border-left:4px solid var(--info)}.toast-info i{color:var(--info)}#confirmModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10500;align-items:center;justify-content:center;backdrop-filter:blur(8px)}.confirm-card{background:var(--admin-card);border:1px solid var(--border);border-radius:20px;width:90%;max-width:440px;padding:30px;box-shadow:0 20px 50px rgba(0,0,0,.8);text-align:center}.confirm-icon{font-size:40px;color:var(--danger);margin-bottom:20px}.confirm-title{font-family:Orbitron;font-size:18px;margin-bottom:12px;color:#fff;letter-spacing:1px}.confirm-msg{font-size:14px;color:var(--text-sub);margin-bottom:25px;line-height:1.5}.confirm-buttons{display:flex;gap:12px}.confirm-btn{flex:1;padding:12px;border:none;border-radius:8px;font-family:Orbitron;font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition)}.confirm-btn-yes{background:var(--danger);color:#fff}.confirm-btn-yes:hover{opacity:.9}.confirm-btn-no{background:#2d3748;color:#fff}.confirm-btn-no:hover{background:#4a5568}.admin-panel{display:none;position:fixed;inset:0;background:var(--admin-bg);z-index:9999;overflow:hidden}.admin-layout{display:flex;width:100%;height:100vh}.admin-sidebar{width:280px;background:var(--admin-sidebar-bg);border-right:1px solid var(--border);padding:30px 20px;display:flex;flex-direction:column;justify-content:space-between;transition:var(--transition)}.admin-brand{display:flex;align-items:center;gap:12px;margin-bottom:40px}.admin-brand i{font-size:24px;color:var(--accent)}.admin-brand div h3{font-family:Orbitron;font-size:15px;letter-spacing:2px;color:var(--text-main)}.admin-brand div p{font-size:10px;color:var(--text-muted)}.sidebar-menu{display:flex;flex-direction:column;gap:8px}.menu-item{display:flex;align-items:center;gap:15px;padding:14px 20px;border-radius:12px;color:var(--text-sub);text-decoration:none;font-size:13px;font-weight:500;transition:var(--transition);border:1px solid transparent;cursor:pointer}.menu-item.active,.menu-item:hover{color:#fff;background:rgba(255,255,255,.02)}.menu-item.active{border-color:rgba(255,193,7,.2);border-left:3px solid var(--accent);color:var(--accent)}.menu-item i{font-size:16px;width:20px;text-align:center}.admin-main{flex:1;height:100vh;overflow-y:auto;padding:40px}.admin-header-v2{display:flex;justify-content:space-between;align-items:center;margin-bottom:35px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:20px}.admin-title-area h2{font-family:Orbitron;font-size:22px;color:#fff;letter-spacing:2px}.admin-title-area p{font-size:12px;color:var(--text-sub);margin-top:2px}.tab-content{display:none}.tab-content.active{display:block;animation:slideIn .4s ease forwards}.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:30px}.stat-card{background:var(--admin-card);border:1px solid var(--border);border-radius:166px;padding:22px;display:flex;align-items:center;gap:20px}.stat-icon{width:54px;height:54px;border-radius:12px;background:rgba(255,193,7,.05);border:1px solid rgba(255,193,7,.1);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--accent)}.stat-info h4{font-family:Orbitron;font-size:24px;color:var(--text-main);line-height:1.2}.stat-info p{font-size:11px;color:var(--text-sub);text-transform:uppercase;letter-spacing:1px}.analytics-graph{background:var(--admin-card);border:1px solid var(--border);border-radius:16px;padding:25px}.analytics-graph h3{font-family:Orbitron;font-size:13px;color:var(--accent);margin-bottom:20px;letter-spacing:1px}.admin-search-wrapper{position:relative;margin-bottom:20px}.admin-search-wrapper i{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text-sub);font-size:14px}.admin-search-wrapper input{padding-left:45px;margin-bottom:0;background:var(--input-bg);border-color:#2d3139;color:var(--text-main)}.bulk-actions-panel{background:rgba(255,193,7,.05);border:1px solid rgba(255,193,7,.2);padding:15px 20px;border-radius:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.bulk-info{font-size:13px;font-weight:500;color:var(--text-main)}.bulk-buttons{display:flex;gap:10px;align-items:center}.member-table-row{background:var(--admin-card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;transition:var(--transition)}.member-table-left{display:flex;align-items:center;gap:15px;flex:2;min-width:250px}.member-table-mid{display:flex;align-items:center;gap:30px;flex:3;justify-content:space-around;flex-wrap:wrap}.member-table-right{display:flex;align-items:center;gap:12px}.status-badge{font-family:Orbitron;font-size:9px;font-weight:700;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}.status-active{background:rgba(46,213,115,.1);color:var(--success);border:1px solid rgba(46,213,115,.2)}.status-inactive{background:rgba(255,71,87,.1);color:var(--danger);border:1px solid rgba(255,71,87,.2)}.admin-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:24px}.admin-card{background:var(--admin-card);padding:28px;border-radius:20px;border:1px solid var(--border)}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}label{display:block;font-family:Orbitron;font-size:11px;color:var(--accent);margin-bottom:8px;letter-spacing:1px;font-weight:700}input,select{width:100%;padding:14px;background:var(--input-bg);border:1px solid #2d3139;color:var(--text-main);border-radius:10px;margin-bottom:20px;font-size:14px;transition:var(--transition)}input::placeholder{color:#64748b}input:focus,select:focus{border-color:var(--accent);outline:0;box-shadow:0 0 10px rgba(255,193,7,.15)}.btn-save{width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;font-family:Orbitron;font-weight:700;transition:var(--transition);background:var(--accent);color:#000}.admin-item-row{background:#0c0d10;padding:15px 20px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);color:var(--text-main)}.delete-btn{color:var(--danger);cursor:pointer;padding:8px;transition:var(--transition)}.delete-btn:hover{transform:scale(1.1)}.playlist-wrapper{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow-y:auto;margin-top:15px}.playlist-item{display:flex;justify-content:space-between;align-items:center;background:#0c0d10;padding:10px 15px;border-radius:8px;border:1px solid var(--border)}.playlist-info{font-size:12px;font-weight:500}.music-hud-group{display:flex;gap:8px;align-items:center}.music-ctrl-btn{width:38px;height:38px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.08);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition)}.music-ctrl-btn:hover{background:var(--accent);color:#000;transform:scale(1.1)}.switch{position:relative;display:inline-block;width:50px;height:24px;margin-bottom:15px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background-color:#333;transition:.4s;border-radius:34px}.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:#fff;transition:.4s;border-radius:50%}input:checked+.slider{background-color:var(--success)}input:checked+.slider:before{transform:translateX(26px)}.dn-book-widget{position:fixed;bottom:30px;right:30px;z-index:9999;perspective:1000px}.dn-book-cover{width:70px;height:95px;background:#0d0d0f;border-radius:3px 8px 8px 3px;box-shadow:0 8px 20px rgba(0,0,0,.7),inset -3px 0 5px rgba(255,255,255,.05);border-left:4px solid #050505;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .4s cubic-bezier(.175,.885,.32,1.275),box-shadow .4s;position:relative}.dn-book-cover:hover{transform:translateY(-8px) rotate(-5deg);box-shadow:0 15px 30px rgba(255,71,87,.35)}.dn-book-cover::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.1)}.dn-book-title{font-family:Orbitron,sans-serif;font-size:8px;color:rgba(255,255,255,.85);letter-spacing:2px;text-align:center;line-height:1.4;transform:scaleY(1.2);font-weight:700}.dn-open-notebook{display:none;position:absolute;bottom:0;right:0;width:500px;height:340px;background:#141416;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.9),0 0 30px rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.15);overflow:hidden;transform-origin:bottom right;animation:openBookAnim .5s cubic-bezier(.25,1,.5,1) forwards}@keyframes openBookAnim{from{opacity:0;transform:scale(.5) rotate(-10deg)}to{opacity:1;transform:scale(1) rotate(0)}}.dn-book-widget.open .dn-book-cover{display:none}.dn-book-widget.open .dn-open-notebook{display:flex}.dn-pages-container{display:flex;width:100%;height:100%;background:#f4f1ea;position:relative}.dn-pages-container::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:30px;transform:translateX(-50%);background:linear-gradient(to right,rgba(0,0,0,.15),rgba(0,0,0,.3) 50%,rgba(0,0,0,.15));z-index:5;pointer-events:none}.dn-page{flex:1;padding:22px;display:flex;flex-direction:column;color:#1a1a1c;position:relative;overflow-y:auto}.dn-page-left{border-right:1px solid rgba(0,0,0,.08)}.dn-rules-header{font-family:'Special Elite',monospace;font-size:11px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:1px;border-bottom:1.5px solid #000;padding-bottom:5px;margin-bottom:12px}.dn-rules-text{font-family:'Special Elite',monospace;font-size:9.5px;line-height:1.4;color:#2b2b2e;margin-bottom:25px}.dn-book-controls{margin-top:auto;display:flex;flex-direction:column;gap:12px}.dn-now-playing-label{font-family:'Special Elite',monospace;font-size:9px;color:#666;letter-spacing:1px}.dn-now-playing-title{font-family:'Reenie Beanie',cursive;font-size:20px;color:#f34;line-height:1.2;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}.dn-book-hud{display:flex;gap:10px;align-items:center}.dn-book-ctrl-btn{width:34px;height:34px;background:#111;border:none;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition);font-size:11px;box-shadow:0 4px 8px rgba(0,0,0,.2)}.dn-book-ctrl-btn:hover{background:#ff4757;transform:scale(1.1)}.dn-book-ctrl-btn.play-btn{background:#000;border:1px solid #ff4757;color:#ff4757}.dn-book-ctrl-btn.play-btn:hover{background:#ff4757;color:#fff}.dn-playlist-header{font-family:'Special Elite',monospace;font-size:11px;font-weight:700;color:#000;letter-spacing:1px;border-bottom:1.5px solid #000;padding-bottom:5px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}.dn-close-btn{background:0 0;border:none;color:#777;font-family:'Special Elite',monospace;font-size:12px;cursor:pointer;transition:var(--transition)}.dn-close-btn:hover{color:#ff4757}.dn-playlist-songs{list-style:none;display:flex;flex-direction:column;gap:2px;padding-right:5px}.dn-playlist-songs li{font-family:'Reenie Beanie',cursive;font-size:24px;color:#111113;cursor:pointer;transition:color .2s,transform .2s;line-height:1.2;word-break:break-all;user-select:none}.dn-playlist-songs li:hover{color:#ff4757;transform:translateX(3px) scale(1.02)}.dn-playlist-songs li.playing-track{color:#b3001e;text-decoration:line-through;text-decoration-color:#ff3344;text-decoration-thickness:3px;font-weight:700}@media(max-width:600px){.dn-open-notebook{width:calc(100vw - 40px);height:420px;bottom:-10px;right:-10px;left:auto}.dn-pages-container{flex-direction:column}.dn-page-left{border-right:none;border-bottom:1px dashed rgba(0,0,0,.15);height:50%;padding:15px}.dn-page-right{height:50%;padding:15px}.dn-rules-text{display:none}.dn-book-controls{margin-top:0}.dn-pages-container::before{display:none}}@media(max-width:992px){.admin-layout{flex-direction:column}.admin-sidebar{width:100%;height:auto;padding:20px}.admin-brand{margin-bottom:20px}.sidebar-menu{flex-direction:row;flex-wrap:wrap}.menu-item{padding:10px 15px;font-size:12px;flex:1 1 auto;justify-content:center}.admin-main{height:auto;padding:20px}.col-4,.col-6,.col-8{grid-column:span 12}}@media(max-width:768px){.member-card,.top-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(20,20,22,.96)!important}}</style>
 </head>
 <body>
-<canvas id="weather-canvas"></canvas>
-<div id="toast-container" class="toast-container"></div>
-<div id="confirmModal">
-<div class="confirm-card">
-<div class="confirm-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-<div class="confirm-title" id="confirmTitle">ARE YOU SURE?</div>
-<div class="confirm-msg" id="confirmMessage">This action cannot be undone.</div>
-<div class="confirm-buttons">
-<button class="confirm-btn confirm-btn-no" onclick="handleConfirm(false)">CANCEL</button>
-<button class="confirm-btn confirm-btn-yes" id="confirmYesBtn" onclick="handleConfirm(true)">CONFIRM</button>
+<canvas id=weather-canvas></canvas>
+<div id=toast-container class=toast-container></div>
+<div id=confirmModal>
+<div class=confirm-card>
+<div class=confirm-icon><i class="fa-solid fa-circle-exclamation"></i></div>
+<div class=confirm-title id=confirmTitle>ARE YOU SURE?</div>
+<div class=confirm-msg id=confirmMessage>This action cannot be undone.</div>
+<div class=confirm-buttons>
+<button class="confirm-btn confirm-btn-no" onclick=handleConfirm(!1)>CANCEL</button>
+<button class="confirm-btn confirm-btn-yes" id=confirmYesBtn onclick=handleConfirm(!0)>CONFIRM</button>
 </div>
 </div>
 </div>
-<div class="dn-book-widget" id="dnBookWidget">
-<div class="dn-book-cover" onclick="toggleNotebook()">
-<div class="dn-book-title">DEATH<br>NOTE</div>
+<div class=dn-book-widget id=dnBookWidget>
+<div class=dn-book-cover onclick=toggleNotebook()>
+<div class=dn-book-title>DEATH<br>NOTE</div>
 </div>
-<div class="dn-open-notebook">
-<div class="dn-pages-container">
+<div class=dn-open-notebook>
+<div class=dn-pages-container>
 <div class="dn-page dn-page-left">
-<div class="dn-rules-header">HOW TO USE IT</div>
-<div class="dn-rules-text">The songs written in this notebook shall play in the background. Click on any title to execute immediately.</div>
-<div class="dn-book-controls">
-<div class="dn-now-playing-label">CURRENT ACTIVE SONG:</div>
-<div class="dn-now-playing-title" id="dnNowPlayingTitle">DEATHNOTE AUDIO</div>
-<div class="dn-book-hud">
-<button class="dn-book-ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-<button class="dn-book-ctrl-btn play-btn" onclick="toggleMusic()"><i id="musicIcon" class="fa-solid fa-play"></i></button>
-<button class="dn-book-ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+<div class=dn-rules-header>HOW TO USE IT</div>
+<div class=dn-rules-text>The songs written in this notebook shall play in the background. Click on any title to execute immediately.</div>
+<div class=dn-book-controls>
+<div class=dn-now-playing-label>CURRENT ACTIVE SONG:</div>
+<div class=dn-now-playing-title id=dnNowPlayingTitle>DEATHNOTE AUDIO</div>
+<div class=dn-book-hud>
+<button class=dn-book-ctrl-btn onclick=prevSong()><i class="fa-solid fa-backward-step"></i></button>
+<button class="dn-book-ctrl-btn play-btn" onclick=toggleMusic()><i id=musicIcon class="fa-solid fa-play"></i></button>
+<button class=dn-book-ctrl-btn onclick=nextSong()><i class="fa-solid fa-forward-step"></i></button>
 </div>
 </div>
 </div>
 <div class="dn-page dn-page-right">
-<div class="dn-playlist-header">
+<div class=dn-playlist-header>
 <span>VICTIMS LIST</span>
-<button class="dn-close-btn" onclick="toggleNotebook()"><i class="fa-solid fa-xmark"></i> CLOSE</button>
+<button class=dn-close-btn onclick=toggleNotebook()><i class="fa-solid fa-xmark"></i> CLOSE</button>
 </div>
-<ul class="dn-playlist-songs" id="notebookTracks">
-<li style="font-size:20px;color:#555">Opening notebook archives...</li>
+<ul class=dn-playlist-songs id=notebookTracks>
+<li style=font-size:20px;color:#555>Opening notebook archives...</li>
 </ul>
 </div>
 </div>
 </div>
 </div>
-<div id="yt-player-container" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;opacity:0"><div id="player"></div></div>
-<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
-<div class="admin-card" style="width:100%;max-width:400px">
-<h2 style="font-family:'Orbitron';text-align:center;color:var(--accent);margin-bottom:30px">ADMIN LOGIN</h2>
-<label>USERNAME</label><input type="text" id="loginUser">
-<label>PASSWORD</label><input type="password" id="loginPass">
-<button class="btn-save" onclick="attemptLogin()">ENTER COMMAND</button>
-<button style="width:100%;background:none;border:none;color:#555;margin-top:15px;cursor:pointer" onclick="closeModal('loginModal')">CANCEL</button>
+<div id=yt-player-container style=position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;pointer-events:none;opacity:0><div id=player></div></div>
+<div id=loginModal style=display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(10px)>
+<div class=admin-card style=width:100%;max-width:400px>
+<h2 style=font-family:Orbitron;text-align:center;color:var(--accent);margin-bottom:30px>ADMIN LOGIN</h2>
+<label>USERNAME</label><input id=loginUser>
+<label>PASSWORD</label><input type=password id=loginPass>
+<button class=btn-save onclick=attemptLogin()>ENTER COMMAND</button>
+<button style="width:100%;background:0 0;border:none;color:#555;margin-top:15px;cursor:pointer" onclick='closeModal("loginModal")'>CANCEL</button>
 </div>
 </div>
-<nav class="top-nav">
-<div style="font-family:'Orbitron';font-size:11px;letter-spacing:2px;display:flex;align-items:center;gap:15px">
-<span><i class="fa-solid fa-users" style="color:var(--accent)"></i> MEMBER: <span id="countNum">0</span></span>
-<span id="dbStatus" style="font-size:9px;color:var(--accent);background:rgba(255,193,7,0.1);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,193,7,0.2)">
+<nav class=top-nav>
+<div style=font-family:Orbitron;font-size:11px;letter-spacing:2px;display:flex;align-items:center;gap:15px>
+<span><i class="fa-solid fa-users" style=color:var(--accent)></i> MEMBER: <span id=countNum>0</span></span>
+<span id=dbStatus style="font-size:9px;color:var(--accent);background:rgba(255,193,7,.1);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,193,7,.2)">
 <i class="fa-solid fa-circle-nodes"></i> CONNECTING...
 </span>
 </div>
 </nav>
-<header class="hero">
-<img src="" id="siteLogo">
-<h1 id="siteNameDisplay">LOADING...</h1>
-<p id="siteDescDisplay" style="font-family:'Orbitron';font-size:11px;opacity:.6;letter-spacing:6px">Not a perfect gang but try to be the best.</p>
+<header class=hero>
+<img src="" id=siteLogo>
+<h1 id=siteNameDisplay>LOADING...</h1>
+<p id=siteDescDisplay style=font-family:Orbitron;font-size:11px;opacity:.6;letter-spacing:6px>Not a perfect gang but try to be the best.</p>
 </header>
 <div style="max-width:700px;margin:0 auto 60px;padding:0 20px">
-<input type="text" id="memberSearch" placeholder="SEARCH BY NAME..." oninput="filterMembers()" style="border-radius:50px;padding-left:30px;background:rgba(255,255,255,0.03)">
-<div id="categoryTabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px"></div>
+<input id=memberSearch placeholder="SEARCH BY NAME..." oninput=filterMembers() style=border-radius:50px;padding-left:30px;background:rgba(255,255,255,.03)>
+<div id=categoryTabs style=display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px></div>
 </div>
-<div id="memberSections"></div>
-<footer class="site-footer">
-<span id="footerTextDisplay">Designed by DEATHNOTE</span> | Support by 
-<a id="footerLinkLabel" href="#" target="_blank">DEATHNOTE</a>
+<div id=memberSections></div>
+<footer class=site-footer>
+<span id=footerTextDisplay>Designed by DEATHNOTE</span> | Support by
+<a id=footerLinkLabel href=# target=_blank>DEATHNOTE</a>
 </footer>
-<div id="adminPanel" class="admin-panel">
-<div class="admin-layout">
-<aside class="admin-sidebar">
+<div id=adminPanel class=admin-panel>
+<div class=admin-layout>
+<aside class=admin-sidebar>
 <div>
-<div class="admin-brand">
+<div class=admin-brand>
 <i class="fa-solid fa-terminal"></i>
 <div>
 <h3>DEATHNOTE</h3>
 <p>DATABASE SYSTEM V2</p>
 </div>
 </div>
-<nav class="sidebar-menu">
-<div class="menu-item active" onclick="switchAdminTab('dashboard',this)">
+<nav class=sidebar-menu>
+<div class="menu-item active" onclick='switchAdminTab("dashboard",this)'>
 <i class="fa-solid fa-chart-simple"></i> Dashboard
 </div>
-<div class="menu-item" onclick="switchAdminTab('media-manager',this)">
+<div class=menu-item onclick='switchAdminTab("media-manager",this)'>
 <i class="fa-solid fa-photo-film"></i> Media Cloud Manager
 </div>
-<div class="menu-item" onclick="switchAdminTab('web-config',this)">
+<div class=menu-item onclick='switchAdminTab("web-config",this)'>
 <i class="fa-solid fa-sliders"></i> Web Settings
 </div>
-<div class="menu-item" onclick="switchAdminTab('roles-groups',this)">
+<div class=menu-item onclick='switchAdminTab("roles-groups",this)'>
 <i class="fa-solid fa-sitemap"></i> Structure & Roles
 </div>
-<div class="menu-item" onclick="switchAdminTab('members-db',this)">
+<div class=menu-item onclick='switchAdminTab("members-db",this)'>
 <i class="fa-solid fa-users-gear"></i> Member Directory
 </div>
-<div class="menu-item" onclick="switchAdminTab('music-config',this)">
+<div class=menu-item onclick='switchAdminTab("music-config",this)'>
 <i class="fa-solid fa-music"></i> Audio Engine
 </div>
 </nav>
 </div>
-<button class="config-btn" style="background:var(--danger);color:#fff;width:100%;border-radius:12px;" onclick="closeAdminPanel()">EXIT CONTROL</button>
+<button class=config-btn style=background:var(--danger);color:#fff;width:100%;border-radius:12px onclick=closeAdminPanel()>EXIT CONTROL</button>
 </aside>
-<main class="admin-main">
-<header class="admin-header-v2">
-<div class="admin-title-area">
-<h2 id="adminTabTitle">CENTRAL COMMAND</h2>
-<p id="adminTabDesc">Real-time Database & Site Analytics</p>
+<main class=admin-main>
+<header class=admin-header-v2>
+<div class=admin-title-area>
+<h2 id=adminTabTitle>CENTRAL COMMAND</h2>
+<p id=adminTabDesc>Real-time Database & Site Analytics</p>
 </div>
-<button class="config-btn" id="toggleDbModeBtn" onclick="toggleDatabaseMode()" style="background:var(--warning);font-size:10px;padding:8px 14px">FORCE LOCAL STORAGE</button>
+<button class=config-btn id=toggleDbModeBtn onclick=toggleDatabaseMode() style="background:var(--warning);font-size:10px;padding:8px 14px">FORCE LOCAL STORAGE</button>
 </header>
-<section id="tab-dashboard" class="tab-content active">
-<div class="analytics-grid">
-<div class="stat-card">
-<div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-<div class="stat-info">
-<h4 id="statTotalMembers">0</h4>
+<section id=tab-dashboard class="tab-content active">
+<div class=analytics-grid>
+<div class=stat-card>
+<div class=stat-icon><i class="fa-solid fa-users"></i></div>
+<div class=stat-info>
+<h4 id=statTotalMembers>0</h4>
 <p>Total Members</p>
 </div>
 </div>
-<div class="stat-card">
-<div class="stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
-<div class="stat-info">
-<h4 id="statTotalRoles">0</h4>
+<div class=stat-card>
+<div class=stat-icon><i class="fa-solid fa-shield-halved"></i></div>
+<div class=stat-info>
+<h4 id=statTotalRoles>0</h4>
 <p>Total Roles</p>
 </div>
 </div>
-<div class="stat-card">
-<div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
-<div class="stat-info">
-<h4 id="statTotalGroups">0</h4>
+<div class=stat-card>
+<div class=stat-icon><i class="fa-solid fa-layer-group"></i></div>
+<div class=stat-info>
+<h4 id=statTotalGroups>0</h4>
 <p>Role Groups</p>
 </div>
 </div>
-<div class="stat-card">
-<div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
-<div class="stat-info">
+<div class=stat-card>
+<div class=stat-icon><i class="fa-solid fa-bolt"></i></div>
+<div class=stat-info>
 <h4>ONLINE</h4>
 <p>System State</p>
 </div>
 </div>
 </div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px">
-<div class="analytics-graph">
+<div style=display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px>
+<div class=analytics-graph>
 <h3>MEMBER DISTRIBUTION BY ROLE GROUP</h3>
-<div id="analyticsDistribution"></div>
+<div id=analyticsDistribution></div>
 </div>
-<div class="logs-panel" style="margin-top:0">
+<div class=logs-panel style=margin-top:0>
 <h3>SYSTEM ACTIVITY LOGS</h3>
-<div class="logs-container" id="logsContainer">
-<p style="font-size:11px;opacity:0.4;text-align:center;padding-top:20px">No system logs captured yet.</p>
+<div class=logs-container id=logsContainer>
+<p style=font-size:11px;opacity:.4;text-align:center;padding-top:20px>No system logs captured yet.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="tab-media-manager" class="tab-content">
-<div class="admin-grid">
+<section id=tab-media-manager class=tab-content>
+<div class=admin-grid>
 <div class="admin-card col-12">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">MEDIA MANAGER UPLOAD CENTER</div>
-<div class="upload-dropzone" style="height:140px" onclick="document.getElementById('fileMediaUpload').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropMediaHandler(event)">
-<i class="fa-solid fa-cloud-arrow-up" style="font-size:32px;margin-bottom:5px"></i>
-<span style="font-size:13px;font-weight:bold;color:var(--text-main)">DRAG & DROP IMAGE HERE</span>
+<div style="margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">MEDIA MANAGER UPLOAD CENTER</div>
+<div class=upload-dropzone style=height:140px onclick='document.getElementById("fileMediaUpload").click()' ondragover=dragOverHandler(event) ondragleave=dragLeaveHandler(event) ondrop=dropMediaHandler(event)>
+<i class="fa-solid fa-cloud-arrow-up" style=font-size:32px;margin-bottom:5px></i>
+<span style=font-size:13px;font-weight:700;color:var(--text-main)>DRAG & DROP IMAGE HERE</span>
 <span>Or click to select photo file (Auto compressed to lightweight cloud storage)</span>
 </div>
-<input type="file" style="display:none" id="fileMediaUpload" accept="image/*" onchange="fileSelectMediaHandler(this)">
-<div id="mediaManagerLibrary">
-<h3 style="font-family:'Orbitron';font-size:12px;margin:30px 0 15px;border-left:2px solid var(--accent);padding-left:10px;color:var(--text-main)">ALL CLOUD FILES</h3>
-<div class="media-grid" id="mediaLibraryContainer">
-<p style="font-size:11px;text-align:center;width:100%;opacity:0.4">No uploaded files detected.</p>
+<input type=file style=display:none id=fileMediaUpload accept=image/* onchange=fileSelectMediaHandler(this)>
+<div id=mediaManagerLibrary>
+<h3 style="font-family:Orbitron;font-size:12px;margin:30px 0 15px;border-left:2px solid var(--accent);padding-left:10px;color:var(--text-main)">ALL CLOUD FILES</h3>
+<div class=media-grid id=mediaLibraryContainer>
+<p style=font-size:11px;text-align:center;width:100%;opacity:.4>No uploaded files detected.</p>
 </div>
 </div>
 </div>
 </div>
 </section>
-<section id="tab-web-config" class="tab-content">
-<div class="admin-grid">
+<section id=tab-web-config class=tab-content>
+<div class=admin-grid>
 <div class="admin-card col-12">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">SETTING - WEBSITE</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
-<div><label>SITE NAME</label><input type="text" id="configSiteName"></div>
+<div style="margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">SETTING - WEBSITE</div>
+<div style=display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px>
+<div><label>SITE NAME</label><input id=configSiteName></div>
 <div>
 <label>FAVICON IMAGE</label>
-<div class="upload-dropzone" onclick="document.getElementById('fileFavicon').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event,'configFavicon',64,64,0.6)">
+<div class=upload-dropzone onclick='document.getElementById("fileFavicon").click()' ondragover=dragOverHandler(event) ondragleave=dragLeaveHandler(event) ondrop='dropHandler(event,"configFavicon",64,64,.6)'>
 <i class="fa-solid fa-image"></i>
 <span>Click / Drop Favicon File (64x64)</span>
 </div>
-<input type="file" style="display:none" id="fileFavicon" accept="image/*" onchange="fileSelectHandler(this,'configFavicon',64,64,0.6)">
-<input type="text" id="configFavicon" placeholder="Or Favicon URL / Base64 fallback">
+<input type=file style=display:none id=fileFavicon accept=image/* onchange='fileSelectHandler(this,"configFavicon",64,64,.6)'>
+<input id=configFavicon placeholder="Or Favicon URL / Base64 fallback">
 </div>
-<div><label>THEME ACCENT</label><input type="color" id="configThemeColor" style="height:50px;cursor:pointer"></div>
+<div><label>THEME ACCENT</label><input type=color id=configThemeColor style=height:50px;cursor:pointer></div>
 <div>
 <label>LOGO IMAGE</label>
-<div class="upload-dropzone" onclick="document.getElementById('fileLogo').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event,'configLogoUrl',300,300,0.75)">
+<div class=upload-dropzone onclick='document.getElementById("fileLogo").click()' ondragover=dragOverHandler(event) ondragleave=dragLeaveHandler(event) ondrop='dropHandler(event,"configLogoUrl",300,300,.75)'>
 <i class="fa-solid fa-cube"></i>
 <span>Click / Drop Logo File (300x300)</span>
 </div>
-<input type="file" style="display:none" id="fileLogo" accept="image/*" onchange="fileSelectHandler(this,'configLogoUrl',300,300,0.75)">
-<input type="text" id="configLogoUrl" placeholder="Or Logo URL / Base64 fallback">
+<input type=file style=display:none id=fileLogo accept=image/* onchange='fileSelectHandler(this,"configLogoUrl",300,300,.75)'>
+<input id=configLogoUrl placeholder="Or Logo URL / Base64 fallback">
 </div>
 <div>
 <label>WALLPAPER / BACKGROUND</label>
-<div class="upload-dropzone" onclick="document.getElementById('fileBg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event,'configBgUrl',1200,800,0.65)">
+<div class=upload-dropzone onclick='document.getElementById("fileBg").click()' ondragover=dragOverHandler(event) ondragleave=dragLeaveHandler(event) ondrop='dropHandler(event,"configBgUrl",1200,800,.65)'>
 <i class="fa-solid fa-panorama"></i>
 <span>Click / Drop Background File (High Compress)</span>
 </div>
-<input type="file" style="display:none" id="fileBg" accept="image/*" onchange="fileSelectHandler(this,'configBgUrl',1200,800,0.65)">
-<input type="text" id="configBgUrl" placeholder="Or Wallpaper URL / Base64 fallback">
+<input type=file style=display:none id=fileBg accept=image/* onchange='fileSelectHandler(this,"configBgUrl",1200,800,.65)'>
+<input id=configBgUrl placeholder="Or Wallpaper URL / Base64 fallback">
 </div>
 <div><label>ATMOSPHERE EFFECT</label>
-<select id="configWeather">
-<option value="none">CLEAR</option>
-<option value="snow">SNOWFLAKES</option>
-<option value="rain">RAIN SHOWER</option>
+<select id=configWeather>
+<option value=none>CLEAR</option>
+<option value=snow>SNOWFLAKES</option>
+<option value=rain>RAIN SHOWER</option>
 </select>
 </div>
-<div><label>FOOTER TEXT</label><input type="text" id="configFooterText"></div>
-<div><label>FOOTER LINK</label><input type="text" id="configFooterLink"></div>
+<div><label>FOOTER TEXT</label><input id=configFooterText></div>
+<div><label>FOOTER LINK</label><input id=configFooterLink></div>
 </div>
-<button class="btn-save" style="margin-top:20px" onclick="saveConfig()">SYNC DATABASE</button>
+<button class=btn-save style=margin-top:20px onclick=saveConfig()>SYNC DATABASE</button>
 </div>
 </div>
 </section>
-<section id="tab-roles-groups" class="tab-content">
-<div class="admin-grid">
+<section id=tab-roles-groups class=tab-content>
+<div class=admin-grid>
 <div class="admin-card col-6" style="grid-column:span 6">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent)">ROLE GROUPS</div>
-<div style="display:flex;gap:10px">
-<input type="text" id="newGroupName" placeholder="NEW GROUP NAME" style="margin-bottom:0;flex:2">
-<input type="number" id="newGroupOrder" placeholder="ORDER (e.g. 1)" style="margin-bottom:0;flex:1">
-<button class="config-btn" onclick="addGroup()">ADD</button>
+<div style=margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent)>ROLE GROUPS</div>
+<div style=display:flex;gap:10px>
+<input id=newGroupName placeholder="NEW GROUP NAME" style=margin-bottom:0;flex:2>
+<input type=number id=newGroupOrder placeholder="ORDER (e.g. 1)" style=margin-bottom:0;flex:1>
+<button class=config-btn onclick=addGroup()>ADD</button>
 </div>
-<div id="groupListContainer" style="margin-top:20px;display:grid;grid-template-columns:1fr;gap:10px"></div>
+<div id=groupListContainer style=margin-top:20px;display:grid;grid-template-columns:1fr;gap:10px></div>
 </div>
 <div class="admin-card col-6" style="grid-column:span 6">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent)">RANK & ROLES</div>
+<div style=margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent)>RANK & ROLES</div>
 <div style="display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:10px;margin-bottom:20px">
-<input type="text" id="newRoleName" placeholder="ROLE NAME" style="margin-bottom:0">
-<select id="roleGroupSelect" style="margin-bottom:0"></select>
-<input type="number" id="newRoleOrder" placeholder="ORDER" style="margin-bottom:0">
-<input type="color" id="newRoleColor" value="#ffc107" style="height:46px;margin-bottom:0">
-<button class="config-btn" onclick="addRole()">ADD</button>
+<input id=newRoleName placeholder="ROLE NAME" style=margin-bottom:0>
+<select id=roleGroupSelect style=margin-bottom:0></select>
+<input type=number id=newRoleOrder placeholder=ORDER style=margin-bottom:0>
+<input type=color id=newRoleColor value=#ffc107 style=height:46px;margin-bottom:0>
+<button class=config-btn onclick=addRole()>ADD</button>
 </div>
-<div id="roleListContainer" style="display:grid;grid-template-columns:1fr;gap:10px"></div>
+<div id=roleListContainer style=display:grid;grid-template-columns:1fr;gap:10px></div>
 </div>
 </div>
 </section>
-<section id="tab-members-db" class="tab-content">
-<div class="admin-grid">
+<section id=tab-members-db class=tab-content>
+<div class=admin-grid>
 <div class="admin-card col-12">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">PERSONNEL CONTROL SHEET</div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
-<div><label>FULL NAME</label><input type="text" id="memName"></div>
+<div style="margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent);border-bottom:1px solid #333;padding-bottom:10px">PERSONNEL CONTROL SHEET</div>
+<div style=display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px>
+<div><label>FULL NAME</label><input id=memName></div>
 <div style="grid-column:span 2">
 <label>AVATAR IMAGE</label>
-<div class="upload-dropzone" onclick="document.getElementById('fileMemImg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event,'memImg',150,150,0.7)">
+<div class=upload-dropzone onclick='document.getElementById("fileMemImg").click()' ondragover=dragOverHandler(event) ondragleave=dragLeaveHandler(event) ondrop='dropHandler(event,"memImg",150,150,.7)'>
 <i class="fa-solid fa-cloud-arrow-up"></i>
 <span>Click / Drop Avatar (Base64 Compress)</span>
 </div>
-<input type="file" style="display:none" id="fileMemImg" accept="image/*" onchange="fileSelectHandler(this,'memImg',150,150,0.7)">
-<input type="text" id="memImg" placeholder="Or Avatar URL / Base64 fallback">
+<input type=file style=display:none id=fileMemImg accept=image/* onchange='fileSelectHandler(this,"memImg",150,150,.7)'>
+<input id=memImg placeholder="Or Avatar URL / Base64 fallback">
 </div>
-<div><label>ASSIGN ROLE</label><select id="memRole"></select></div>
+<div><label>ASSIGN ROLE</label><select id=memRole></select></div>
 <div><label>STATUS</label>
-<select id="memStatus">
-<option value="active">Active (กำลังปฏิบัติงาน)</option>
-<option value="inactive">Inactive (ออกจากแก๊ง/ปิดตัว)</option>
+<select id=memStatus>
+<option value=active>Active (กำลังปฏิบัติงาน)</option>
+<option value=inactive>Inactive (ออกจากแก๊ง/ปิดตัว)</option>
 </select>
 </div>
-<div><label><i class="fa-brands fa-facebook"></i> FB URL</label><input type="text" id="memFb"></div>
-<div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input type="text" id="memYt"></div>
-<div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input type="text" id="memTk"></div>
+<div><label><i class="fa-brands fa-facebook"></i> FB URL</label><input id=memFb></div>
+<div><label><i class="fa-brands fa-youtube"></i> YT URL</label><input id=memYt></div>
+<div><label><i class="fa-brands fa-tiktok"></i> TK URL</label><input id=memTk></div>
 </div>
-<input type="hidden" id="editMemId">
-<input type="hidden" id="editMemJoinDate">
-<div style="display:flex;gap:10px;margin-top:10px">
-<button id="memBtn" class="btn-save" style="flex:3" onclick="saveMember()">DEPLOY TO DIRECTORY</button>
-<button class="btn-save" style="flex:1;background:#333;color:#fff" onclick="clearMemForm()">CLEAR FORM</button>
+<input type=hidden id=editMemId>
+<input type=hidden id=editMemJoinDate>
+<div style=display:flex;gap:10px;margin-top:10px>
+<button id=memBtn class=btn-save style=flex:3 onclick=saveMember()>DEPLOY TO DIRECTORY</button>
+<button class=btn-save style=flex:1;background:#333;color:#fff onclick=clearMemForm()>CLEAR FORM</button>
 </div>
 </div>
 <div class="admin-card col-12">
-<div style="margin-bottom:25px">
-<h4 style="font-family:'Orbitron';font-size:14px;color:var(--accent);margin-bottom:15px">MEMBER DIRECTORY CONTROLLER</h4>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px">
-<div class="admin-search-wrapper" style="margin-bottom:0">
+<div style=margin-bottom:25px>
+<h4 style=font-family:Orbitron;font-size:14px;color:var(--accent);margin-bottom:15px>MEMBER DIRECTORY CONTROLLER</h4>
+<div style=display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px>
+<div class=admin-search-wrapper style=margin-bottom:0>
 <i class="fa-solid fa-magnifying-glass"></i>
-<input type="text" id="adminMemberSearch" placeholder="SEARCH MEMBERS BY NAME..." oninput="filterAdminMembers()">
+<input id=adminMemberSearch placeholder="SEARCH MEMBERS BY NAME..." oninput=filterAdminMembers()>
 </div>
 <div>
-<select id="adminFilterRole" onchange="filterAdminMembers()" style="margin-bottom:0">
-<option value="all">FILTER BY ALL ROLES</option>
+<select id=adminFilterRole onchange=filterAdminMembers() style=margin-bottom:0>
+<option value=all>FILTER BY ALL ROLES</option>
 </select>
 </div>
 <div>
-<select id="adminFilterStatus" onchange="filterAdminMembers()" style="margin-bottom:0">
-<option value="all">FILTER BY ALL STATUS</option>
-<option value="active">ACTIVE ONLY</option>
-<option value="inactive">INACTIVE ONLY</option>
+<select id=adminFilterStatus onchange=filterAdminMembers() style=margin-bottom:0>
+<option value=all>FILTER BY ALL STATUS</option>
+<option value=active>ACTIVE ONLY</option>
+<option value=inactive>INACTIVE ONLY</option>
 </select>
 </div>
 </div>
-<div id="bulkPanel" class="bulk-actions-panel" style="display:none">
-<div class="bulk-info"><span id="bulkSelectedCount">0</span> members selected</div>
-<div class="bulk-buttons">
-<select id="bulkStatusSelect" style="margin-bottom:0;width:150px;padding:10px">
+<div id=bulkPanel class=bulk-actions-panel style=display:none>
+<div class=bulk-info><span id=bulkSelectedCount>0</span> members selected</div>
+<div class=bulk-buttons>
+<select id=bulkStatusSelect style=margin-bottom:0;width:150px;padding:10px>
 <option value="">CHANGE STATUS</option>
-<option value="active">Active</option>
-<option value="inactive">Inactive</option>
+<option value=active>Active</option>
+<option value=inactive>Inactive</option>
 </select>
-<button class="config-btn" onclick="applyBulkStatus()" style="padding:10px 15px">APPLY</button>
-<button class="config-btn" onclick="applyBulkDelete()" style="background:var(--danger);color:#fff;padding:10px 15px">DELETE SELECTED</button>
+<button class=config-btn onclick=applyBulkStatus() style="padding:10px 15px">APPLY</button>
+<button class=config-btn onclick=applyBulkDelete() style="background:var(--danger);color:#fff;padding:10px 15px">DELETE SELECTED</button>
 </div>
 </div>
 </div>
-<div style="display:flex;gap:15px;align-items:center;margin-bottom:12px;font-size:12px;color:var(--text-sub)">
-<input type="checkbox" id="selectAllMembers" onchange="toggleSelectAll(this)" style="width:16px;height:16px;margin-bottom:0;cursor:pointer">
-<label for="selectAllMembers" style="margin-bottom:0;cursor:pointer;color:var(--text-main);font-family:'Inter';font-size:12px">SELECT ALL MEMBERS LIST</label>
+<div style=display:flex;gap:15px;align-items:center;margin-bottom:12px;font-size:12px;color:var(--text-sub)>
+<input type=checkbox id=selectAllMembers onchange=toggleSelectAll(this) style=width:16px;height:16px;margin-bottom:0;cursor:pointer>
+<label for=selectAllMembers style=margin-bottom:0;cursor:pointer;color:var(--text-main);font-family:Inter;font-size:12px>SELECT ALL MEMBERS LIST</label>
 </div>
-<div id="adminMemberList" style="display:flex;flex-direction:column;gap:8px"></div>
+<div id=adminMemberList style=display:flex;flex-direction:column;gap:8px></div>
 </div>
 </div>
 </section>
-<section id="tab-music-config" class="tab-content">
-<div class="admin-grid">
+<section id=tab-music-config class=tab-content>
+<div class=admin-grid>
 <div class="admin-card col-12">
-<div style="margin-bottom:20px;font-family:'Orbitron';font-size:14px;color:var(--accent)">AUDIO PLAYLIST ENGINE</div>
-<div style="display:flex;align-items:center;gap:15px;margin-bottom:25px">
-<label class="switch"><input type="checkbox" id="musicAutoToggle" onchange="saveMusic()"><span class="slider"></span></label>
-<span style="font-size:11px;font-family:'Orbitron'">AUTO-START ON LOAD</span>
+<div style=margin-bottom:20px;font-family:Orbitron;font-size:14px;color:var(--accent)>AUDIO PLAYLIST ENGINE</div>
+<div style=display:flex;align-items:center;gap:15px;margin-bottom:25px>
+<label class=switch><input type=checkbox id=musicAutoToggle onchange=saveMusic()><span class=slider></span></label>
+<span style=font-size:11px;font-family:Orbitron>AUTO-START ON LOAD</span>
 </div>
 <div style="display:grid;grid-template-columns:2fr 1.5fr 1fr auto;gap:15px;margin-bottom:20px;align-items:flex-end">
 <div>
 <label>SONG TITLE</label>
-<input type="text" id="musicTitle" placeholder="e.g. Lost in Tokyo" style="margin-bottom:0">
+<input id=musicTitle placeholder="e.g. Lost in Tokyo" style=margin-bottom:0>
 </div>
 <div>
 <label>YOUTUBE VIDEO ID</label>
-<input type="text" id="musicVidId" placeholder="e.g. JXg_Qe48cbU" style="margin-bottom:0">
+<input id=musicVidId placeholder="e.g. JXg_Qe48cbU" style=margin-bottom:0>
 </div>
 <div>
 <label>START AT (วินาที)</label>
-<input type="number" id="musicStartSecond" placeholder="0" value="0" style="margin-bottom:0">
+<input type=number id=musicStartSecond placeholder=0 value=0 style=margin-bottom:0>
 </div>
-<button class="config-btn" onclick="addSongPlaylist()" style="height:48px">ADD TO PLAYLIST</button>
+<button class=config-btn onclick=addSongPlaylist() style=height:48px>ADD TO PLAYLIST</button>
 </div>
-<div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px">
-<h4 style="font-family:'Orbitron';font-size:12px;color:var(--accent);margin-bottom:15px">CURRENT PLAYLIST QUEUE</h4>
-<div class="playlist-wrapper" id="playlistItems"></div>
+<div style="border-top:1px solid rgba(255,255,255,.05);padding-top:20px">
+<h4 style=font-family:Orbitron;font-size:12px;color:var(--accent);margin-bottom:15px>CURRENT PLAYLIST QUEUE</h4>
+<div class=playlist-wrapper id=playlistItems></div>
 </div>
 </div>
 </div>
@@ -376,1619 +374,6 @@
 </main>
 </div>
 </div>
-<script>
-// Obfuscation String Lookup Table
-const _0x4d32 = [
-  "\x64\x61\x74\x61\x62\x61\x73\x65\x55\x52\x4c", // databaseURL
-  "\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x61\x64\x64\x61\x64\x2d\x38\x34\x65\x31\x62\x2d\x64\x65\x66\x61\x75\x6c\x74\x2d\x72\x74\x64\x62\x2e\x61\x73\x69\x61\x2d\x73\x6f\x75\x74\x68\x65\x61\x73\x74\x31\x2e\x66\x69\x72\x65\x62\x61\x73\x65\x64\x61\x74\x61\x62\x61\x73\x65\x2e\x61\x70\x70\x2f", // https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/
-  "\x64\x65\x61\x74\x68\x6e\x6f\x74\x65\x5f", // deathnote_
-  "\x37\x35\x33\x31\x37\x37\x36\x63\x35\x62\x39\x36\x37\x64\x63\x31\x66\x38\x35\x63\x66\x65\x63\x35\x38\x39\x35\x37\x62\x61\x35\x34\x31\x31\x37\x30\x37\x39\x63\x62\x61\x66\x36\x65\x34\x37\x39\x64\x32\x64\x66\x38\x66\x63\x32\x65\x34\x64\x66\x61\x36\x30\x39\x64", // Admin user SHA256
-  "\x35\x66\x31\x35\x31\x32\x62\x66\x36\x64\x66\x62\x66\x35\x31\x39\x61\x34\x65\x33\x66\x61\x33\x38\x33\x31\x62\x35\x34\x34\x33\x66\x61\x34\x63\x34\x62\x39\x32\x62\x36\x37\x66\x31\x33\x39\x64\x36\x37\x66\x62\x63\x61\x38\x33\x65\x65\x37\x63\x30\x30\x31\x63\x66", // Admin pass SHA256
-  "\x50\x65\x72\x6d\x69\x73\x73\x69\x6f\x6e\x20\x64\x65\x6e\x69\x65\x64", // Permission denied
-  "\x50\x45\x52\x4d\x49\x53\x53\x49\x4f\x4e\x5f\x44\x45\x4e\x49\x45\x44", // PERMISSION_DENIED
-  "\x6c\x6f\x63\x61\x6c\x5f", // local_
-  "\x61\x63\x74\x69\x76\x65", // active
-  "\x69\x6e\x61\x63\x74\x69\x76\x65", // inactive
-  "\x6d\x65\x6d\x62\x65\x72\x73", // members
-  "\x72\x6f\x6c\x65\x47\x72\x6f\x75\x70\x73", // roleGroups
-  "\x72\x6f\x6c\x65\x73", // roles
-  "\x70\x6c\x61\x79\x6c\x69\x73\x74", // playlist
-  "\x63\x6f\x6e\x66\x69\x67", // config
-  "\x6d\x65\x64\x69\x61", // media
-  "\x61\x63\x74\x69\x76\x69\x74\x79\x5f\x6c\x6f\x67\x73", // activity_logs
-  "\x6d\x75\x73\x69\x63", // music
-  "\x61\x75\x74\x6f", // auto
-  "\x4c\x4f\x43\x41\x4c\x20\x53\x54\x4f\x52\x41\x47\x45" // LOCAL STORAGE
-];
-
-function _0x1a8b(_0x5cde) {
-  return _0x4d32[_0x5cde];
-}
-
-const firebaseConfig = { databaseURL: _0x1a8b(1) };
-try {
-  firebase.initializeApp(firebaseConfig);
-} catch (e) {
-  console.error(e);
-}
-const db = firebase.database();
-let player,
-  currentRoles = {},
-  currentMembers = {},
-  currentGroups = {},
-  activeTab = "all",
-  weatherType = "none";
-let playlist = [],
-  currentTrackIndex = 0,
-  isPlaying = !1;
-document.addEventListener("DOMContentLoaded", () => {});
-let useLocalFallback = !1;
-const listeners = {};
-const firebaseLoaded = {
-  config: !1,
-  roleGroups: !1,
-  roles: !1,
-  members: !1,
-};
-const fallbackTimeout = setTimeout(() => {
-  if (!firebaseLoaded.config) {
-    triggerFallbackMode();
-  }
-}, 2500);
-
-function triggerFallbackMode() {
-  if (useLocalFallback) return;
-  useLocalFallback = !0;
-  clearTimeout(fallbackTimeout);
-  document.getElementById("dbStatus").innerHTML =
-    '<i class="fa-solid fa-database" style="color:#ffc107"></i> ' + _0x1a8b(19);
-  document.getElementById("toggleDbModeBtn").innerText = "FORCE DATABASE SYNC";
-  showToast(
-    "สลับเข้าสู่ Offline Mode จัดเก็บข้อมูลในเบราว์เซอร์ชั่วคราว",
-    "warning"
-  );
-  Object.keys(listeners).forEach((path) => {
-    triggerLocalUpdate(path);
-  });
-}
-
-function triggerLocalUpdate(path) {
-  if (listeners[path]) {
-    const localData =
-      JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) ||
-      getDefaultData(path);
-    const snap = {
-      val: () => localData,
-      once: (evt, cb) => cb({ val: () => localData }),
-    };
-    listeners[path].forEach((cb) => cb(snap));
-  }
-}
-
-function toggleDatabaseMode() {
-  useLocalFallback = !useLocalFallback;
-  if (useLocalFallback) {
-    document.getElementById("dbStatus").innerHTML =
-      '<i class="fa-solid fa-database" style="color:#ffc107"></i> ' + _0x1a8b(19);
-    document.getElementById("toggleDbModeBtn").innerText = "FORCE DATABASE SYNC";
-    showToast(
-      "เปลี่ยนมาใช้ระบบจำในเครื่อง (Local Storage) เรียบร้อย",
-      "success"
-    );
-    [
-      _0x1a8b(14),
-      _0x1a8b(11),
-      _0x1a8b(12),
-      _0x1a8b(10),
-      _0x1a8b(13),
-      _0x1a8b(15),
-    ].forEach((path) => triggerLocalUpdate(path));
-  } else {
-    document.getElementById("dbStatus").innerHTML =
-      '<i class="fa-solid fa-circle-nodes"></i> CONNECTING...';
-    document.getElementById("toggleDbModeBtn").innerText = "FORCE LOCAL STORAGE";
-    showToast("กำลังเชื่อมต่อ Firebase...", "info");
-    location.reload();
-  }
-}
-
-function handleWriteError(err) {
-  console.error(err);
-  if (
-    err.message &&
-    (err.message.includes(_0x1a8b(5)) || err.message.includes(_0x1a8b(6)))
-  ) {
-    showToast(
-      "Firebase ปฏิเสธการเขียนข้อมูล (Rules หมดอายุ) แนะนำให้กดปุ่ม 'FORCE LOCAL STORAGE' ด้านบนหลังบ้านครับ",
-      "error"
-    );
-  } else {
-    showToast("เกิดข้อผิดพลาดในการบันทึก: " + err.message, "error");
-  }
-}
-
-function getDefaultData(path) {
-  if (path === _0x1a8b(14)) {
-    return {
-      name: "DEATHNOTE",
-      favicon: "",
-      themeColor: "#ffc107",
-      logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
-      bgUrl: "",
-      weather: "snow",
-      footerText: "Designed by DEATHNOTE",
-      footerLink: "#",
-    };
-  }
-  if (path === _0x1a8b(11)) {
-    return {
-      g1: { name: "HIGH COMMAND", order: 1 },
-      g2: { name: "MEMBERS", order: 2 },
-    };
-  }
-  if (path === _0x1a8b(12)) {
-    return {
-      r1: { name: "FOUNDER", groupId: "g1", color: "#ff4757", order: 1 },
-      r2: { name: "MEMBER", groupId: "g2", color: "#ffc107", order: 2 },
-    };
-  }
-  if (path === _0x1a8b(10)) {
-    return {
-      m1: {
-        name: "DEATHNOTE PERSONNEL",
-        img: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",
-        roleId: "r1",
-        fb: "https://facebook.com",
-        yt: "",
-        tk: "",
-        order: 1,
-        status: _0x1a8b(8),
-        joinDate: "2026-05-20",
-        lastEdit: "2026-05-20 12:00:00",
-      },
-    };
-  }
-  if (path === _0x1a8b(17)) {
-    return { auto: !0 };
-  }
-  if (path === _0x1a8b(13)) {
-    return {
-      p1: { title: "Background LoFi", videoId: "JXg_Qe48cbU", startSecond: 0 },
-    };
-  }
-  return {};
-}
-
-const dbHelper = {
-  ref: function (path) {
-    return {
-      on: function (event, successCallback, failureCallback) {
-        if (!listeners[path]) listeners[path] = [];
-        if (listeners[path].indexOf(successCallback) === -1) {
-          listeners[path].push(successCallback);
-        }
-        if (useLocalFallback) {
-          triggerLocalUpdate(path);
-          return;
-        }
-        db.ref(path).on(
-          event,
-          (snap) => {
-            firebaseLoaded[path] = !0;
-            if (path === _0x1a8b(14)) {
-              document.getElementById("dbStatus").innerHTML =
-                '<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE';
-              clearTimeout(fallbackTimeout);
-            }
-            successCallback(snap);
-          },
-          (err) => {
-            console.warn("Firebase error on [" + path + "]:", err.message);
-            triggerFallbackMode();
-            if (failureCallback) failureCallback(err);
-          }
-        );
-      },
-      once: function (event, successCallback) {
-        if (useLocalFallback) {
-          const localData =
-            JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) ||
-            getDefaultData(path);
-          successCallback({ val: () => localData });
-          return;
-        }
-        db.ref(path).once(event, successCallback, (err) => {
-          console.warn("Firebase once error on [" + path + "]:", err.message);
-          triggerFallbackMode();
-        });
-      },
-      set: function (value) {
-        if (useLocalFallback) {
-          localStorage.setItem(_0x1a8b(2) + path, JSON.stringify(value));
-          triggerLocalUpdate(path);
-          return Promise.resolve();
-        }
-        return db.ref(path).set(value).catch(handleWriteError);
-      },
-      update: function (value) {
-        if (useLocalFallback) {
-          const existing =
-            JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) || {};
-          const updated = { ...existing, ...value };
-          localStorage.setItem(_0x1a8b(2) + path, JSON.stringify(updated));
-          triggerLocalUpdate(path);
-          return Promise.resolve();
-        }
-        return db.ref(path).update(value).catch(handleWriteError);
-      },
-      push: function (value) {
-        if (useLocalFallback) {
-          const localData =
-            JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) || {};
-          const newId = _0x1a8b(7) + Math.random().toString(36).substr(2, 9);
-          if (value) {
-            localData[newId] = value;
-            localStorage.setItem(_0x1a8b(2) + path, JSON.stringify(localData));
-            triggerLocalUpdate(path);
-          }
-          return {
-            then: function (cb) {
-              cb();
-              return this;
-            },
-            set: function (val) {
-              localData[newId] = val;
-              localStorage.setItem(
-                _0x1a8b(2) + path,
-                JSON.stringify(localData)
-              );
-              triggerLocalUpdate(path);
-              return Promise.resolve();
-            },
-          };
-        }
-        return db.ref(path).push(value);
-      },
-      child: function (childPath) {
-        return {
-          remove: function () {
-            if (useLocalFallback) {
-              const localData =
-                JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) || {};
-              delete localData[childPath];
-              localStorage.setItem(
-                _0x1a8b(2) + path,
-                JSON.stringify(localData)
-              );
-              triggerLocalUpdate(path);
-              return Promise.resolve();
-            }
-            return db.ref(path).child(childPath).remove().catch(handleWriteError);
-          },
-          set: function (value) {
-            if (useLocalFallback) {
-              const localData =
-                JSON.parse(localStorage.getItem(_0x1a8b(2) + path)) || {};
-              localData[childPath] = value;
-              localStorage.setItem(
-                _0x1a8b(2) + path,
-                JSON.stringify(localData)
-              );
-              triggerLocalUpdate(path);
-              return Promise.resolve();
-            }
-            return db.ref(path).child(childPath).set(value).catch(handleWriteError);
-          },
-        };
-      },
-    };
-  },
-};
-let currentMediaList = {};
-
-function dragOverHandler(e) {
-  e.preventDefault();
-  e.currentTarget.classList.add("dragover");
-}
-
-function dragLeaveHandler(e) {
-  e.preventDefault();
-  e.currentTarget.classList.remove("dragover");
-}
-
-function dropMediaHandler(e) {
-  e.preventDefault();
-  e.currentTarget.classList.remove("dragover");
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    processAndSaveMediaCloud(e.dataTransfer.files[0]);
-  }
-}
-
-function fileSelectMediaHandler(input) {
-  if (input.files && input.files[0]) {
-    processAndSaveMediaCloud(input.files[0]);
-  }
-}
-
-function processAndSaveMediaCloud(file) {
-  if (!file.type.match("image.*")) {
-    return showToast("ไฟล์ที่อัปโหลดต้องเป็นรูปภาพเท่านั้น", "error");
-  }
-  showToast("กำลังอัปโหลดรูปภาพขึ้นสารระบบคลาวด์...", "info");
-  const nameWithoutExt =
-    file.name.split(".").slice(0, -1).join(".") || file.name;
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      let width = img.width;
-      let height = img.height;
-      const maxDim = 800;
-      if (width > height) {
-        if (width > maxDim) {
-          height *= maxDim / width;
-          width = maxDim;
-        }
-      } else {
-        if (height > maxDim) {
-          width *= maxDim / height;
-          height = maxDim;
-        }
-      }
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-      const finalBase64 = canvas.toDataURL("image/jpeg", 0.7);
-      const newMediaObj = {
-        name: nameWithoutExt.toUpperCase(),
-        data: finalBase64,
-        size: (finalBase64.length / 1024).toFixed(1) + " KB",
-        timestamp: new Date().toLocaleDateString("th-TH"),
-      };
-      dbHelper
-        .ref(_0x1a8b(15))
-        .push(newMediaObj)
-        .then(() => {
-          showToast("อัปโหลดขึ้นมินิคลาวด์สำเร็จ", "success");
-          logActivity(
-            'อัปโหลดไฟล์ภาพใหม่ "' + newMediaObj.name + '" สู่คลาวด์จัดเก็บ',
-            "success"
-          );
-        });
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-dbHelper.ref(_0x1a8b(15)).on("value", (snap) => {
-  currentMediaList = snap.val() || {};
-  renderMediaLibrary();
-});
-
-function renderMediaLibrary() {
-  const container = document.getElementById("mediaLibraryContainer");
-  const keys = Object.keys(currentMediaList);
-  if (keys.length === 0) {
-    container.innerHTML =
-      '<p style="font-size:11px;text-align:center;width:100%;opacity:0.4;padding:20px 0;">No uploaded files detected.</p>';
-    return;
-  }
-  let html = "";
-  keys.forEach((key) => {
-    const fileObj = currentMediaList[key];
-    html += `<div class="media-file-card"><div class="media-preview-container"><img class="media-preview-img" src="${fileObj.data}"></div><div class="media-details"><input class="media-name-input" type="text" value="${fileObj.name}" onchange="renameMedia('${key}',this.value)"><span class="media-size-tag">${fileObj.size} | ${fileObj.timestamp}</span></div><div class="media-card-actions"><button class="media-card-btn" onclick="copyMediaUrl('${key}')" style="background:var(--accent);color:#000">COPY URL</button><button class="media-card-btn" onclick="deleteMediaConfirm('${key}')" style="background:var(--danger);color:#fff">DELETE</button></div></div>`;
-  });
-  container.innerHTML = html;
-}
-
-function renameMedia(key, newName) {
-  const cleanedName = newName.toUpperCase().trim();
-  if (!cleanedName) return showToast("ชื่อรูปภาพต้องห้ามว่างเปล่า", "warning");
-  dbHelper
-    .ref(_0x1a8b(15))
-    .child(key)
-    .update({ name: cleanedName })
-    .then(() => {
-      showToast("เปลี่ยนชื่อไฟล์สำเร็จ", "success");
-      logActivity('เปลี่ยนชื่อไฟล์คลาวด์ย่อยเป็น "' + cleanedName + '"', "info");
-    });
-}
-
-function copyMediaUrl(key) {
-  const dataStr = currentMediaList[key]?.data || "";
-  if (dataStr) {
-    navigator.clipboard
-      .writeText(dataStr)
-      .then(() => {
-        showToast("Copy URL รูปภาพ Base64 เรียบร้อยแล้ว!", "success");
-      })
-      .catch(() => {
-        showToast("เกิดข้อผิดพลาดในการคัดลอกไฟล์", "error");
-      });
-  }
-}
-
-function deleteMediaConfirm(key) {
-  const name = currentMediaList[key]?.name;
-  showConfirm(
-    "Delete Image",
-    'ต้องการลบไฟล์ภาพ "' + name + '" ออกจากสารระบบคลาวด์ย่อยหรือไม่?',
-    () => {
-      dbHelper
-        .ref(_0x1a8b(15))
-        .child(key)
-        .remove()
-        .then(() => {
-          showToast("ลบรูปภาพเสร็จสิ้น", "success");
-          logActivity("ลบไฟล์ภาพจากคลาวด์: " + name, "warning");
-        });
-    }
-  );
-}
-let draggedNode = null;
-let selectedMemberIds = new Set();
-
-function bindDragSortEvents() {
-  const draggables = document.querySelectorAll(
-    ".member-table-row.draggable"
-  );
-  draggables.forEach((row) => {
-    row.addEventListener("dragstart", (e) => {
-      draggedNode = row;
-      row.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-    });
-    row.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const container = document.getElementById("adminMemberList");
-      const elements = [
-        ...container.querySelectorAll(
-          ".member-table-row.draggable:not(.dragging)"
-        ),
-      ];
-      const nextElement = elements.find((el) => {
-        const box = el.getBoundingClientRect();
-        const offset = e.clientY - box.top - box.height / 2;
-        return offset < 0;
-      });
-      if (nextElement) {
-        container.insertBefore(draggedNode, nextElement);
-      } else {
-        container.appendChild(draggedNode);
-      }
-    });
-    row.addEventListener("dragend", () => {
-      row.classList.remove("dragging");
-      draggedNode = null;
-      saveDraggedOrder();
-    });
-  });
-}
-
-function saveDraggedOrder() {
-  const container = document.getElementById("adminMemberList");
-  const sortedRows = [
-    ...container.querySelectorAll(".member-table-row.draggable"),
-  ];
-  const updates = {};
-  sortedRows.forEach((row, idx) => {
-    const id = row.dataset.id;
-    if (id && currentMembers[id]) {
-      currentMembers[id].order = idx;
-      updates[id + "/order"] = idx;
-    }
-  });
-  if (useLocalFallback) {
-    localStorage.setItem(
-      "deathnote_members",
-      JSON.stringify(currentMembers)
-    );
-    triggerLocalUpdate(_0x1a8b(10));
-    showToast("จัดลำดับข้อมูลภายในเครื่องสำเร็จ", "success");
-  } else {
-    dbHelper
-      .ref(_0x1a8b(10))
-      .update(updates)
-      .then(() => {
-        showToast("จัดเรียงและสลับลำดับสมาชิกเรียบร้อย", "success");
-        logActivity(
-          "อัปเดตสลับจัดลำดับสมาชิกใหม่ (Drag Sort V2)",
-          "info"
-        );
-      })
-      .catch(handleWriteError);
-  }
-}
-
-function filterAdminMembers() {
-  const term = document.getElementById("adminMemberSearch").value.toLowerCase();
-  const filterRole = document.getElementById("adminFilterRole").value;
-  const filterStatus = document.getElementById("adminFilterStatus").value;
-  let adminList = "";
-  const sortedMemberKeys = Object.keys(currentMembers).sort((a, b) => {
-    const orderA = currentMembers[a].order || 0;
-    const orderB = currentMembers[b].order || 0;
-    if (orderA !== orderB) return orderA - orderB;
-    return currentMembers[a].name.localeCompare(currentMembers[b].name);
-  });
-  sortedMemberKeys.forEach((id) => {
-    const m = currentMembers[id];
-    const matchedSearch = m.name.toLowerCase().includes(term);
-    const matchedRole = filterRole === "all" || m.roleId === filterRole;
-    const matchedStatus = filterStatus === "all" || m.status === filterStatus;
-    if (matchedSearch && matchedRole && matchedStatus) {
-      const roleName = currentRoles[m.roleId]?.name || "UNKNOWN ROLE";
-      const statusClass =
-        m.status === _0x1a8b(9) ? "status-inactive" : "status-active";
-      const joinDate = m.joinDate || "2026-05-20";
-      const lastEdit = m.lastEdit ? m.lastEdit.split(" ")[0] : "2026-05-20";
-      const isChecked = selectedMemberIds.has(id) ? "checked" : "";
-      adminList += `<div class="member-table-row draggable" draggable="true" data-id="${id}"><div class="member-table-left"><span class="drag-handle" style="cursor:grab;padding:5px"><i class="fa-solid fa-grip-vertical" style="opacity:0.4"></i></span><input type="checkbox" class="member-row-selector" data-id="${id}" ${isChecked} onchange="toggleSelectMember('${id}',this)" style="width:16px;height:16px;margin-bottom:0;cursor:pointer"><img src="${m.img || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}" style="width:36px;height:36px;border-radius:6px;object-fit:cover"><span style="font-weight:600;font-size:14px;color:var(--text-main)">${m.name}</span></div><div class="member-table-mid"><span style="font-size:13px;font-weight:500;color:var(--text-sub)">${roleName}</span><span class="status-badge ${statusClass}">${m.status || "Active"}</span><span style="font-size:12px;color:var(--text-muted);font-family:'Orbitron'">Join: ${joinDate}</span><span style="font-size:12px;color:var(--text-muted);font-family:'Orbitron'">Edit: ${lastEdit}</span></div><div class="member-table-right"><button class="config-btn" onclick="toggleQuickStatus('${id}')" style="background:#222;color:var(--accent);font-size:9px;padding:6px 12px">Toggle</button><i class="fa-solid fa-pen-to-square" style="color:var(--accent);cursor:pointer;font-size:15px;padding:5px" onclick="editMember('${id}')"></i><i class="fa-solid fa-trash-can delete-btn" style="font-size:14px;padding:5px" onclick="deleteMemberConfirm('${id}')"></i></div></div>`;
-    }
-  });
-  document.getElementById("adminMemberList").innerHTML =
-    adminList ||
-    '<div style="color:var(--text-muted);font-size:12px;padding:25px;text-align:center;">NO MATCHING PERSONNEL FOUND</div>';
-  bindDragSortEvents();
-  updateBulkPanel();
-}
-
-function toggleSelectMember(id, cb) {
-  if (cb.checked) {
-    selectedMemberIds.add(id);
-  } else {
-    selectedMemberIds.delete(id);
-  }
-  updateBulkPanel();
-}
-
-function toggleSelectAll(cb) {
-  const rowSelectors = document.querySelectorAll(".member-row-selector");
-  if (cb.checked) {
-    rowSelectors.forEach((sel) => {
-      sel.checked = !0;
-      selectedMemberIds.add(sel.dataset.id);
-    });
-  } else {
-    rowSelectors.forEach((sel) => {
-      sel.checked = !1;
-    });
-    selectedMemberIds.clear();
-  }
-  updateBulkPanel();
-}
-
-function updateBulkPanel() {
-  const panel = document.getElementById("bulkPanel");
-  const countLabel = document.getElementById("bulkSelectedCount");
-  if (selectedMemberIds.size > 0) {
-    panel.style.display = "flex";
-    countLabel.innerText = selectedMemberIds.size;
-  } else {
-    panel.style.display = "none";
-  }
-}
-
-function applyBulkStatus() {
-  const status = document.getElementById("bulkStatusSelect").value;
-  if (!status) return showToast("กรุณาเลือกสถานะที่ต้องการเปลี่ยน", "warning");
-  const updates = {};
-  selectedMemberIds.forEach((id) => {
-    updates[id + "/status"] = status;
-    updates[id + "/lastEdit"] = new Date().toLocaleString("th-TH");
-  });
-  dbHelper
-    .ref(_0x1a8b(10))
-    .update(updates)
-    .then(() => {
-      showToast(
-        "อัปเดตสถานะกลุ่ม " + selectedMemberIds.size + " คนเรียบร้อย",
-        "success"
-      );
-      logActivity(
-        "เปลี่ยนสถานะแบบกลุ่มสมาชิก " + selectedMemberIds.size + " รายการ",
-        "info"
-      );
-      selectedMemberIds.clear();
-      document.getElementById("selectAllMembers").checked = !1;
-      filterAdminMembers();
-    });
-}
-
-function applyBulkDelete() {
-  showConfirm(
-    "Bulk Delete",
-    "คุณต้องการยืนยันการลบรายชื่อที่เลือกทั้งหมด " +
-      selectedMemberIds.size +
-      " คน ใช่หรือไม่?",
-    () => {
-      const deletePromises = [];
-      selectedMemberIds.forEach((id) => {
-        deletePromises.push(dbHelper.ref(_0x1a8b(10)).child(id).remove());
-      });
-      Promise.all(deletePromises).then(() => {
-        showToast(
-          "ลบรายชื่อสมาชิกแบบกลุ่ม " + selectedMemberIds.size + " คนสำเร็จ",
-          "success"
-        );
-        logActivity(
-          "ลบรายชื่อสมาชิกแบบกลุ่มจำนวน " + selectedMemberIds.size + " คน",
-          "warning"
-        );
-        selectedMemberIds.clear();
-        document.getElementById("selectAllMembers").checked = !1;
-        filterAdminMembers();
-      });
-    }
-  );
-}
-
-function toggleQuickStatus(id) {
-  const currentStatus = currentMembers[id]?.status || "active";
-  const nextStatus = currentStatus === "active" ? _0x1a8b(9) : "active";
-  dbHelper
-    .ref(_0x1a8b(10))
-    .child(id)
-    .update({ status: nextStatus, lastEdit: new Date().toLocaleString("th-TH") })
-    .then(() => {
-      showToast("เปลี่ยนสถานะผู้ใช้งานสำเร็จ", "success");
-      logActivity(
-        'เปลี่ยนสถานะสมาชิก "' + currentMembers[id].name + '" เป็น ' + nextStatus,
-        "info"
-      );
-    });
-}
-
-function addSongPlaylist() {
-  const title = document.getElementById("musicTitle").value.trim();
-  const videoId = document.getElementById("musicVidId").value.trim();
-  const startSecond =
-    parseInt(document.getElementById("musicStartSecond").value) || 0;
-  if (!title || !videoId) {
-    return showToast("กรุณากรอกชื่อเพลงและ Video ID ให้ครบถ้วน", "warning");
-  }
-  dbHelper
-    .ref(_0x1a8b(13))
-    .push({ title: title, videoId: videoId, startSecond: startSecond })
-    .then(() => {
-      document.getElementById("musicTitle").value = "";
-      document.getElementById("musicVidId").value = "";
-      document.getElementById("musicStartSecond").value = "0";
-      showToast("เพิ่มเพลงเข้าสู่รายการเพลงเรียบร้อย", "success");
-      logActivity(
-        "เพิ่มเพลงใหม่ลงระบบคอร์: " +
-          title +
-          " (เริ่มเล่นวินาทีที่ " +
-          startSecond +
-          ")",
-        "success"
-      );
-    });
-}
-dbHelper.ref(_0x1a8b(13)).on("value", (snap) => {
-  const playlistData = snap.val() || {};
-  playlist = Object.keys(playlistData).map((k) => ({
-    id: k,
-    ...playlistData[k],
-  }));
-  renderPlaylistUI();
-  renderNotebookPlaylist();
-  if (player && playlist.length > 0) {
-    const startTrack = playlist[currentTrackIndex];
-    if (startTrack) {
-      player.cueVideoById({
-        videoId: startTrack.videoId,
-        startSeconds: parseInt(startTrack.startSecond) || 0,
-      });
-    }
-  }
-});
-
-function renderPlaylistUI() {
-  const wrapper = document.getElementById("playlistItems");
-  if (playlist.length === 0) {
-    wrapper.innerHTML =
-      '<p style="font-size:11px;opacity:0.4;text-align:center;padding-top:15px;">Playlist Queue Empty.</p>';
-    return;
-  }
-  let html = "";
-  playlist.forEach((track, index) => {
-    const startSec = track.startSecond || 0;
-    html += `<div class="playlist-item"><span class="playlist-info"><b>${index + 1}. ${track.title}</b> <small style="color:#64748b">(ID: ${track.videoId}) [เริ่มวิที่: ${startSec}]</small></span><i class="fa-solid fa-trash-can delete-btn" onclick="deleteSongPlaylist('${track.id}')"></i></div>`;
-  });
-  wrapper.innerHTML = html;
-}
-
-function deleteSongPlaylist(id) {
-  showConfirm(
-    "Remove Track",
-    "ต้องการนำไฟล์เพลงนี้ออกจากแกลเลอรีเพลย์ลิสต์ใช่หรือไม่?",
-    () => {
-      dbHelper
-        .ref(_0x1a8b(13))
-        .child(id)
-        .remove()
-        .then(() => {
-          showToast("ลบเพลงสำเร็จ", "success");
-        });
-    }
-  );
-}
-
-function nextSong() {
-  if (!player || playlist.length === 0) return;
-  let nextIndex = currentTrackIndex + 1;
-  if (nextIndex >= playlist.length) nextIndex = 0;
-  playTrackByIndex(nextIndex);
-}
-
-function prevSong() {
-  if (!player || playlist.length === 0) return;
-  let prevIndex = currentTrackIndex - 1;
-  if (prevIndex < 0) prevIndex = playlist.length - 1;
-  playTrackByIndex(prevIndex);
-}
-
-function logActivity(text, status = "info") {
-  const timestamp = new Date().toLocaleTimeString("th-TH", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-  const logEntry = { text: text, status: status, timestamp: timestamp };
-  if (useLocalFallback) {
-    const localLogs = JSON.parse(localStorage.getItem("deathnote_logs")) || [];
-    localLogs.unshift(logEntry);
-    if (localLogs.length > 25) localLogs.pop();
-    localStorage.setItem("deathnote_logs", JSON.stringify(localLogs));
-    renderLogsUI(localLogs);
-  } else {
-    db.ref("activity_logs").push(logEntry);
-  }
-}
-dbHelper.ref("activity_logs").on("value", (snap) => {
-  const logsData = snap.val() || {};
-  const logsArray = Object.keys(logsData)
-    .map((k) => logsData[k])
-    .reverse()
-    .slice(0, 25);
-  renderLogsUI(logsArray);
-});
-
-function renderLogsUI(logs) {
-  const container = document.getElementById("logsContainer");
-  if (!logs || logs.length === 0) {
-    container.innerHTML =
-      '<p style="font-size:11px;opacity:0.4;text-align:center;padding-top:20px">No system logs captured yet.</p>';
-    return;
-  }
-  let html = "";
-  logs.forEach((log) => {
-    html += `<div class="log-item log-${log.status}"><span>${log.text}</span><span class="log-time">${log.timestamp}</span></div>`;
-  });
-  container.innerHTML = html;
-}
-
-function loadConfigToInputs() {
-  dbHelper.ref(_0x1a8b(14)).once("value", (snap) => {
-    const d = snap.val() || {};
-    document.getElementById("configSiteName").value = d.name || "";
-    document.getElementById("configFavicon").value = d.favicon || "";
-    document.getElementById("configThemeColor").value = d.themeColor || "#ffc107";
-    document.getElementById("configLogoUrl").value = d.logo || "";
-    document.getElementById("configBgUrl").value = d.bgUrl || "";
-    document.getElementById("configWeather").value = d.weather || "none";
-    document.getElementById("configFooterText").value = d.footerText || "";
-    document.getElementById("configFooterLink").value = d.footerLink || "";
-  });
-  dbHelper.ref("music").once("value", (snap) => {
-    const m = snap.val() || {};
-    document.getElementById("musicAutoToggle").checked = m.auto || !1;
-  });
-}
-
-function openModal(id) {
-  document.getElementById(id).style.display = "flex";
-}
-
-function closeModal(id) {
-  document.getElementById(id).style.display = "none";
-}
-
-function closeAdminPanel() {
-  document.getElementById("adminPanel").style.display = "none";
-  document.body.style.overflow = "auto";
-}
-dbHelper.ref(_0x1a8b(11)).on("value", (snap) => {
-  currentGroups = snap.val() || {};
-  let list = "",
-    opt = '<option value="">SELECT GROUP</option>';
-  const sortedGroupKeys = Object.keys(currentGroups).sort(
-    (a, b) => (currentGroups[a].order || 0) - (currentGroups[b].order || 0)
-  );
-  sortedGroupKeys.forEach((id) => {
-    list += `<div class="admin-item-row"><span>${
-      currentGroups[id].name
-    } <small style="color:#64748b">(Order: ${
-      currentGroups[id].order || 0
-    })</small></span><i class="fa-solid fa-trash-can delete-btn" onclick="deleteGroupConfirm('${id}')"></i></div>`;
-    opt += `<option value="${id}">${currentGroups[id].name}</option>`;
-  });
-  document.getElementById("groupListContainer").innerHTML = list;
-  document.getElementById("roleGroupSelect").innerHTML = opt;
-  filterMembers();
-  updateAnalytics();
-});
-dbHelper.ref(_0x1a8b(12)).on("value", (snap) => {
-  currentRoles = snap.val() || {};
-  let opt = '<option value="">SELECT ROLE</option>',
-    list = "",
-    filterOpt = '<option value="all">FILTER BY ALL ROLES</option>';
-  const sortedRoleKeys = Object.keys(currentRoles).sort(
-    (a, b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0)
-  );
-  sortedRoleKeys.forEach((id) => {
-    const gName = currentGroups[currentRoles[id].groupId]?.name || "UNKNOWN";
-    opt += `<option value="${id}">${currentRoles[id].name}</option>`;
-    filterOpt += `<option value="${id}">${currentRoles[id].name}</option>`;
-    list += `<div class="admin-item-row"><div><b style="color:${
-      currentRoles[id].color
-    }">${currentRoles[id].name}</b> <small style="color:#64748b">(Order: ${
-      currentRoles[id].order || 0
-    })</small><br><small style="color:#64748b">${gName}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRoleConfirm('${id}')"></i></div>`;
-  });
-  document.getElementById("memRole").innerHTML = opt;
-  document.getElementById("adminFilterRole").innerHTML = filterOpt;
-  document.getElementById("roleListContainer").innerHTML = list;
-  renderTabs();
-  filterMembers();
-  updateAnalytics();
-});
-dbHelper.ref(_0x1a8b(10)).on("value", (snap) => {
-  currentMembers = snap.val() || {};
-  document.getElementById("countNum").innerText =
-    Object.keys(currentMembers).length;
-  filterAdminMembers();
-  filterMembers();
-  updateAnalytics();
-});
-
-function addGroup() {
-  const name = document.getElementById("newGroupName").value.toUpperCase();
-  const order = parseInt(document.getElementById("newGroupOrder").value) || 0;
-  if (name) {
-    dbHelper
-      .ref(_0x1a8b(11))
-      .push({ name: name, order: order })
-      .then(() => {
-        document.getElementById("newGroupName").value = "";
-        document.getElementById("newGroupOrder").value = "";
-        showToast("NEW GROUP LAYOUT ADDED", "success");
-        logActivity('เพิ่มกลุ่มโครงสร้างยศ "' + name + '" เข้าสู่สารระบบ', "success");
-      });
-  }
-}
-
-function addRole() {
-  const name = document.getElementById("newRoleName").value.toUpperCase();
-  const gId = document.getElementById("roleGroupSelect").value;
-  const color = document.getElementById("newRoleColor").value;
-  const order = parseInt(document.getElementById("newRoleOrder").value) || 0;
-  if (name && gId) {
-    dbHelper
-      .ref(_0x1a8b(12))
-      .push({ name: name, groupId: gId, color: color, order: order })
-      .then(() => {
-        document.getElementById("newRoleName").value = "";
-        document.getElementById("newRoleOrder").value = "";
-        showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
-        logActivity('สร้างยศตำแหน่งหน้าที่ "' + name + '" ใหม่สำเร็จ', "success");
-      });
-  }
-}
-
-function saveMember() {
-  const id = document.getElementById("editMemId").value;
-  const originalJoinDate = document.getElementById("editMemJoinDate").value;
-  const currentDate = new Date().toLocaleDateString("th-TH");
-  const calculatedOrder = id
-    ? currentMembers[id].order || 0
-    : Object.keys(currentMembers).length;
-  const data = {
-    name: document.getElementById("memName").value,
-    img: document.getElementById("memImg").value,
-    roleId: document.getElementById("memRole").value,
-    order: calculatedOrder,
-    status: document.getElementById("memStatus").value || "active",
-    fb: document.getElementById("memFb").value || "",
-    yt: document.getElementById("memYt").value || "",
-    tk: document.getElementById("memTk").value || "",
-    joinDate: id ? originalJoinDate : currentDate,
-    lastEdit: new Date().toLocaleString("th-TH"),
-  };
-  if (!data.name || !data.roleId) {
-    return showToast("ERROR: จำเป็นต้องระบุชื่อและเลือกตำแหน่งยศ", "error");
-  }
-  if (!data.fb) {
-    return showToast("ERROR: จำเป็นต้องแนบลิงก์ Facebook ของสมาชิกเป็นอย่างน้อย", "warning");
-  }
-  const ref = id
-    ? dbHelper.ref(_0x1a8b(10)).child(id)
-    : dbHelper.ref(_0x1a8b(10)).push();
-  ref.set(data).then(() => {
-    showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED", "success");
-    logActivity(
-      (id ? "อัปเดตแก้ไขโปรไฟล์ของ" : "เพิ่มรายชื่อสมาชิกใหม่") +
-        ' "' +
-        data.name +
-        '" ลงสู่หน้าทำเนียบ',
-      "success"
-    );
-    clearMemForm();
-  });
-}
-
-function editMember(id) {
-  const m = currentMembers[id];
-  document.getElementById("editMemId").value = id;
-  document.getElementById("editMemJoinDate").value = m.joinDate || "2026-05-20";
-  document.getElementById("memName").value = m.name;
-  document.getElementById("memImg").value = m.img;
-  document.getElementById("memRole").value = m.roleId;
-  document.getElementById("memStatus").value = m.status || "active";
-  document.getElementById("memFb").value = m.fb;
-  document.getElementById("memYt").value = m.yt;
-  document.getElementById("memTk").value = m.tk;
-  document.getElementById("memBtn").innerText = "UPDATE PERSONNEL INFO";
-  document.getElementById("memBtn").style.background = "var(--success)";
-  document
-    .querySelector("#tab-members-db .admin-card")
-    .scrollIntoView({ behavior: "smooth" });
-}
-
-function clearMemForm() {
-  document.getElementById("editMemId").value = "";
-  document.getElementById("editMemJoinDate").value = "";
-  document.getElementById("memName").value = "";
-  document.getElementById("memImg").value = "";
-  document.getElementById("memRole").value = "";
-  document.getElementById("memStatus").value = "active";
-  document.getElementById("memFb").value = "";
-  document.getElementById("memYt").value = "";
-  document.getElementById("memTk").value = "";
-  document.getElementById("memBtn").innerText = "DEPLOY TO DIRECTORY";
-  document.getElementById("memBtn").style.background = "var(--accent)";
-}
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("reveal-active");
-      }
-    });
-  },
-  { threshold: 0.05, rootMargin: "0px 0px -50px 0px" }
-);
-
-function updateScrollReveals() {
-  const sections = document.querySelectorAll(".category-section");
-  sections.forEach((section) => {
-    revealObserver.observe(section);
-  });
-}
-let lastParticleTime = 0;
-
-function handleCardHoverParticles(e) {
-  const now = Date.now();
-  if (now - lastParticleTime < 120) return;
-  lastParticleTime = now;
-  const card = e.currentTarget;
-  const rect = card.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  const particle = document.createElement("span");
-  particle.className = "hover-particle";
-  particle.style.left = `${x}px`;
-  particle.style.top = `${y}px`;
-  const size = Math.random() * 3 + 1.5;
-  particle.style.width = `${size}px`;
-  particle.style.height = `${size}px`;
-  const driftX = (Math.random() - 0.5) * 30;
-  const driftY = -(Math.random() * 40 + 20);
-  particle.style.setProperty("--drift-x", `${driftX}px`);
-  particle.style.setProperty("--drift-y", `${driftY}px`);
-  card.appendChild(particle);
-  setTimeout(() => {
-    particle.remove();
-  }, 1000);
-}
-
-function filterMembers() {
-  const term = document.getElementById("memberSearch").value.toLowerCase();
-  const wrapper = document.getElementById("memberSections");
-  wrapper.innerHTML = "";
-  const structure = {};
-  Object.keys(currentMembers).forEach((id) => {
-    const m = currentMembers[id];
-    if (m.status === _0x1a8b(9)) return;
-    const role = currentRoles[m.roleId];
-    if (!role) return;
-    const gId = role.groupId;
-    const gName = currentGroups[gId]?.name || "MEMBER DEATHNOTE 2K26";
-    const gOrder = currentGroups[gId]?.order || 0;
-    if (
-      m.name.toLowerCase().includes(term) &&
-      (activeTab === "all" || m.roleId === activeTab)
-    ) {
-      if (!structure[gId]) {
-        structure[gId] = { name: gName, order: gOrder, items: [] };
-      }
-      structure[gId].items.push({ ...m, role: role });
-    }
-  });
-  const sortedSections = Object.keys(structure)
-    .map((gId) => ({ id: gId, ...structure[gId] }))
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
-  sortedSections.forEach((group) => {
-    group.items.sort((a, b) => {
-      const orderA = a.order || 0;
-      const orderB = b.order || 0;
-      if (orderA !== orderB) return orderA - orderB;
-      return a.name.localeCompare(b.name);
-    });
-    const groupColor = group.items[0]?.role?.color || "var(--accent)";
-    let html = `<section class="category-section"><div class="category-header" style="color:${groupColor};border-left-color:${groupColor}">${group.name}</div><div class="member-grid">`;
-    group.items.forEach((m, i) => {
-      const roleColor = m.role?.color || "#ffc107";
-      html += `<div class="member-card" style="animation-delay:${
-        i * 0.05
-      }s;--role-color:${roleColor}"><img src="${
-        m.img ||
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
-      }" class="avatar"><div><div style="font-weight:600;font-size:15px;position:relative;z-index:10">${
-        m.name
-      }</div><span class="rank-tag" style="background:${roleColor}">${
-        m.role.name
-      }</span></div><div class="social-links">${
-        m.fb
-          ? `<a href="${m.fb}" target="_blank" style="color:#1877f2"><i class="fa-brands fa-facebook"></i></a>`
-          : ""
-      }${
-        m.yt
-          ? `<a href="${m.yt}" target="_blank" style="color:#ff0000"><i class="fa-brands fa-youtube"></i></a>`
-          : ""
-      }${
-        m.tk
-          ? `<a href="${m.tk}" target="_blank" style="color:#fff"><i class="fa-brands fa-tiktok"></i></a>`
-          : ""
-      }</div></div>`;
-    });
-    html += `</div></section>`;
-    wrapper.innerHTML += html;
-  });
-  const cards = document.querySelectorAll(".member-card");
-  cards.forEach((card) => {
-    card.addEventListener("mousemove", handleCardHoverParticles);
-  });
-  updateScrollReveals();
-  if (!sortedSections.length) {
-    wrapper.innerHTML =
-      '<p style="text-align:center;opacity:0.2;padding:100px;font-family:\'Orbitron\'">NO RECORDS FOUND</p>';
-  }
-}
-
-function renderTabs() {
-  const container = document.getElementById("categoryTabs");
-  let html = `<button class="config-btn" style="background:${
-    activeTab === "all" ? "var(--accent)" : "#161719"
-  };color:${activeTab === "all" ? "#000" : "#888"}" onclick="setActiveTab('all')">ALL</button>`;
-  const sortedRoleKeys = Object.keys(currentRoles).sort(
-    (a, b) => (currentRoles[a].order || 0) - (currentRoles[b].order || 0)
-  );
-  sortedRoleKeys.forEach((id) => {
-    const active = activeTab === id;
-    html += `<button class="config-btn" style="background:${
-      active ? "var(--accent)" : "#161719"
-    };color:${active ? "#000" : "#888"}" onclick="setActiveTab('${id}')">${
-      currentRoles[id].name
-    }</button>`;
-  });
-  container.innerHTML = html;
-}
-
-function setActiveTab(id) {
-  activeTab = id;
-  renderTabs();
-  filterMembers();
-}
-
-function toggleNotebook() {
-  const widget = document.getElementById("dnBookWidget");
-  widget.classList.toggle("open");
-}
-
-function toggleMusic() {
-  if (!player) return;
-  const icon = document.getElementById("musicIcon");
-  if (isPlaying) {
-    player.pauseVideo();
-    if (icon) icon.className = "fa-solid fa-play";
-    isPlaying = !1;
-  } else {
-    player.playVideo();
-    if (icon) icon.className = "fa-solid fa-pause";
-    isPlaying = !0;
-  }
-}
-
-function updateCurrentTrackDisplay() {
-  if (!player || playlist.length === 0) return;
-  try {
-    const index = player.getPlaylistIndex();
-    if (index !== -1 && playlist[index]) {
-      const trackTitle = playlist[index].title.toUpperCase();
-      const titleEl = document.getElementById("dnNowPlayingTitle");
-      if (titleEl) titleEl.innerText = trackTitle;
-    } else {
-      const titleEl = document.getElementById("dnNowPlayingTitle");
-      if (titleEl) titleEl.innerText = "PLAYING AUDIO";
-    }
-  } catch (e) {
-    const titleEl = document.getElementById("dnNowPlayingTitle");
-    if (titleEl) titleEl.innerText = "DEATHNOTE AUDIO";
-  }
-}
-
-function playTrackByIndex(index) {
-  if (!player || playlist.length === 0) return;
-  if (index < 0) index = playlist.length - 1;
-  if (index >= playlist.length) index = 0;
-  currentTrackIndex = index;
-  const track = playlist[index];
-  const startSec = parseInt(track.startSecond) || 0;
-  player.loadVideoById({ videoId: track.videoId, startSeconds: startSec });
-  setTimeout(() => {
-    updateCurrentTrackDisplay();
-    renderNotebookPlaylist();
-  }, 500);
-}
-
-function renderNotebookPlaylist() {
-  const container = document.getElementById("notebookTracks");
-  if (!container) return;
-  if (playlist.length === 0) {
-    container.innerHTML =
-      '<li style="font-family:\'Reenie Beanie\';font-size:24px;color:#555;text-align:center">No victim songs written...</li>';
-    return;
-  }
-  let html = "";
-  playlist.forEach((track, index) => {
-    let isCurrent = !1;
-    if (player) {
-      try {
-        isCurrent = player.getPlaylistIndex() === index;
-      } catch (e) {}
-    }
-    const activeClass = isCurrent ? "playing-track" : "";
-    html += `<li class="${activeClass}" onclick="playTrackByIndex(${index})">${
-      index + 1
-    }. ${track.title}</li>`;
-  });
-  container.innerHTML = html;
-}
-
-function onYouTubeIframeAPIReady() {
-  dbHelper.ref("music").once("value", (snap) => {
-    let m = snap.val() || {};
-    dbHelper.ref(_0x1a8b(13)).once("value", (playlistSnap) => {
-      const pData = playlistSnap.val() || {};
-      playlist = Object.keys(pData).map((k) => ({ id: k, ...pData[k] }));
-      const autoStart = m.auto !== undefined ? m.auto : !0;
-      const startTrack = playlist[currentTrackIndex];
-      const startId = startTrack ? startTrack.videoId : "JXg_Qe48cbU";
-      const startSec = startTrack ? parseInt(startTrack.startSecond) || 0 : 0;
-      player = new YT.Player("player", {
-        height: "0",
-        width: "0",
-        videoId: startId,
-        playerVars: {
-          autoplay: autoStart ? 1 : 0,
-          start: startSec,
-          loop: 0,
-          controls: 0,
-        },
-        events: {
-          onReady: (e) => {
-            if (autoStart && playlist.length > 0) {
-              player.loadVideoById({ videoId: startId, startSeconds: startSec });
-              setTimeout(() => {
-                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-                  const playOnInteraction = () => {
-                    player.playVideo();
-                    document.removeEventListener("click", playOnInteraction);
-                  };
-                  document.addEventListener("click", playOnInteraction);
-                }
-              }, 1000);
-            }
-          },
-          onStateChange: (e) => {
-            const icon = document.getElementById("musicIcon");
-            if (e.data === YT.PlayerState.PLAYING) {
-              isPlaying = !0;
-              if (icon) icon.className = "fa-solid fa-pause";
-              updateCurrentTrackDisplay();
-              renderNotebookPlaylist();
-            } else if (e.data === YT.PlayerState.ENDED) {
-              nextSong();
-            } else {
-              isPlaying = !1;
-              if (icon) icon.className = "fa-solid fa-play";
-            }
-          },
-        },
-      });
-    });
-  });
-}
-dbHelper.ref(_0x1a8b(14)).on("value", (snap) => {
-  const d = snap.val() || {};
-  document.title = d.name || "DEATHNOTE";
-  document.getElementById("siteNameDisplay").innerText = d.name || "DEATHNOTE";
-  document.getElementById("favicon").href = d.favicon || "";
-  document.getElementById("siteLogo").src = d.logo || "";
-  if (d.bgUrl) document.body.style.backgroundImage = "url('" + d.bgUrl + "')";
-  if (d.themeColor) {
-    document.documentElement.style.setProperty("--accent", d.themeColor);
-  }
-  weatherType = d.weather || "none";
-  initWeather();
-  document.getElementById("footerTextDisplay").innerText =
-    d.footerText || "Designed by DEATHNOTE";
-  document.getElementById("footerLinkLabel").href = d.footerLink || "#";
-});
-
-function saveConfig() {
-  dbHelper
-    .ref(_0x1a8b(14))
-    .update({
-      name: document.getElementById("configSiteName").value,
-      favicon: document.getElementById("configFavicon").value,
-      themeColor: document.getElementById("configThemeColor").value,
-      logo: document.getElementById("configLogoUrl").value,
-      bgUrl: document.getElementById("configBgUrl").value,
-      weather: document.getElementById("configWeather").value,
-      footerText: document.getElementById("configFooterText").value,
-      footerLink: document.getElementById("configFooterLink").value,
-    })
-    .then(() => {
-      showToast("CONFIGURATION DATABASE UPDATED", "success");
-      logActivity("อัปเดตปรับแก้การตั้งค่าส่วนหน้าบ้านเว็บไซต์หลัก", "info");
-    });
-}
-
-function saveMusic() {
-  dbHelper
-    .ref("music")
-    .update({ auto: document.getElementById("musicAutoToggle").checked })
-    .then(() => {
-      showToast("AUDIO CORE SYNCHRONIZED", "success");
-      logActivity("ปรับเปลี่ยนตั้งค่าระบบบอร์ดเพลงพื้นหลัง (Audio Engine)", "info");
-    });
-}
-const canvas = document.getElementById("weather-canvas"),
-  ctx = canvas.getContext("2d");
-let particles = [];
-
-function initWeather() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  particles = [];
-  if (weatherType === "none") return;
-  for (let i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      speed: Math.random() * 2 + 1,
-      radius: Math.random() * 2 + 1,
-    });
-  }
-}
-
-function drawWeather() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (weatherType === "none") return requestAnimationFrame(drawWeather);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-  particles.forEach((p) => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    ctx.fill();
-    p.y += p.speed;
-    if (p.y > canvas.height) p.y = -10;
-  });
-  requestAnimationFrame(drawWeather);
-}
-window.addEventListener("resize", initWeather);
-drawWeather();
-async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function attemptLogin() {
-  const u = document.getElementById("loginUser").value;
-  const p = document.getElementById("loginPass").value;
-
-  const userHash = await sha256(u);
-  const passHash = await sha256(p);
-
-  if (
-    userHash === "b79bb8bd1670509b4fe13ebaa27e22f32aa9231814a24e332a6f6e8d4126e5df" &&
-    passHash === "b307110e2d41c49f350cb8b893fa491d6b29a5c7ee59efb8c227f98e175eccf2"
-  ) {
-    closeModal("loginModal");
-    document.getElementById("adminPanel").style.display = "block";
-    document.body.style.overflow = "hidden";
-    loadConfigToInputs();
-    showToast("ยินดีต้อนรับสู่แผงควบคุมระบบ", "success");
-    logActivity("แอดมินลงชื่อเข้าสู่ระบบหลังบ้าน Central Command", "success");
-  } else {
-    showToast("ความปลอดภัยล้มเหลว: รหัสผ่านไม่ถูกต้อง", "error");
-  }
-}
-window.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("login") === "deathnote") {
-    openModal("loginModal");
-    showToast("ยินดีต้อนรับแอดมิน กรุณากรอกรหัสความปลอดภัย", "info");
-  }
-});
-let confirmActionCallback = null;
-
-function showConfirm(title, message, callback) {
-  document.getElementById("confirmTitle").innerText = title.toUpperCase();
-  document.getElementById("confirmMessage").innerText = message;
-  document.getElementById("confirmModal").style.display = "flex";
-  confirmActionCallback = callback;
-}
-document.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-  showToast("⚠️ ระบบความปลอดภัย: ล็อกคำสั่งคลิกขวาบนหน้าเว็บหลัก", "warning");
-});
-document.addEventListener("keydown", (e) => {
-  if (e.keyCode === 123 || e.key === "F12") {
-    e.preventDefault();
-    showToast("⚠️ ปิดกั้นคำสั่ง F12 เพื่อความปลอดภัยสูงสุด", "error");
-    return !1;
-  }
-  if (
-    e.ctrlKey &&
-    e.shiftKey &&
-    (e.keyCode === 73 ||
-      e.keyCode === 74 ||
-      e.keyCode === 67 ||
-      e.key === "I" ||
-      e.key === "J" ||
-      e.key === "C" ||
-      e.key === "i" ||
-      e.key === "j" ||
-      e.key === "c")
-  ) {
-    e.preventDefault();
-    showToast("⚠️ ปิดกั้นการใช้งานเครื่องมือตรวจสอบองค์ประกอบหน้าบ้าน", "error");
-    return !1;
-  }
-  if (e.ctrlKey && (e.keyCode === 85 || e.key === "U" || e.key === "u")) {
-    e.preventDefault();
-    showToast("⚠️ ปิดกั้นการเข้าเรียกดูซอร์สโค้ดดิบหลักของเว็บไซต์", "error");
-    return !1;
-  }
-  if (e.ctrlKey && (e.keyCode === 83 || e.key === "S" || e.key === "s")) {
-    e.preventDefault();
-    showToast("⚠️ ปิดกั้นการเซฟดาวน์โหลดหน้าเว็บหน้าบ้านเก็บไว้ในส่วนตัว", "error");
-    return !1;
-  }
-  if (e.ctrlKey && (e.keyCode === 67 || e.key === "C" || e.key === "c")) {
-    const activeEl = document.activeElement;
-    const isAdmin =
-      activeEl.closest("#adminPanel") ||
-      activeEl.tagName === "INPUT" ||
-      activeEl.tagName === "TEXTAREA" ||
-      activeEl.tagName === "SELECT";
-    if (!isAdmin) {
-      e.preventDefault();
-      showToast("⚠️ ปิดกั้นการคัดลอกข้อมูลรายชื่อทำเนียบบนหน้าแรก", "warning");
-      return !1;
-    }
-  }
-});
-
-function handleConfirm(isConfirmed) {
-  document.getElementById("confirmModal").style.display = "none";
-  if (isConfirmed && confirmActionCallback) {
-    confirmActionCallback();
-  }
-  confirmActionCallback = null;
-}
-
-function switchAdminTab(tabId, el) {
-  document
-    .querySelectorAll(".menu-item")
-    .forEach((item) => item.classList.remove("active"));
-  document
-    .querySelectorAll(".tab-content")
-    .forEach((tab) => tab.classList.remove("active"));
-  el.classList.add("active");
-  document.getElementById("tab-" + tabId).classList.add("active");
-  const titles = {
-    dashboard: {
-      t: "CENTRAL COMMAND",
-      d: "Real-time Database & Site Analytics",
-    },
-    "media-manager": {
-      t: "MEDIA CLOUD MANAGER",
-      d: "Upload, Rename, Truncate, and Copy Base64 hosted files",
-    },
-    "web-config": {
-      t: "WEBSITE CONFIGURATION",
-      d: "Adjust Identity, Wallpaper, Themes & Weather Effects",
-    },
-    "roles-groups": {
-      t: "STRUCTURE & ROLES",
-      d: "Create and Manage Group Layouts and Rank Positions",
-    },
-    "members-db": {
-      t: "PERSONNEL DIRECTORY",
-      d: "Add, Update, Search and Remove Gang Personnel",
-    },
-    "music-config": {
-      t: "AUDIO MUSIC ENGINE",
-      d: "Configure YouTube Media Integration Background Audio",
-    },
-  };
-  document.getElementById("adminTabTitle").innerText = titles[tabId].t;
-  document.getElementById("adminTabDesc").innerText = titles[tabId].d;
-}
-
-function updateAnalytics() {
-  const memberCount = Object.keys(currentMembers).length;
-  const groupCount = Object.keys(currentGroups).length;
-  const roleCount = Object.keys(currentRoles).length;
-  document.getElementById("statTotalMembers").innerText = memberCount;
-  document.getElementById("statTotalGroups").innerText = groupCount;
-  document.getElementById("statTotalRoles").innerText = roleCount;
-  let visualHtml = "";
-  Object.keys(currentGroups).forEach((gId) => {
-    const group = currentGroups[gId];
-    const matchCount = Object.values(currentMembers).filter((m) => {
-      const roleObj = currentRoles[m.roleId];
-      return roleObj && roleObj.groupId === gId;
-    }).length;
-    const percent = memberCount > 0 ? (matchCount / memberCount) * 100 : 0;
-    visualHtml += `<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;font-family:'Orbitron'"><span>${
-      group.name
-    }</span><span style="opacity:0.8">${matchCount} Personnel (${Math.round(
-      percent
-    )}%)</span></div><div style="height:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:4px;overflow:hidden"><div style="width:${percent}%;height:100%;background:var(--accent);border-radius:4px;box-shadow:0 0 10px var(--accent);transition:width 0.6s ease"></div></div></div>`;
-  });
-  document.getElementById("analyticsDistribution").innerHTML =
-    visualHtml ||
-    '<p style="font-size:12px;color:#555;padding:10px 0">No active structure layout to compute</p>';
-}
-
-function fileSelectHandler(input, targetId, w, h, q) {
-  if (input.files && input.files[0]) {
-    processAndCompressImage(input.files[0], targetId, w, h, q);
-  }
-}
-
-function dropHandler(e, targetId, w, h, q) {
-  e.preventDefault();
-  e.currentTarget.classList.remove("dragover");
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    processAndCompressImage(e.dataTransfer.files[0], targetId, w, h, q);
-  }
-}
-
-function processAndCompressImage(file, targetId, w, h, q) {
-  if (!file.type.match("image.*")) return showToast("ไฟล์ต้องเป็นรูปภาพเท่านั้น", "error");
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
-      const base64 = canvas.toDataURL("image/jpeg", q);
-      document.getElementById(targetId).value = base64;
-      showToast("บีบอัดรูปภาพลงช่องข้อมูลสำเร็จ", "success");
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function showToast(message, type = "info") {
-  const container = document.getElementById("toast-container");
-  const toast = document.createElement("div");
-  toast.className = `toast toast-${type}`;
-  const icons = {
-    success: "fa-circle-check",
-    error: "fa-circle-xmark",
-    warning: "fa-triangle-exclamation",
-    info: "fa-circle-info",
-  };
-  toast.innerHTML = `<i class="fa-solid ${icons[type]}"></i><div class="toast-content">${message}</div>`;
-  container.appendChild(toast);
-  setTimeout(() => toast.classList.add("toast-show"), 10);
-  setTimeout(() => {
-    toast.classList.remove("toast-show");
-    setTimeout(() => toast.remove(), 400);
-  }, 4000);
-}
-
-function deleteGroupConfirm(key) {
-  showConfirm(
-    "Delete Group",
-    "คุณต้องการลบกลุ่มยศตำแหน่งนี้ออกจากระบบใช่หรือไม่?",
-    () => {
-      dbHelper
-        .ref(_0x1a8b(11))
-        .child(key)
-        .remove()
-        .then(() => {
-          showToast("ลบกลุ่มเสร็จสิ้น", "success");
-        });
-    }
-  );
-}
-
-function deleteRoleConfirm(key) {
-  showConfirm(
-    "Delete Position",
-    "คุณต้องการลบตำแหน่งนี้ออกจากระบบใช่หรือไม่?",
-    () => {
-      dbHelper
-        .ref(_0x1a8b(12))
-        .child(key)
-        .remove()
-        .then(() => {
-          showToast("ลบยศตำแหน่งเสร็จสิ้น", "success");
-        });
-    }
-  );
-}
-
-function deleteMemberConfirm(key) {
-  const name = currentMembers[key]?.name;
-  showConfirm(
-    "Delete Personnel",
-    'คุณต้องการลบ "' + name + '" ออกจากรายชื่อทั้งหมดใช่หรือไม่?',
-    () => {
-      dbHelper
-        .ref(_0x1a8b(10))
-        .child(key)
-        .remove()
-        .then(() => {
-          showToast("ลบข้อมูลสมาชิกเสร็จสิ้น", "success");
-          logActivity("ลบข้อมูลผู้ใช้งาน: " + name, "warning");
-        });
-    }
-  );
-}
-function showSkeletons() {}
-</script>
+<script>const _0x4d32=["databaseURL","https://daddad-84e1b-default-rtdb.asia-southeast1.firebasedatabase.app/","deathnote_","7531776c5b967dc1f85cfec58957ba54117079cbaf6e479d2df8fc2e4dfa609d","5f1512bf6dfbf519a4e3fa3831b5443fa4c4b92b67f139d67fbca83ee7c001cf","Permission denied","PERMISSION_DENIED","local_","active","inactive","members","roleGroups","roles","playlist","config","media","activity_logs","music","auto","LOCAL STORAGE"];function _0x1a8b(e){return _0x4d32[e]}const firebaseConfig={databaseURL:_0x1a8b(1)};try{firebase.initializeApp(firebaseConfig)}catch(e){console.error(e)}const db=firebase.database();let player,currentRoles={},currentMembers={},currentGroups={},activeTab="all",weatherType="none",playlist=[],currentTrackIndex=0,isPlaying=!1;document.addEventListener("DOMContentLoaded",(()=>{}));let useLocalFallback=!1;const listeners={},firebaseLoaded={config:!1,roleGroups:!1,roles:!1,members:!1},fallbackTimeout=setTimeout((()=>{firebaseLoaded.config||triggerFallbackMode()}),2500);function triggerFallbackMode(){useLocalFallback||(useLocalFallback=!0,clearTimeout(fallbackTimeout),document.getElementById("dbStatus").innerHTML='<i class="fa-solid fa-database" style="color:#ffc107"></i> '+_0x1a8b(19),document.getElementById("toggleDbModeBtn").innerText="FORCE DATABASE SYNC",showToast("สลับเข้าสู่ Offline Mode จัดเก็บข้อมูลในเบราว์เซอร์ชั่วคราว","warning"),Object.keys(listeners).forEach((e=>{triggerLocalUpdate(e)})))}function triggerLocalUpdate(e){if(listeners[e]){const t=JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||getDefaultData(e),n={val:()=>t,once:(e,n)=>n({val:()=>t})};listeners[e].forEach((e=>e(n)))}}function toggleDatabaseMode(){useLocalFallback=!useLocalFallback,useLocalFallback?(document.getElementById("dbStatus").innerHTML='<i class="fa-solid fa-database" style="color:#ffc107"></i> '+_0x1a8b(19),document.getElementById("toggleDbModeBtn").innerText="FORCE DATABASE SYNC",showToast("เปลี่ยนมาใช้ระบบจำในเครื่อง (Local Storage) เรียบร้อย","success"),[_0x1a8b(14),_0x1a8b(11),_0x1a8b(12),_0x1a8b(10),_0x1a8b(13),_0x1a8b(15)].forEach((e=>triggerLocalUpdate(e)))):(document.getElementById("dbStatus").innerHTML='<i class="fa-solid fa-circle-nodes"></i> CONNECTING...',document.getElementById("toggleDbModeBtn").innerText="FORCE LOCAL STORAGE",showToast("กำลังเชื่อมต่อ Firebase...","info"),location.reload())}function handleWriteError(e){console.error(e),e.message&&(e.message.includes(_0x1a8b(5))||e.message.includes(_0x1a8b(6)))?showToast("Firebase ปฏิเสธการเขียนข้อมูล (Rules หมดอายุ) แนะนำให้กดปุ่ม 'FORCE LOCAL STORAGE' ด้านบนหลังบ้านครับ","error"):showToast("เกิดข้อผิดพลาดในการบันทึก: "+e.message,"error")}function getDefaultData(e){return e===_0x1a8b(14)?{name:"DEATHNOTE",favicon:"",themeColor:"#ffc107",logo:"https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",bgUrl:"",weather:"snow",footerText:"Designed by DEATHNOTE",footerLink:"#"}:e===_0x1a8b(11)?{g1:{name:"HIGH COMMAND",order:1},g2:{name:"MEMBERS",order:2}}:e===_0x1a8b(12)?{r1:{name:"FOUNDER",groupId:"g1",color:"#ff4757",order:1},r2:{name:"MEMBER",groupId:"g2",color:"#ffc107",order:2}}:e===_0x1a8b(10)?{m1:{name:"DEATHNOTE PERSONNEL",img:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150",roleId:"r1",fb:"https://facebook.com",yt:"",tk:"",order:1,status:_0x1a8b(8),joinDate:"2026-05-20",lastEdit:"2026-05-20 12:00:00"}}:e===_0x1a8b(17)?{auto:!0}:e===_0x1a8b(13)?{p1:{title:"Background LoFi",videoId:"JXg_Qe48cbU",startSecond:0}}:{}}const dbHelper={ref:function(e){return{on:function(t,n,a){listeners[e]||(listeners[e]=[]),-1===listeners[e].indexOf(n)&&listeners[e].push(n),useLocalFallback?triggerLocalUpdate(e):db.ref(e).on(t,(t=>{firebaseLoaded[e]=!0,e===_0x1a8b(14)&&(document.getElementById("dbStatus").innerHTML='<i class="fa-solid fa-cloud" style="color:#2ed573"></i> ONLINE',clearTimeout(fallbackTimeout)),n(t)}),(t=>{console.warn("Firebase error on ["+e+"]:",t.message),triggerFallbackMode(),a&&a(t)}))},once:function(t,n){if(useLocalFallback){const t=JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||getDefaultData(e);n({val:()=>t})}else db.ref(e).once(t,n,(t=>{console.warn("Firebase once error on ["+e+"]:",t.message),triggerFallbackMode()}))},set:function(t){return useLocalFallback?(localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(t)),triggerLocalUpdate(e),Promise.resolve()):db.ref(e).set(t).catch(handleWriteError)},update:function(t){if(useLocalFallback){const n={...JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||{},...t};return localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(n)),triggerLocalUpdate(e),Promise.resolve()}return db.ref(e).update(t).catch(handleWriteError)},push:function(t){if(useLocalFallback){const n=JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||{},a=_0x1a8b(7)+Math.random().toString(36).substr(2,9);return t&&(n[a]=t,localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(n)),triggerLocalUpdate(e)),{then:function(e){return e(),this},set:function(t){return n[a]=t,localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(n)),triggerLocalUpdate(e),Promise.resolve()}}}return db.ref(e).push(t)},child:function(t){return{remove:function(){if(useLocalFallback){const n=JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||{};return delete n[t],localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(n)),triggerLocalUpdate(e),Promise.resolve()}return db.ref(e).child(t).remove().catch(handleWriteError)},set:function(n){if(useLocalFallback){const a=JSON.parse(localStorage.getItem(_0x1a8b(2)+e))||{};return a[t]=n,localStorage.setItem(_0x1a8b(2)+e,JSON.stringify(a)),triggerLocalUpdate(e),Promise.resolve()}return db.ref(e).child(t).set(n).catch(handleWriteError)}}}}}};let currentMediaList={};function dragOverHandler(e){e.preventDefault(),e.currentTarget.classList.add("dragover")}function dragLeaveHandler(e){e.preventDefault(),e.currentTarget.classList.remove("dragover")}function dropMediaHandler(e){e.preventDefault(),e.currentTarget.classList.remove("dragover"),e.dataTransfer.files&&e.dataTransfer.files[0]&&processAndSaveMediaCloud(e.dataTransfer.files[0])}function fileSelectMediaHandler(e){e.files&&e.files[0]&&processAndSaveMediaCloud(e.files[0])}function processAndSaveMediaCloud(e){if(!e.type.match("image.*"))return showToast("ไฟล์ที่อัปโหลดต้องเป็นรูปภาพเท่านั้น","error");showToast("กำลังอัปโหลดรูปภาพขึ้นสารระบบคลาวด์...","info");const t=e.name.split(".").slice(0,-1).join(".")||e.name,n=new FileReader;n.onload=function(e){const n=new Image;n.onload=function(){const e=document.createElement("canvas");let a=n.width,o=n.height;const r=800;a>o?a>r&&(o*=r/a,a=r):o>r&&(a*=r/o,o=r),e.width=a,e.height=o;e.getContext("2d").drawImage(n,0,0,a,o);const l=e.toDataURL("image/jpeg",.7),s={name:t.toUpperCase(),data:l,size:(l.length/1024).toFixed(1)+" KB",timestamp:(new Date).toLocaleDateString("th-TH")};dbHelper.ref(_0x1a8b(15)).push(s).then((()=>{showToast("อัปโหลดขึ้นมินิคลาวด์สำเร็จ","success"),logActivity('อัปโหลดไฟล์ภาพใหม่ "'+s.name+'" สู่คลาวด์จัดเก็บ',"success")}))},n.src=e.target.result},n.readAsDataURL(e)}function renderMediaLibrary(){const e=document.getElementById("mediaLibraryContainer"),t=Object.keys(currentMediaList);if(0===t.length)return void(e.innerHTML='<p style="font-size:11px;text-align:center;width:100%;opacity:0.4;padding:20px 0;">No uploaded files detected.</p>');let n="";t.forEach((e=>{const t=currentMediaList[e];n+=`<div class="media-file-card"><div class="media-preview-container"><img class="media-preview-img" src="${t.data}"></div><div class="media-details"><input class="media-name-input" type="text" value="${t.name}" onchange="renameMedia('${e}',this.value)"><span class="media-size-tag">${t.size} | ${t.timestamp}</span></div><div class="media-card-actions"><button class="media-card-btn" onclick="copyMediaUrl('${e}')" style="background:var(--accent);color:#000">COPY URL</button><button class="media-card-btn" onclick="deleteMediaConfirm('${e}')" style="background:var(--danger);color:#fff">DELETE</button></div></div>`})),e.innerHTML=n}function renameMedia(e,t){const n=t.toUpperCase().trim();if(!n)return showToast("ชื่อรูปภาพต้องห้ามว่างเปล่า","warning");dbHelper.ref(_0x1a8b(15)).child(e).update({name:n}).then((()=>{showToast("เปลี่ยนชื่อไฟล์สำเร็จ","success"),logActivity('เปลี่ยนชื่อไฟล์คลาวด์ย่อยเป็น "'+n+'"',"info")}))}function copyMediaUrl(e){const t=currentMediaList[e]?.data||"";t&&navigator.clipboard.writeText(t).then((()=>{showToast("Copy URL รูปภาพ Base64 เรียบร้อยแล้ว!","success")})).catch((()=>{showToast("เกิดข้อผิดพลาดในการคัดลอกไฟล์","error")}))}function deleteMediaConfirm(e){const t=currentMediaList[e]?.name;showConfirm("Delete Image",'ต้องการลบไฟล์ภาพ "'+t+'" ออกจากสารระบบคลาวด์ย่อยหรือไม่?',(()=>{dbHelper.ref(_0x1a8b(15)).child(e).remove().then((()=>{showToast("ลบรูปภาพเสร็จสิ้น","success"),logActivity("ลบไฟล์ภาพจากคลาวด์: "+t,"warning")}))}))}dbHelper.ref(_0x1a8b(15)).on("value",(e=>{currentMediaList=e.val()||{},renderMediaLibrary()}));let draggedNode=null,selectedMemberIds=new Set;function bindDragSortEvents(){document.querySelectorAll(".member-table-row.draggable").forEach((e=>{e.addEventListener("dragstart",(t=>{draggedNode=e,e.classList.add("dragging"),t.dataTransfer.effectAllowed="move"})),e.addEventListener("dragover",(e=>{e.preventDefault();const t=document.getElementById("adminMemberList"),n=[...t.querySelectorAll(".member-table-row.draggable:not(.dragging)")].find((t=>{const n=t.getBoundingClientRect();return e.clientY-n.top-n.height/2<0}));n?t.insertBefore(draggedNode,n):t.appendChild(draggedNode)})),e.addEventListener("dragend",(()=>{e.classList.remove("dragging"),draggedNode=null,saveDraggedOrder()}))}))}function saveDraggedOrder(){const e=[...document.getElementById("adminMemberList").querySelectorAll(".member-table-row.draggable")],t={};e.forEach(((e,n)=>{const a=e.dataset.id;a&&currentMembers[a]&&(currentMembers[a].order=n,t[a+"/order"]=n)})),useLocalFallback?(localStorage.setItem("deathnote_members",JSON.stringify(currentMembers)),triggerLocalUpdate(_0x1a8b(10)),showToast("จัดลำดับข้อมูลภายในเครื่องสำเร็จ","success")):dbHelper.ref(_0x1a8b(10)).update(t).then((()=>{showToast("จัดเรียงและสลับลำดับสมาชิกเรียบร้อย","success"),logActivity("อัปเดตสลับจัดลำดับสมาชิกใหม่ (Drag Sort V2)","info")})).catch(handleWriteError)}function filterAdminMembers(){const e=document.getElementById("adminMemberSearch").value.toLowerCase(),t=document.getElementById("adminFilterRole").value,n=document.getElementById("adminFilterStatus").value;let a="";Object.keys(currentMembers).sort(((e,t)=>{const n=currentMembers[e].order||0,a=currentMembers[t].order||0;return n!==a?n-a:currentMembers[e].name.localeCompare(currentMembers[t].name)})).forEach((o=>{const r=currentMembers[o],l=r.name.toLowerCase().includes(e),s="all"===t||r.roleId===t,c="all"===n||r.status===n;if(l&&s&&c){const e=currentRoles[r.roleId]?.name||"UNKNOWN ROLE",t=r.status===_0x1a8b(9)?"status-inactive":"status-active",n=r.joinDate||"2026-05-20",l=r.lastEdit?r.lastEdit.split(" ")[0]:"2026-05-20",s=selectedMemberIds.has(o)?"checked":"";a+=`<div class="member-table-row draggable" draggable="true" data-id="${o}"><div class="member-table-left"><span class="drag-handle" style="cursor:grab;padding:5px"><i class="fa-solid fa-grip-vertical" style="opacity:0.4"></i></span><input type="checkbox" class="member-row-selector" data-id="${o}" ${s} onchange="toggleSelectMember('${o}',this)" style="width:16px;height:16px;margin-bottom:0;cursor:pointer"><img src="${r.img||"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}" style="width:36px;height:36px;border-radius:6px;object-fit:cover"><span style="font-weight:600;font-size:14px;color:var(--text-main)">${r.name}</span></div><div class="member-table-mid"><span style="font-size:13px;font-weight:500;color:var(--text-sub)">${e}</span><span class="status-badge ${t}">${r.status||"Active"}</span><span style="font-size:12px;color:var(--text-muted);font-family:'Orbitron'">Join: ${n}</span><span style="font-size:12px;color:var(--text-muted);font-family:'Orbitron'">Edit: ${l}</span></div><div class="member-table-right"><button class="config-btn" onclick="toggleQuickStatus('${o}')" style="background:#222;color:var(--accent);font-size:9px;padding:6px 12px">Toggle</button><i class="fa-solid fa-pen-to-square" style="color:var(--accent);cursor:pointer;font-size:15px;padding:5px" onclick="editMember('${o}')"></i><i class="fa-solid fa-trash-can delete-btn" style="font-size:14px;padding:5px" onclick="deleteMemberConfirm('${o}')"></i></div></div>`}})),document.getElementById("adminMemberList").innerHTML=a||'<div style="color:var(--text-muted);font-size:12px;padding:25px;text-align:center;">NO MATCHING PERSONNEL FOUND</div>',bindDragSortEvents(),updateBulkPanel()}function toggleSelectMember(e,t){t.checked?selectedMemberIds.add(e):selectedMemberIds.delete(e),updateBulkPanel()}function toggleSelectAll(e){const t=document.querySelectorAll(".member-row-selector");e.checked?t.forEach((e=>{e.checked=!0,selectedMemberIds.add(e.dataset.id)})):(t.forEach((e=>{e.checked=!1})),selectedMemberIds.clear()),updateBulkPanel()}function updateBulkPanel(){const e=document.getElementById("bulkPanel"),t=document.getElementById("bulkSelectedCount");selectedMemberIds.size>0?(e.style.display="flex",t.innerText=selectedMemberIds.size):e.style.display="none"}function applyBulkStatus(){const e=document.getElementById("bulkStatusSelect").value;if(!e)return showToast("กรุณาเลือกสถานะที่ต้องการเปลี่ยน","warning");const t={};selectedMemberIds.forEach((n=>{t[n+"/status"]=e,t[n+"/lastEdit"]=(new Date).toLocaleString("th-TH")})),dbHelper.ref(_0x1a8b(10)).update(t).then((()=>{showToast("อัปเดตสถานะกลุ่ม "+selectedMemberIds.size+" คนเรียบร้อย","success"),logActivity("เปลี่ยนสถานะแบบกลุ่มสมาชิก "+selectedMemberIds.size+" รายการ","info"),selectedMemberIds.clear(),document.getElementById("selectAllMembers").checked=!1,filterAdminMembers()}))}function applyBulkDelete(){showConfirm("Bulk Delete","คุณต้องการยืนยันการลบรายชื่อที่เลือกทั้งหมด "+selectedMemberIds.size+" คน ใช่หรือไม่?",(()=>{const e=[];selectedMemberIds.forEach((t=>{e.push(dbHelper.ref(_0x1a8b(10)).child(t).remove())})),Promise.all(e).then((()=>{showToast("ลบรายชื่อสมาชิกแบบกลุ่ม "+selectedMemberIds.size+" คนสำเร็จ","success"),logActivity("ลบรายชื่อสมาชิกแบบกลุ่มจำนวน "+selectedMemberIds.size+" คน","warning"),selectedMemberIds.clear(),document.getElementById("selectAllMembers").checked=!1,filterAdminMembers()}))}))}function toggleQuickStatus(e){const t="active"===(currentMembers[e]?.status||"active")?_0x1a8b(9):"active";dbHelper.ref(_0x1a8b(10)).child(e).update({status:t,lastEdit:(new Date).toLocaleString("th-TH")}).then((()=>{showToast("เปลี่ยนสถานะผู้ใช้งานสำเร็จ","success"),logActivity('เปลี่ยนสถานะสมาชิก "'+currentMembers[e].name+'" เป็น '+t,"info")}))}function addSongPlaylist(){const e=document.getElementById("musicTitle").value.trim(),t=document.getElementById("musicVidId").value.trim(),n=parseInt(document.getElementById("musicStartSecond").value)||0;if(!e||!t)return showToast("กรุณากรอกชื่อเพลงและ Video ID ให้ครบถ้วน","warning");dbHelper.ref(_0x1a8b(13)).push({title:e,videoId:t,startSecond:n}).then((()=>{document.getElementById("musicTitle").value="",document.getElementById("musicVidId").value="",document.getElementById("musicStartSecond").value="0",showToast("เพิ่มเพลงเข้าสู่รายการเพลงเรียบร้อย","success"),logActivity("เพิ่มเพลงใหม่ลงระบบคอร์: "+e+" (เริ่มเล่นวินาทีที่ "+n+")","success")}))}function renderPlaylistUI(){const e=document.getElementById("playlistItems");if(0===playlist.length)return void(e.innerHTML='<p style="font-size:11px;opacity:0.4;text-align:center;padding-top:15px;">Playlist Queue Empty.</p>');let t="";playlist.forEach(((e,n)=>{const a=e.startSecond||0;t+=`<div class="playlist-item"><span class="playlist-info"><b>${n+1}. ${e.title}</b> <small style="color:#64748b">(ID: ${e.videoId}) [เริ่มวิที่: ${a}]</small></span><i class="fa-solid fa-trash-can delete-btn" onclick="deleteSongPlaylist('${e.id}')"></i></div>`})),e.innerHTML=t}function deleteSongPlaylist(e){showConfirm("Remove Track","ต้องการนำไฟล์เพลงนี้ออกจากแกลเลอรีเพลย์ลิสต์ใช่หรือไม่?",(()=>{dbHelper.ref(_0x1a8b(13)).child(e).remove().then((()=>{showToast("ลบเพลงสำเร็จ","success")}))}))}function nextSong(){if(!player||0===playlist.length)return;let e=currentTrackIndex+1;e>=playlist.length&&(e=0),playTrackByIndex(e)}function prevSong(){if(!player||0===playlist.length)return;let e=currentTrackIndex-1;e<0&&(e=playlist.length-1),playTrackByIndex(e)}function logActivity(e,t="info"){const n={text:e,status:t,timestamp:(new Date).toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit",second:"2-digit"})};if(useLocalFallback){const e=JSON.parse(localStorage.getItem("deathnote_logs"))||[];e.unshift(n),e.length>25&&e.pop(),localStorage.setItem("deathnote_logs",JSON.stringify(e)),renderLogsUI(e)}else db.ref("activity_logs").push(n)}function renderLogsUI(e){const t=document.getElementById("logsContainer");if(!e||0===e.length)return void(t.innerHTML='<p style="font-size:11px;opacity:0.4;text-align:center;padding-top:20px">No system logs captured yet.</p>');let n="";e.forEach((e=>{n+=`<div class="log-item log-${e.status}"><span>${e.text}</span><span class="log-time">${e.timestamp}</span></div>`})),t.innerHTML=n}function loadConfigToInputs(){dbHelper.ref(_0x1a8b(14)).once("value",(e=>{const t=e.val()||{};document.getElementById("configSiteName").value=t.name||"",document.getElementById("configFavicon").value=t.favicon||"",document.getElementById("configThemeColor").value=t.themeColor||"#ffc107",document.getElementById("configLogoUrl").value=t.logo||"",document.getElementById("configBgUrl").value=t.bgUrl||"",document.getElementById("configWeather").value=t.weather||"none",document.getElementById("configFooterText").value=t.footerText||"",document.getElementById("configFooterLink").value=t.footerLink||""})),dbHelper.ref("music").once("value",(e=>{const t=e.val()||{};document.getElementById("musicAutoToggle").checked=t.auto||!1}))}function openModal(e){document.getElementById(e).style.display="flex"}function closeModal(e){document.getElementById(e).style.display="none"}function closeAdminPanel(){document.getElementById("adminPanel").style.display="none",document.body.style.overflow="auto"}function addGroup(){const e=document.getElementById("newGroupName").value.toUpperCase(),t=parseInt(document.getElementById("newGroupOrder").value)||0;e&&dbHelper.ref(_0x1a8b(11)).push({name:e,order:t}).then((()=>{document.getElementById("newGroupName").value="",document.getElementById("newGroupOrder").value="",showToast("NEW GROUP LAYOUT ADDED","success"),logActivity('เพิ่มกลุ่มโครงสร้างยศ "'+e+'" เข้าสู่สารระบบ',"success")}))}function addRole(){const e=document.getElementById("newRoleName").value.toUpperCase(),t=document.getElementById("roleGroupSelect").value,n=document.getElementById("newRoleColor").value,a=parseInt(document.getElementById("newRoleOrder").value)||0;e&&t&&dbHelper.ref(_0x1a8b(12)).push({name:e,groupId:t,color:n,order:a}).then((()=>{document.getElementById("newRoleName").value="",document.getElementById("newRoleOrder").value="",showToast("NEW EXCLUSIVE POSITION RANK CREATED","success"),logActivity('สร้างยศตำแหน่งหน้าที่ "'+e+'" ใหม่สำเร็จ',"success")}))}function saveMember(){const e=document.getElementById("editMemId").value,t=document.getElementById("editMemJoinDate").value,n=(new Date).toLocaleDateString("th-TH"),a=e?currentMembers[e].order||0:Object.keys(currentMembers).length,o={name:document.getElementById("memName").value,img:document.getElementById("memImg").value,roleId:document.getElementById("memRole").value,order:a,status:document.getElementById("memStatus").value||"active",fb:document.getElementById("memFb").value||"",yt:document.getElementById("memYt").value||"",tk:document.getElementById("memTk").value||"",joinDate:e?t:n,lastEdit:(new Date).toLocaleString("th-TH")};if(!o.name||!o.roleId)return showToast("ERROR: จำเป็นต้องระบุชื่อและเลือกตำแหน่งยศ","error");if(!o.fb)return showToast("ERROR: จำเป็นต้องแนบลิงก์ Facebook ของสมาชิกเป็นอย่างน้อย","warning");(e?dbHelper.ref(_0x1a8b(10)).child(e):dbHelper.ref(_0x1a8b(10)).push()).set(o).then((()=>{showToast("PERSONNEL DIRECTORY ARCHIVES DEPLOYED","success"),logActivity((e?"อัปเดตแก้ไขโปรไฟล์ของ":"เพิ่มรายชื่อสมาชิกใหม่")+' "'+o.name+'" ลงสู่หน้าทำเนียบ',"success"),clearMemForm()}))}function editMember(e){const t=currentMembers[e];document.getElementById("editMemId").value=e,document.getElementById("editMemJoinDate").value=t.joinDate||"2026-05-20",document.getElementById("memName").value=t.name,document.getElementById("memImg").value=t.img,document.getElementById("memRole").value=t.roleId,document.getElementById("memStatus").value=t.status||"active",document.getElementById("memFb").value=t.fb,document.getElementById("memYt").value=t.yt,document.getElementById("memTk").value=t.tk,document.getElementById("memBtn").innerText="UPDATE PERSONNEL INFO",document.getElementById("memBtn").style.background="var(--success)",document.querySelector("#tab-members-db .admin-card").scrollIntoView({behavior:"smooth"})}function clearMemForm(){document.getElementById("editMemId").value="",document.getElementById("editMemJoinDate").value="",document.getElementById("memName").value="",document.getElementById("memImg").value="",document.getElementById("memRole").value="",document.getElementById("memStatus").value="active",document.getElementById("memFb").value="",document.getElementById("memYt").value="",document.getElementById("memTk").value="",document.getElementById("memBtn").innerText="DEPLOY TO DIRECTORY",document.getElementById("memBtn").style.background="var(--accent)"}dbHelper.ref(_0x1a8b(13)).on("value",(e=>{const t=e.val()||{};if(playlist=Object.keys(t).map((e=>({id:e,...t[e]}))),renderPlaylistUI(),renderNotebookPlaylist(),player&&playlist.length>0){const e=playlist[currentTrackIndex];e&&player.cueVideoById({videoId:e.videoId,startSeconds:parseInt(e.startSecond)||0})}})),dbHelper.ref("activity_logs").on("value",(e=>{const t=e.val()||{};renderLogsUI(Object.keys(t).map((e=>t[e])).reverse().slice(0,25))})),dbHelper.ref(_0x1a8b(11)).on("value",(e=>{currentGroups=e.val()||{};let t="",n='<option value="">SELECT GROUP</option>';Object.keys(currentGroups).sort(((e,t)=>(currentGroups[e].order||0)-(currentGroups[t].order||0))).forEach((e=>{t+=`<div class="admin-item-row"><span>${currentGroups[e].name} <small style="color:#64748b">(Order: ${currentGroups[e].order||0})</small></span><i class="fa-solid fa-trash-can delete-btn" onclick="deleteGroupConfirm('${e}')"></i></div>`,n+=`<option value="${e}">${currentGroups[e].name}</option>`})),document.getElementById("groupListContainer").innerHTML=t,document.getElementById("roleGroupSelect").innerHTML=n,filterMembers(),updateAnalytics()})),dbHelper.ref(_0x1a8b(12)).on("value",(e=>{currentRoles=e.val()||{};let t='<option value="">SELECT ROLE</option>',n="",a='<option value="all">FILTER BY ALL ROLES</option>';Object.keys(currentRoles).sort(((e,t)=>(currentRoles[e].order||0)-(currentRoles[t].order||0))).forEach((e=>{const o=currentGroups[currentRoles[e].groupId]?.name||"UNKNOWN";t+=`<option value="${e}">${currentRoles[e].name}</option>`,a+=`<option value="${e}">${currentRoles[e].name}</option>`,n+=`<div class="admin-item-row"><div><b style="color:${currentRoles[e].color}">${currentRoles[e].name}</b> <small style="color:#64748b">(Order: ${currentRoles[e].order||0})</small><br><small style="color:#64748b">${o}</small></div><i class="fa-solid fa-trash-can delete-btn" onclick="deleteRoleConfirm('${e}')"></i></div>`})),document.getElementById("memRole").innerHTML=t,document.getElementById("adminFilterRole").innerHTML=a,document.getElementById("roleListContainer").innerHTML=n,renderTabs(),filterMembers(),updateAnalytics()})),dbHelper.ref(_0x1a8b(10)).on("value",(e=>{currentMembers=e.val()||{},document.getElementById("countNum").innerText=Object.keys(currentMembers).length,filterAdminMembers(),filterMembers(),updateAnalytics()}));const revealObserver=new IntersectionObserver((e=>{e.forEach((e=>{e.isIntersecting&&e.target.classList.add("reveal-active")}))}),{threshold:.05,rootMargin:"0px 0px -50px 0px"});function updateScrollReveals(){document.querySelectorAll(".category-section").forEach((e=>{revealObserver.observe(e)}))}let lastParticleTime=0;function handleCardHoverParticles(e){const t=Date.now();if(t-lastParticleTime<120)return;lastParticleTime=t;const n=e.currentTarget,a=n.getBoundingClientRect(),o=e.clientX-a.left,r=e.clientY-a.top,l=document.createElement("span");l.className="hover-particle",l.style.left=`${o}px`,l.style.top=`${r}px`;const s=3*Math.random()+1.5;l.style.width=`${s}px`,l.style.height=`${s}px`;const c=30*(Math.random()-.5),i=-(40*Math.random()+20);l.style.setProperty("--drift-x",`${c}px`),l.style.setProperty("--drift-y",`${i}px`),n.appendChild(l),setTimeout((()=>{l.remove()}),1e3)}function filterMembers(){const e=document.getElementById("memberSearch").value.toLowerCase(),t=document.getElementById("memberSections");t.innerHTML="";const n={};Object.keys(currentMembers).forEach((t=>{const a=currentMembers[t];if(a.status===_0x1a8b(9))return;const o=currentRoles[a.roleId];if(!o)return;const r=o.groupId,l=currentGroups[r]?.name||"MEMBER DEATHNOTE 2K26",s=currentGroups[r]?.order||0;!a.name.toLowerCase().includes(e)||"all"!==activeTab&&a.roleId!==activeTab||(n[r]||(n[r]={name:l,order:s,items:[]}),n[r].items.push({...a,role:o}))}));const a=Object.keys(n).map((e=>({id:e,...n[e]}))).sort(((e,t)=>(e.order||0)-(t.order||0)));a.forEach((e=>{e.items.sort(((e,t)=>{const n=e.order||0,a=t.order||0;return n!==a?n-a:e.name.localeCompare(t.name)}));const n=e.items[0]?.role?.color||"var(--accent)";let a=`<section class="category-section"><div class="category-header" style="color:${n};border-left-color:${n}">${e.name}</div><div class="member-grid">`;e.items.forEach(((e,t)=>{const n=e.role?.color||"#ffc107";a+=`<div class="member-card" style="animation-delay:${.05*t}s;--role-color:${n}"><img src="${e.img||"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"}" class="avatar"><div><div style="font-weight:600;font-size:15px;position:relative;z-index:10">${e.name}</div><span class="rank-tag" style="background:${n}">${e.role.name}</span></div><div class="social-links">${e.fb?`<a href="${e.fb}" target="_blank" style="color:#1877f2"><i class="fa-brands fa-facebook"></i></a>`:""}${e.yt?`<a href="${e.yt}" target="_blank" style="color:#ff0000"><i class="fa-brands fa-youtube"></i></a>`:""}${e.tk?`<a href="${e.tk}" target="_blank" style="color:#fff"><i class="fa-brands fa-tiktok"></i></a>`:""}</div></div>`})),a+="</div></section>",t.innerHTML+=a}));document.querySelectorAll(".member-card").forEach((e=>{e.addEventListener("mousemove",handleCardHoverParticles)})),updateScrollReveals(),a.length||(t.innerHTML="<p style=\"text-align:center;opacity:0.2;padding:100px;font-family:'Orbitron'\">NO RECORDS FOUND</p>")}function renderTabs(){const e=document.getElementById("categoryTabs");let t=`<button class="config-btn" style="background:${"all"===activeTab?"var(--accent)":"#161719"};color:${"all"===activeTab?"#000":"#888"}" onclick="setActiveTab('all')">ALL</button>`;Object.keys(currentRoles).sort(((e,t)=>(currentRoles[e].order||0)-(currentRoles[t].order||0))).forEach((e=>{const n=activeTab===e;t+=`<button class="config-btn" style="background:${n?"var(--accent)":"#161719"};color:${n?"#000":"#888"}" onclick="setActiveTab('${e}')">${currentRoles[e].name}</button>`})),e.innerHTML=t}function setActiveTab(e){activeTab=e,renderTabs(),filterMembers()}function toggleNotebook(){document.getElementById("dnBookWidget").classList.toggle("open")}function toggleMusic(){if(!player)return;const e=document.getElementById("musicIcon");isPlaying?(player.pauseVideo(),e&&(e.className="fa-solid fa-play"),isPlaying=!1):(player.playVideo(),e&&(e.className="fa-solid fa-pause"),isPlaying=!0)}function updateCurrentTrackDisplay(){if(player&&0!==playlist.length)try{const e=player.getPlaylistIndex();if(-1!==e&&playlist[e]){const t=playlist[e].title.toUpperCase(),n=document.getElementById("dnNowPlayingTitle");n&&(n.innerText=t)}else{const e=document.getElementById("dnNowPlayingTitle");e&&(e.innerText="PLAYING AUDIO")}}catch(e){const t=document.getElementById("dnNowPlayingTitle");t&&(t.innerText="DEATHNOTE AUDIO")}}function playTrackByIndex(e){if(!player||0===playlist.length)return;e<0&&(e=playlist.length-1),e>=playlist.length&&(e=0),currentTrackIndex=e;const t=playlist[e],n=parseInt(t.startSecond)||0;player.loadVideoById({videoId:t.videoId,startSeconds:n}),setTimeout((()=>{updateCurrentTrackDisplay(),renderNotebookPlaylist()}),500)}function renderNotebookPlaylist(){const e=document.getElementById("notebookTracks");if(!e)return;if(0===playlist.length)return void(e.innerHTML="<li style=\"font-family:'Reenie Beanie';font-size:24px;color:#555;text-align:center\">No victim songs written...</li>");let t="";playlist.forEach(((e,n)=>{let a=!1;if(player)try{a=player.getPlaylistIndex()===n}catch(e){}t+=`<li class="${a?"playing-track":""}" onclick="playTrackByIndex(${n})">${n+1}. ${e.title}</li>`})),e.innerHTML=t}function onYouTubeIframeAPIReady(){dbHelper.ref("music").once("value",(e=>{let t=e.val()||{};dbHelper.ref(_0x1a8b(13)).once("value",(e=>{const n=e.val()||{};playlist=Object.keys(n).map((e=>({id:e,...n[e]})));const a=void 0===t.auto||t.auto,o=playlist[currentTrackIndex],r=o?o.videoId:"JXg_Qe48cbU",l=o&&parseInt(o.startSecond)||0;player=new YT.Player("player",{height:"0",width:"0",videoId:r,playerVars:{autoplay:a?1:0,start:l,loop:0,controls:0},events:{onReady:e=>{a&&playlist.length>0&&(player.loadVideoById({videoId:r,startSeconds:l}),setTimeout((()=>{if(player.getPlayerState()!==YT.PlayerState.PLAYING){const e=()=>{player.playVideo(),document.removeEventListener("click",e)};document.addEventListener("click",e)}}),1e3))},onStateChange:e=>{const t=document.getElementById("musicIcon");e.data===YT.PlayerState.PLAYING?(isPlaying=!0,t&&(t.className="fa-solid fa-pause"),updateCurrentTrackDisplay(),renderNotebookPlaylist()):e.data===YT.PlayerState.ENDED?nextSong():(isPlaying=!1,t&&(t.className="fa-solid fa-play"))}}})}))}))}function saveConfig(){dbHelper.ref(_0x1a8b(14)).update({name:document.getElementById("configSiteName").value,favicon:document.getElementById("configFavicon").value,themeColor:document.getElementById("configThemeColor").value,logo:document.getElementById("configLogoUrl").value,bgUrl:document.getElementById("configBgUrl").value,weather:document.getElementById("configWeather").value,footerText:document.getElementById("configFooterText").value,footerLink:document.getElementById("configFooterLink").value}).then((()=>{showToast("CONFIGURATION DATABASE UPDATED","success"),logActivity("อัปเดตปรับแก้การตั้งค่าส่วนหน้าบ้านเว็บไซต์หลัก","info")}))}function saveMusic(){dbHelper.ref("music").update({auto:document.getElementById("musicAutoToggle").checked}).then((()=>{showToast("AUDIO CORE SYNCHRONIZED","success"),logActivity("ปรับเปลี่ยนตั้งค่าระบบบอร์ดเพลงพื้นหลัง (Audio Engine)","info")}))}dbHelper.ref(_0x1a8b(14)).on("value",(e=>{const t=e.val()||{};document.title=t.name||"DEATHNOTE",document.getElementById("siteNameDisplay").innerText=t.name||"DEATHNOTE",document.getElementById("favicon").href=t.favicon||"",document.getElementById("siteLogo").src=t.logo||"",t.bgUrl&&(document.body.style.backgroundImage="url('"+t.bgUrl+"')"),t.themeColor&&document.documentElement.style.setProperty("--accent",t.themeColor),weatherType=t.weather||"none",initWeather(),document.getElementById("footerTextDisplay").innerText=t.footerText||"Designed by DEATHNOTE",document.getElementById("footerLinkLabel").href=t.footerLink||"#"}));const canvas=document.getElementById("weather-canvas"),ctx=canvas.getContext("2d");let particles=[];function initWeather(){if(canvas.width=window.innerWidth,canvas.height=window.innerHeight,particles=[],"none"!==weatherType)for(let e=0;e<80;e++)particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,speed:2*Math.random()+1,radius:2*Math.random()+1})}function drawWeather(){if(ctx.clearRect(0,0,canvas.width,canvas.height),"none"===weatherType)return requestAnimationFrame(drawWeather);ctx.fillStyle="rgba(255, 255, 255, 0.5)",particles.forEach((e=>{ctx.beginPath(),ctx.arc(e.x,e.y,e.radius,0,2*Math.PI),ctx.fill(),e.y+=e.speed,e.y>canvas.height&&(e.y=-10)})),requestAnimationFrame(drawWeather)}async function sha256(e){const t=(new TextEncoder).encode(e),n=await crypto.subtle.digest("SHA-256",t);return Array.from(new Uint8Array(n)).map((e=>e.toString(16).padStart(2,"0"))).join("")}async function sha256(e){const t=(new TextEncoder).encode(e),n=await crypto.subtle.digest("SHA-256",t);return Array.from(new Uint8Array(n)).map((e=>e.toString(16).padStart(2,"0"))).join("")}async function attemptLogin(){const e=document.getElementById("loginUser").value,t=document.getElementById("loginPass").value,n=await sha256(e),a=await sha256(t);"b79bb8bd1670509b4fe13ebaa27e22f32aa9231814a24e332a6f6e8d4126e5df"===n&&"b307110e2d41c49f350cb8b893fa491d6b29a5c7ee59efb8c227f98e175eccf2"===a?(closeModal("loginModal"),document.getElementById("adminPanel").style.display="block",document.body.style.overflow="hidden",loadConfigToInputs(),showToast("ยินดีต้อนรับสู่แผงควบคุมระบบ","success"),logActivity("แอดมินลงชื่อเข้าสู่ระบบหลังบ้าน Central Command","success")):showToast("ความปลอดภัยล้มเหลว: รหัสผ่านไม่ถูกต้อง","error")}window.addEventListener("resize",initWeather),drawWeather(),window.addEventListener("DOMContentLoaded",(()=>{"deathnote"===new URLSearchParams(window.location.search).get("login")&&(openModal("loginModal"),showToast("ยินดีต้อนรับแอดมิน กรุณากรอกรหัสความปลอดภัย","info"))}));let confirmActionCallback=null;function showConfirm(e,t,n){document.getElementById("confirmTitle").innerText=e.toUpperCase(),document.getElementById("confirmMessage").innerText=t,document.getElementById("confirmModal").style.display="flex",confirmActionCallback=n}function handleConfirm(e){document.getElementById("confirmModal").style.display="none",e&&confirmActionCallback&&confirmActionCallback(),confirmActionCallback=null}function switchAdminTab(e,t){document.querySelectorAll(".menu-item").forEach((e=>e.classList.remove("active"))),document.querySelectorAll(".tab-content").forEach((e=>e.classList.remove("active"))),t.classList.add("active"),document.getElementById("tab-"+e).classList.add("active");const n={dashboard:{t:"CENTRAL COMMAND",d:"Real-time Database & Site Analytics"},"media-manager":{t:"MEDIA CLOUD MANAGER",d:"Upload, Rename, Truncate, and Copy Base64 hosted files"},"web-config":{t:"WEBSITE CONFIGURATION",d:"Adjust Identity, Wallpaper, Themes & Weather Effects"},"roles-groups":{t:"STRUCTURE & ROLES",d:"Create and Manage Group Layouts and Rank Positions"},"members-db":{t:"PERSONNEL DIRECTORY",d:"Add, Update, Search and Remove Gang Personnel"},"music-config":{t:"AUDIO MUSIC ENGINE",d:"Configure YouTube Media Integration Background Audio"}};document.getElementById("adminTabTitle").innerText=n[e].t,document.getElementById("adminTabDesc").innerText=n[e].d}function updateAnalytics(){const e=Object.keys(currentMembers).length,t=Object.keys(currentGroups).length,n=Object.keys(currentRoles).length;document.getElementById("statTotalMembers").innerText=e,document.getElementById("statTotalGroups").innerText=t,document.getElementById("statTotalRoles").innerText=n;let a="";Object.keys(currentGroups).forEach((t=>{const n=currentGroups[t],o=Object.values(currentMembers).filter((e=>{const n=currentRoles[e.roleId];return n&&n.groupId===t})).length,r=e>0?o/e*100:0;a+=`<div style="margin-bottom:18px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px;font-family:'Orbitron'"><span>${n.name}</span><span style="opacity:0.8">${o} Personnel (${Math.round(r)}%)</span></div><div style="height:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:4px;overflow:hidden"><div style="width:${r}%;height:100%;background:var(--accent);border-radius:4px;box-shadow:0 0 10px var(--accent);transition:width 0.6s ease"></div></div></div>`})),document.getElementById("analyticsDistribution").innerHTML=a||'<p style="font-size:12px;color:#555;padding:10px 0">No active structure layout to compute</p>'}function fileSelectHandler(e,t,n,a,o){e.files&&e.files[0]&&processAndCompressImage(e.files[0],t,n,a,o)}function dropHandler(e,t,n,a,o){e.preventDefault(),e.currentTarget.classList.remove("dragover"),e.dataTransfer.files&&e.dataTransfer.files[0]&&processAndCompressImage(e.dataTransfer.files[0],t,n,a,o)}function processAndCompressImage(e,t,n,a,o){if(!e.type.match("image.*"))return showToast("ไฟล์ต้องเป็นรูปภาพเท่านั้น","error");const r=new FileReader;r.onload=function(e){const r=new Image;r.onload=function(){const e=document.createElement("canvas");e.width=n,e.height=a;e.getContext("2d").drawImage(r,0,0,n,a);const l=e.toDataURL("image/jpeg",o);document.getElementById(t).value=l,showToast("บีบอัดรูปภาพลงช่องข้อมูลสำเร็จ","success")},r.src=e.target.result},r.readAsDataURL(e)}function showToast(e,t="info"){const n=document.getElementById("toast-container"),a=document.createElement("div");a.className=`toast toast-${t}`;a.innerHTML=`<i class="fa-solid ${{success:"fa-circle-check",error:"fa-circle-xmark",warning:"fa-triangle-exclamation",info:"fa-circle-info"}[t]}"></i><div class="toast-content">${e}</div>`,n.appendChild(a),setTimeout((()=>a.classList.add("toast-show")),10),setTimeout((()=>{a.classList.remove("toast-show"),setTimeout((()=>a.remove()),400)}),4e3)}function deleteGroupConfirm(e){showConfirm("Delete Group","คุณต้องการลบกลุ่มยศตำแหน่งนี้ออกจากระบบใช่หรือไม่?",(()=>{dbHelper.ref(_0x1a8b(11)).child(e).remove().then((()=>{showToast("ลบกลุ่มเสร็จสิ้น","success")}))}))}function deleteRoleConfirm(e){showConfirm("Delete Position","คุณต้องการลบตำแหน่งนี้ออกจากระบบใช่หรือไม่?",(()=>{dbHelper.ref(_0x1a8b(12)).child(e).remove().then((()=>{showToast("ลบยศตำแหน่งเสร็จสิ้น","success")}))}))}function deleteMemberConfirm(e){const t=currentMembers[e]?.name;showConfirm("Delete Personnel",'คุณต้องการลบ "'+t+'" ออกจากรายชื่อทั้งหมดใช่หรือไม่?',(()=>{dbHelper.ref(_0x1a8b(10)).child(e).remove().then((()=>{showToast("ลบข้อมูลสมาชิกเสร็จสิ้น","success"),logActivity("ลบข้อมูลผู้ใช้งาน: "+t,"warning")}))}))}function showSkeletons(){}document.addEventListener("contextmenu",(e=>{e.preventDefault(),showToast("⚠️ ระบบความปลอดภัย: ล็อกคำสั่งคลิกขวาบนหน้าเว็บหลัก","warning")})),document.addEventListener("keydown",(e=>{if(123===e.keyCode||"F12"===e.key)return e.preventDefault(),showToast("⚠️ ปิดกั้นคำสั่ง F12 เพื่อความปลอดภัยสูงสุด","error"),!1;if(e.ctrlKey&&e.shiftKey&&(73===e.keyCode||74===e.keyCode||67===e.keyCode||"I"===e.key||"J"===e.key||"C"===e.key||"i"===e.key||"j"===e.key||"c"===e.key))return e.preventDefault(),showToast("⚠️ ปิดกั้นการใช้งานเครื่องมือตรวจสอบองค์ประกอบหน้าบ้าน","error"),!1;if(e.ctrlKey&&(85===e.keyCode||"U"===e.key||"u"===e.key))return e.preventDefault(),showToast("⚠️ ปิดกั้นการเข้าเรียกดูซอร์สโค้ดดิบหลักของเว็บไซต์","error"),!1;if(e.ctrlKey&&(83===e.keyCode||"S"===e.key||"s"===e.key))return e.preventDefault(),showToast("⚠️ ปิดกั้นการเซฟดาวน์โหลดหน้าเว็บหน้าบ้านเก็บไว้ในส่วนตัว","error"),!1;if(e.ctrlKey&&(67===e.keyCode||"C"===e.key||"c"===e.key)){const t=document.activeElement;if(!(t.closest("#adminPanel")||"INPUT"===t.tagName||"TEXTAREA"===t.tagName||"SELECT"===t.tagName))return e.preventDefault(),showToast("⚠️ ปิดกั้นการคัดลอกข้อมูลรายชื่อทำเนียบบนหน้าแรก","warning"),!1}}))</script>
 </body>
 </html>
