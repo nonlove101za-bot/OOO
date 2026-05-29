@@ -6,7 +6,7 @@
     <title id="pageTitle">DEATHNOTE</title>
     <link id="favicon" rel="icon" href="" type="image/x-icon">
     
-    <!-- นำเข้าฟอนต์เพื่อใช้กับสมุดเดธโน้ต -->
+    <!-- นำเข้าฟอนต์ Reenie Beanie และ Special Elite สำหรับสมุดเดธโน้ต -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Reenie+Beanie&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -422,7 +422,7 @@
         .col-12 { grid-column: span 12; }
         
         label { display: block; font-family: 'Orbitron'; font-size: 11px; color: var(--accent); margin-bottom: 8px; letter-spacing: 1px; font-weight: 700; }
-        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d3139; color: var(--text-main); border-radius: 10px; margin-bottom: 20px; font-size: 14px; transition: var(--transition); }
+        input, select { width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid #2d3139; color: var(--text-main); border-radius: 10px; margin-bottom: 20px; font-size: 14px; transition: var(--transition); margin-bottom: 20px; }
         input::placeholder { color: #64748b; }
         input:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 10px rgba(255,193,7,0.15); }
         
@@ -583,64 +583,7 @@
             font-size: 9.5px;
             line-height: 1.4;
             color: #2b2b2e;
-            margin-bottom: 15px;
-        }
-        
-        /* Interactive Seek/Scrub Timeline Bar */
-        .dn-timeline-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.02);
-            padding: 4px 6px;
-            border-radius: 4px;
-        }
-        .dn-time-label {
-            font-family: 'Special Elite', monospace;
-            font-size: 9px;
-            color: #444;
-            min-width: 32px;
-            text-align: center;
-        }
-        .dn-seek-bar {
-            flex: 1;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 3px;
-            background: #222; /* เส้นแกนสีกราไฟต์เข้มดุดัน */
-            outline: none;
-            cursor: pointer;
-            position: relative;
-        }
-        .dn-seek-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ff3344; /* หยดน้ำหมึกสีแดงโลหิต */
-            border: 1px solid #000;
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(255, 51, 68, 0.6);
-            transition: transform 0.1s;
-        }
-        .dn-seek-bar::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
-        }
-        .dn-seek-bar::-moz-range-thumb {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ff3344;
-            border: 1px solid #000;
-            cursor: pointer;
-            box-shadow: 0 0 5px rgba(255, 51, 68, 0.6);
-            transition: transform 0.1s;
-        }
-        .dn-seek-bar::-moz-range-thumb:hover {
-            transform: scale(1.3);
+            margin-bottom: 25px;
         }
 
         /* Book Style Controls */
@@ -661,7 +604,7 @@
             font-size: 20px;
             color: #ff3344;
             line-height: 1.2;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -765,8 +708,8 @@
                 width: calc(100vw - 40px);
                 height: 420px;
                 bottom: -10px;
-                right: -10px;
-                left: auto; /* override left */
+                right: -10px; /* ปรับขวาในมือถือ */
+                left: auto;   /* เคลียร์ซ้ายออก */
             }
             .dn-pages-container {
                 flex-direction: column;
@@ -839,23 +782,11 @@
         <!-- Opened Book Spread Panel -->
         <div class="dn-open-notebook">
             <div class="dn-pages-container">
-                <!-- LEFT PAGE: Rule & Controls & Timeline scrubbing -->
+                <!-- LEFT PAGE: Rule & Controls (ไม่มีแถบเลื่อนกอเพลงแล้ว) -->
                 <div class="dn-page dn-page-left">
                     <div class="dn-rules-header">HOW TO USE IT</div>
                     <div class="dn-rules-text">
-                        The songs written in this notebook shall play in the background. Use the slider below to scroll through time.
-                    </div>
-                    
-                    <!-- Timeline Seek Bar (สำหรับเลื่อนกอเพลง) -->
-                    <div class="dn-timeline-container">
-                        <span class="dn-time-label" id="dnCurrentTime">00:00</span>
-                        <input type="range" class="dn-seek-bar" id="dnSeekBar" min="0" max="100" value="0" step="0.5" 
-                               onmousedown="isSeeking = true" 
-                               onmouseup="isSeeking = false" 
-                               ontouchstart="isSeeking = true" 
-                               ontouchend="isSeeking = false"
-                               oninput="seekSong(this.value)">
-                        <span class="dn-time-label" id="dnTotalTime">00:00</span>
+                        The songs written in this notebook shall play in the background. Click on any title to execute immediately.
                     </div>
 
                     <div class="dn-book-controls">
@@ -1126,7 +1057,7 @@
                                 <div><label>FULL NAME</label><input type="text" id="memName"></div>
                                 <div style="grid-column: span 2;">
                                     <label>AVATAR IMAGE</label>
-                                    <div class="upload-dropzone" onclick="document.getElementById('fileMemImg').click()" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'memImg', 150, 150, 0.7)">
+                                    <div class="upload-dropzone" onclick="document.getElementById('fileMemImg').click()" ondragover="dragOverHandler(event)" ondrag-leave="dragLeaveHandler(event)" ondrop="dropHandler(event, 'memImg', 150, 150, 0.7)">
                                         <i class="fa-solid fa-cloud-arrow-up"></i>
                                         <span>Click / Drop Avatar (Base64 Compress)</span>
                                     </div>
@@ -1256,8 +1187,6 @@
 
         let player, currentRoles = {}, currentMembers = {}, currentGroups = {}, activeTab = 'all', weatherType = 'none';
         let playlist = [], currentTrackIndex = 0, isPlaying = false;
-        let isSeeking = false; // ตรวจจับการลากเพื่อเลื่อนกอเพลง
-        let progressInterval = null; // อินเตอร์วัลนับและอัปเดตเวลาเพลง
 
         document.addEventListener("DOMContentLoaded", () => {
             showSkeletons();
@@ -1394,7 +1323,7 @@
                             }
                             successCallback(snap);
                         }, (err) => {
-                            console.warn(`Firebase error on [${path}]:`, err.message);
+                            console.warn("Firebase error on [" + path + "]:", err.message);
                             triggerFallbackMode();
                             if (failureCallback) failureCallback(err);
                         });
@@ -1406,7 +1335,7 @@
                             return;
                         }
                         db.ref(path).once(event, successCallback, (err) => {
-                            console.warn(`Firebase once error on [${path}]:`, err.message);
+                            console.warn("Firebase once error on [" + path + "]:", err.message);
                             triggerFallbackMode();
                         });
                     },
@@ -1539,7 +1468,7 @@
 
                     dbHelper.ref('media').push(newMediaObj).then(() => {
                         showToast("อัปโหลดขึ้นมินิคลาวด์สำเร็จ", "success");
-                        logActivity(`อัปโหลดไฟล์ภาพใหม่ "${newMediaObj.name}" สู่คลาวด์จัดเก็บ`, "success");
+                        logActivity("อัปโหลดไฟล์ภาพใหม่ \"" + newMediaObj.name + "\" สู่คลาวด์จัดเก็บ", "success");
                     });
                 };
                 img.src = e.target.result;
@@ -1587,7 +1516,7 @@
             
             dbHelper.ref('media').child(key).update({ name: cleanedName }).then(() => {
                 showToast("เปลี่ยนชื่อไฟล์สำเร็จ", "success");
-                logActivity(`เปลี่ยนชื่อไฟล์คลาวด์ย่อยเป็น "${cleanedName}"`, "info");
+                logActivity("เปลี่ยนชื่อไฟล์คลาวด์ย่อยเป็น \"" + cleanedName + "\"", "info");
             });
         }
 
@@ -1604,10 +1533,10 @@
 
         function deleteMediaConfirm(key) {
             const name = currentMediaList[key]?.name;
-            showConfirm("Delete Image", `ต้องการลบไฟล์ภาพ "${name}" ออกจากสารระบบคลาวด์ย่อยหรือไม่?`, () => {
+            showConfirm("Delete Image", "ต้องการลบไฟล์ภาพ \"" + name + "\" ออกจากสารระบบคลาวด์ย่อยหรือไม่?", () => {
                 dbHelper.ref('media').child(key).remove().then(() => {
-                    showToast("ลบรูปภาพเสสิ้น", "success");
-                    logActivity(`ลบไฟล์ภาพจากคลาวด์: ${name}`, "warning");
+                    showToast("ลบรูปภาพเสร็จสิ้น", "success");
+                    logActivity("ลบไฟล์ภาพจากคลาวด์: " + name, "warning");
                 });
             });
         }
@@ -1662,7 +1591,7 @@
                 const id = row.dataset.id;
                 if (id && currentMembers[id]) {
                     currentMembers[id].order = idx;
-                    updates[`${id}/order`] = idx;
+                    updates[id + "/order"] = idx;
                 }
             });
 
@@ -1780,12 +1709,12 @@
             
             const updates = {};
             selectedMemberIds.forEach(id => {
-                updates[`${id}/status`] = status;
-                updates[`${id}/lastEdit`] = new Date().toLocaleString('th-TH');
+                updates[id + "/status"] = status;
+                updates[id + "/lastEdit"] = new Date().toLocaleString('th-TH');
             });
 
             dbHelper.ref('members').update(updates).then(() => {
-                showToast(`อัปเดตสถานะกลุ่ม ${selectedMemberIds.size} คนเรียบร้อย`, "success");
+                showToast("อัปเดตสถานะกลุ่ม " + selectedMemberIds.size + " คนเรียบร้อย", "success");
                 logActivity("เปลี่ยนสถานะแบบกลุ่มสมาชิก " + selectedMemberIds.size + " รายการ", "info");
                 selectedMemberIds.clear();
                 document.getElementById('selectAllMembers').checked = false;
@@ -1794,15 +1723,15 @@
         }
 
         function applyBulkDelete() {
-            showConfirm("Bulk Delete", `คุณต้องการยืนยันการลบรายชื่อที่เลือกทั้งหมด ${selectedMemberIds.size} คน ใช่หรือไม่?`, () => {
+            showConfirm("Bulk Delete", "คุณต้องการยืนยันการลบรายชื่อที่เลือกทั้งหมด " + selectedMemberIds.size + " คน ใช่หรือไม่?", () => {
                 const deletePromises = [];
                 selectedMemberIds.forEach(id => {
                     deletePromises.push(dbHelper.ref('members').child(id).remove());
                 });
 
                 Promise.all(deletePromises).then(() => {
-                    showToast(`ลบรายชื่อสมาชิกแบบกลุ่ม ${selectedMemberIds.size} คนสำเร็จ`, "success");
-                    logActivity(`ลบรายชื่อสมาชิกแบบกลุ่มจำนวน ${selectedMemberIds.size} คน`, "warning");
+                    showToast("ลบรายชื่อสมาชิกแบบกลุ่ม " + selectedMemberIds.size + " คนสำเร็จ", "success");
+                    logActivity("ลบรายชื่อสมาชิกแบบกลุ่มจำนวน " + selectedMemberIds.size + " คน", "warning");
                     selectedMemberIds.clear();
                     document.getElementById('selectAllMembers').checked = false;
                     filterAdminMembers();
@@ -1819,7 +1748,7 @@
                 lastEdit: new Date().toLocaleString('th-TH')
             }).then(() => {
                 showToast("เปลี่ยนสถานะผู้ใช้งานสำเร็จ", "success");
-                logActivity(`เปลี่ยนสถานะสมาชิก "${currentMembers[id].name}" เป็น ${nextStatus}`, "info");
+                logActivity("เปลี่ยนสถานะสมาชิก \"" + currentMembers[id].name + "\" เป็น " + nextStatus, "info");
             });
         }
 
@@ -1832,11 +1761,11 @@
             
             if (!title || !videoId) return showToast("กรุณากรอกชื่อเพลงและ Video ID ให้ครบถ้วน", "warning");
 
-            dbHelper.ref('playlist').push({ title, videoId }).then(() => {
+            dbHelper.ref('playlist').push({ title: title, videoId: videoId }).then(() => {
                 document.getElementById('musicTitle').value = '';
                 document.getElementById('musicVidId').value = '';
                 showToast("เพิ่มเพลงเข้าสู่รายการเพลงเรียบร้อย", "success");
-                logActivity(`เพิ่มเพลงใหม่ลงระบบคอร์: ${title}`, "success");
+                logActivity("เพิ่มเพลงใหม่ลงระบบคอร์: " + title, "success");
             });
         }
 
@@ -1904,7 +1833,7 @@
         // ----------------------------------------------------
         function logActivity(text, status = 'info') {
             const timestamp = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const logEntry = { text, status, timestamp };
+            const logEntry = { text: text, status: status, timestamp: timestamp };
             
             if (useLocalFallback) {
                 const localLogs = JSON.parse(localStorage.getItem('deathnote_logs')) || [];
@@ -2029,11 +1958,11 @@
         function addGroup() {
             const name = document.getElementById('newGroupName').value.toUpperCase();
             const order = parseInt(document.getElementById('newGroupOrder').value) || 0;
-            if(name) dbHelper.ref('roleGroups').push({ name, order }).then(() => {
+            if(name) dbHelper.ref('roleGroups').push({ name: name, order: order }).then(() => {
                 document.getElementById('newGroupName').value = '';
                 document.getElementById('newGroupOrder').value = '';
                 showToast("NEW GROUP LAYOUT ADDED", "success");
-                logActivity("เพิ่มกลุ่มโครงสร้างยศ " + name + " เข้าสู่สารระบบ", "success");
+                logActivity("เพิ่มกลุ่มโครงสร้างยศ \"" + name + "\" เข้าสู่สารระบบ", "success");
             });
         }
 
@@ -2042,11 +1971,11 @@
             const gId = document.getElementById('roleGroupSelect').value;
             const color = document.getElementById('newRoleColor').value;
             const order = parseInt(document.getElementById('newRoleOrder').value) || 0;
-            if(name && gId) dbHelper.ref('roles').push({ name, groupId: gId, color, order }).then(() => {
+            if(name && gId) dbHelper.ref('roles').push({ name: name, groupId: gId, color: color, order: order }).then(() => {
                 document.getElementById('newRoleName').value = '';
                 document.getElementById('newRoleOrder').value = '';
                 showToast("NEW EXCLUSIVE POSITION RANK CREATED", "success");
-                logActivity("สร้างยศตำแหน่งหน้าที่ " + name + " ใหม่สำเร็จ", "success");
+                logActivity("สร้างยศตำแหน่งหน้าที่ \"" + name + "\" ใหม่สำเร็จ", "success");
             });
         }
 
@@ -2192,7 +2121,7 @@
                     if(!structure[gId]) {
                         structure[gId] = { name: gName, order: gOrder, items: [] };
                     }
-                    structure[gId].items.push({...m, role});
+                    structure[gId].items.push({...m, role: role});
                 }
             });
             
@@ -2284,61 +2213,6 @@
                 if(icon) icon.className = 'fa-solid fa-pause';
                 isPlaying = true;
             }
-        }
-
-        // ----------------------------------------------------
-        // SYSTEM: Seeking timeline logic
-        // ----------------------------------------------------
-        function seekSong(value) {
-            if (!player) return;
-            try {
-                const duration = player.getDuration();
-                if (duration > 0) {
-                    const targetSeconds = (value / 100) * duration;
-                    player.seekTo(targetSeconds, true);
-                    
-                    const curTimeDisplay = document.getElementById('dnCurrentTime');
-                    if (curTimeDisplay) curTimeDisplay.innerText = formatTime(targetSeconds);
-                }
-            } catch (e) {}
-        }
-
-        function startProgressTracker() {
-            if (progressInterval) clearInterval(progressInterval);
-            progressInterval = setInterval(() => {
-                if (player && isPlaying) {
-                    try {
-                        const currentTime = player.getCurrentTime();
-                        const duration = player.getDuration();
-                        if (duration > 0) {
-                            const percent = (currentTime / duration) * 100;
-                            const seekBar = document.getElementById('dnSeekBar');
-                            // อัปเดตแถบกอเพลงเฉพาะในกรณีที่ผู้ใช้ไม่ได้ทำการลากค้างไว้อยู่
-                            if (seekBar && !isSeeking) {
-                                seekBar.value = percent;
-                            }
-                            
-                            const curTimeDisplay = document.getElementById('dnCurrentTime');
-                            const totalTimeDisplay = document.getElementById('dnTotalTime');
-                            if (curTimeDisplay) curTimeDisplay.innerText = formatTime(currentTime);
-                            if (totalTimeDisplay) totalTimeDisplay.innerText = formatTime(duration);
-                        }
-                    } catch (e) {}
-                }
-            }, 500);
-        }
-
-        function stopProgressTracker() {
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
-        }
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return mins.toString().padStart(2, '0') + ":" + secs.toString().padStart(2, '0');
         }
 
         function updateCurrentTrackDisplay() {
@@ -2437,11 +2311,9 @@
                                     if(icon) icon.className = 'fa-solid fa-pause'; 
                                     updateCurrentTrackDisplay();
                                     renderNotebookPlaylist();
-                                    startProgressTracker(); // เริ่มคำนวณแถบความยาวคลื่นเพลง
                                 } else { 
                                     isPlaying = false; 
                                     if(icon) icon.className = 'fa-solid fa-play'; 
-                                    stopProgressTracker(); // หยุดคำนวณคลื่นเพลงเมื่อจบหรือหยุด
                                 }
                             }
                         }
@@ -2456,7 +2328,7 @@
             document.getElementById('siteNameDisplay').innerText = d.name || 'DEATHNOTE';
             document.getElementById('favicon').href = d.favicon || '';
             document.getElementById('siteLogo').src = d.logo || '';
-            if(d.bgUrl) document.body.style.backgroundImage = `url('${d.bgUrl}')`;
+            if(d.bgUrl) document.body.style.backgroundImage = "url('" + d.bgUrl + "')";
             if(d.themeColor) {
                 document.documentElement.style.setProperty('--accent', d.themeColor);
             }
@@ -2572,7 +2444,7 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             
             el.classList.add('active');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.getElementById("tab-" + tabId).classList.add('active');
 
             const titles = {
                 'dashboard': { t: 'CENTRAL COMMAND', d: 'Real-time Database & Site Analytics' },
